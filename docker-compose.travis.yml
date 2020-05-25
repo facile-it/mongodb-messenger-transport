@@ -1,0 +1,9 @@
+version: "3.1"
+
+services:
+  php:
+    image: ilariopierbattista/mongodb-bundle-php:${PHP_IMG}
+  mongo:
+    image: ${MONGO_IMG}
+    ports:
+      - 27017:27017
