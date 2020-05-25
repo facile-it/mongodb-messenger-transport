@@ -21,7 +21,6 @@ env:
 before_install:
   - mv docker-compose.travis.yml docker-compose.override.yml
   - sudo chmod -R 777 . # ugly! Travis is 2000:2000
-  - docker-compose run --no-deps --rm php composer config github-oauth.github.com ${GITHUB_OAUTH_TOKEN}
   - |
     if [ "$SYMFONY" != "" ]; then
       make lock-symfony-$SYMFONY
