@@ -6,6 +6,7 @@ namespace Facile\MongoDbMessenger\Tests\Functional\Transport;
 
 use Facile\MongoDbMessenger\Tests\Functional\BaseFunctionalTestCase;
 use Facile\MongoDbMessenger\Tests\Stubs\FooMessage;
+use MongoDB\BSON\ObjectId;
 use MongoDB\Collection;
 use MongoDB\Model\BSONDocument;
 use Symfony\Component\Messenger\Envelope;
@@ -19,9 +20,21 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
         $envelope = new Envelope(new FooMessage());
         $transport = $this->getTransport();
 
-        $transport->send($envelope);
+        $envelope = $transport->send($envelope);
+
+        $stamps = $envelope->all();
+        $this->assertCount(1, $stamps);
+        $this->assertArrayHasKey(TransportMessageIdStamp::class, $stamps);
+        $stamps = $stamps[TransportMessageIdStamp::class];
+        $this->assertIsArray($stamps);
+        $this->assertCount(1, $stamps);
+        $stamp = current($stamps);
+        $this->assertInstanceOf(TransportMessageIdStamp::class, $stamp);
+        $document = $this->getMessageCollection()->findOne(['_id' => $stamp->getId()]);
+        $this->assertInstanceOf(BSONDocument::class, $document);
 
         $fetchedEnvelope = $this->getOneEnvelope($transport);
+
         $this->assertEquals($envelope->getMessage(), $fetchedEnvelope->getMessage());
     }
 
@@ -143,22 +156,25 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
 
     public function testFind(): void
     {
-        $firstMessage = new FooMessage();
+        $message = new FooMessage();
         $transport = $this->getTransport();
-        $transport->send((new Envelope(new FooMessage()))->with(new DelayStamp(10000)));
-        $transport->send(new Envelope($firstMessage));
+        $transport->send(new Envelope(new FooMessage()));
+        $stamp = $transport->send(new Envelope($message))
+            ->last(TransportMessageIdStamp::class);
+        $this->assertInstanceOf(TransportMessageIdStamp::class, $stamp);
 
-        $result = $transport->countBy(['body' => ['$regex' => $firstMessage->getData()]]);
+        $envelope = $transport->find($stamp->getId());
 
-        $this->assertSame(1, $result);
+        $this->assertInstanceOf(Envelope::class, $envelope);
+        $this->assertEquals($message, $envelope->getMessage());
+    }
 
-        $result = $transport->countBy(['body' => ['$regex' => 'test-data-']], ['limit' => 1]);
+    public function testFindWithNonexistentId(): void
+    {
+        $transport = $this->getTransport();
+        $transport->send(new Envelope(new FooMessage()));
 
-        $this->assertSame(1, $result);
-
-        $result = $transport->countBy(['body' => ['$regex' => 'test-data-']], ['limit' => 999]);
-
-        $this->assertSame(2, $result);
+        $this->assertNull($transport->find(new ObjectId()));
     }
 
     public function testMessageCount(): void
