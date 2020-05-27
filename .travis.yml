@@ -26,8 +26,9 @@ before_script:
 
 script:
   - docker-compose run --rm php bash -c "sleep 3; -v --coverage-clover=build/coverage-report.xml"
+
 after_script:
-  - bash <(curl -s https://codecov.io/bash) -f build/coverage-report.xml"
+  - bash <(curl -s https://codecov.io/bash) -f build/coverage-report.xml
 
 jobs:
   include:
