@@ -70,6 +70,9 @@ final class TransportFactory implements TransportFactoryInterface
         return new MongoDbTransport($connection, $serializer);
     }
 
+    /**
+     * @param array{document_enhancers: string[]} $options
+     */
     private function addDocumentEnhancers(Connection $connection, array $options): void
     {
         foreach ($options[self::DOCUMENT_ENHANCERS] as $name) {
@@ -90,7 +93,7 @@ final class TransportFactory implements TransportFactoryInterface
     /**
      * @param array<string, mixed> $options
      *
-     * @return array{connection_name: string, collection_name: string, queue_name: string, redeliver_timeout: int}
+     * @return array{connection_name: string, collection_name: string, queue_name: string, redeliver_timeout: int, document_enhancers: string[]}
      */
     private function buildConfiguration(string $dsn, array $options = []): array
     {
@@ -129,9 +132,11 @@ final class TransportFactory implements TransportFactoryInterface
     }
 
     /**
+     * @param string[] $configuration
+     *
      * @throws \InvalidArgumentException If any of the document_enhancers values is not valid
      */
-    private function validateDocumentEnhancers($configuration): void
+    private function validateDocumentEnhancers(array $configuration): void
     {
         foreach ($configuration as $name) {
             if ($this->isServiceDefinition($name)) {

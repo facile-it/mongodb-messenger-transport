@@ -19,7 +19,10 @@ class MongoDbTransportTest extends BaseEnd2EndTestCase
         $transport->send($envelope);
 
         $this->assertSame(1, $transport->getMessageCount());
-        $fetchedEnvelope = $transport->get()[0];
+        $envelopes = $transport->get();
+        $this->assertIsArray($envelopes);
+        $this->assertNotEmpty($envelopes);
+        $fetchedEnvelope = current($envelopes);
         $this->assertInstanceOf(Envelope::class, $fetchedEnvelope);
         /* @var Envelope $fetchedEnvelope */
         $this->assertEquals($envelope->getMessage(), $fetchedEnvelope->getMessage());

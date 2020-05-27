@@ -6,6 +6,7 @@ namespace Facile\MongoDbMessenger\Tests\End2End;
 
 use Facile\MongoDbMessenger\Tests\End2End\App\Kernel;
 use Facile\SymfonyFunctionalTestCase\WebTestCase as FacileWebTestCase;
+use MongoDB\Database;
 
 class BaseEnd2EndTestCase extends FacileWebTestCase
 {
@@ -18,8 +19,14 @@ class BaseEnd2EndTestCase extends FacileWebTestCase
     {
         parent::setUp();
 
-        $this->getContainer()
-            ->get('mongo.connection.test_default')
-            ->drop();
+        $this->getMongoDb()->drop();
+    }
+
+    protected function getMongoDb(): Database
+    {
+        $database = $this->getContainer()->get('mongo.connection.test_default');
+        $this->assertInstanceOf(Database::class, $database);
+
+        return $database;
     }
 }

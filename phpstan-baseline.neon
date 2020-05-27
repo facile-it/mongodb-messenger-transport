@@ -1,0 +1,6 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Method Facile\\\\MongoDbMessenger\\\\Transport\\\\Connection\\:\\:find\\(\\) should return MongoDB\\\\Model\\\\BSONDocument\\|null but returns array\\|object\\|null\\.$#"
+			count: 1
+			path: src/Transport/Connection.php

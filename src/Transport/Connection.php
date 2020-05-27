@@ -72,17 +72,11 @@ final class Connection
 
         $updatedDocument = $this->collection->findOneAndUpdate($this->createAvailableMessagesQuery(), $updateStatement, $options);
 
-        if ($updatedDocument === null) {
+        if (! $updatedDocument instanceof BSONDocument) {
             return null;
         }
 
-        if (is_object($updatedDocument)) {
-            $deliveredTo = $updatedDocument->deliveredTo;
-        } else {
-            $deliveredTo = $updatedDocument['deliveredTo'];
-        }
-
-        if ($deliveredTo !== $this->uniqueId) {
+        if ($updatedDocument->deliveredTo !== $this->uniqueId) {
             // concurrency issue - some other consumer got to this message while we were updating it
             return null;
         }
@@ -183,6 +177,8 @@ final class Connection
     /**
      * @param array<string, mixed>|object $filters
      * @param array<string, mixed> $options
+     *
+     * @return Cursor<BSONDocument>
      */
     public function findBy($filters, array $options): Cursor
     {
@@ -193,9 +189,9 @@ final class Connection
      * @param array<string, mixed>|object $filters
      * @param array<string, mixed> $options
      */
-    public function countBy(array $filters, array $options): int
+    public function countBy($filters, array $options): int
     {
-        return $this->collection->countDocuments($filters, $options);
+        return $this->collection->count($filters, $options);
     }
 
     public function deleteAll(): void

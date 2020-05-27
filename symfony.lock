@@ -5,6 +5,12 @@
     "php": {
         "version": "7.2"
     },
+    "phpstan/extension-installer": {
+        "version": "1.0.4"
+    },
+    "phpstan/phpstan-phpunit": {
+        "version": "0.12.8"
+    },
     "psr/event-dispatcher": {
         "version": "1.0.0"
     },

@@ -32,7 +32,7 @@ final class Receiver implements ReceiverInterface, MessageCountAwareInterface, L
     }
 
     /**
-     * @return array{0: Envelope}|Envelope[]
+     * @return array{0?: Envelope}
      */
     public function get(): iterable
     {
@@ -91,7 +91,7 @@ final class Receiver implements ReceiverInterface, MessageCountAwareInterface, L
      *
      * @return \Generator<Envelope>
      */
-    public function findBy(array $filters, array $options): \Generator
+    public function findBy($filters, array $options): \Generator
     {
         foreach ($this->connection->findBy($filters, $options) as $document) {
             yield $this->createEnvelope($document);

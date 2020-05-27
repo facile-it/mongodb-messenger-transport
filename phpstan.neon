@@ -1,5 +1,10 @@
 parameters:
-    level: 8
+    level: max
     paths:
         - src/
         - tests/
+    ignoreErrors:
+        - /no value type specified in iterable type MongoDB\\Model\\BSONDocument\./
+        - /^Access to an undefined property MongoDB\\Model\\BSONDocument::\$\w+\.$/
+includes:
+	- phpstan-baseline.neon

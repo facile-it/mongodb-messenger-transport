@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Facile\MongoDbMessenger\Transport;
 
+use MongoDB\BSON\ObjectId;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Transport\Receiver\ListableReceiverInterface;
 use Symfony\Component\Messenger\Transport\Receiver\MessageCountAwareInterface;
@@ -65,7 +66,7 @@ class MongoDbTransport implements TransportInterface, SetupableTransportInterfac
      *
      * @return \Generator<Envelope>
      */
-    public function findBy(array $filters, array $options): \Generator
+    public function findBy($filters, array $options): \Generator
     {
         yield from $this->getReceiver()->findBy($filters, $options);
     }
@@ -81,6 +82,9 @@ class MongoDbTransport implements TransportInterface, SetupableTransportInterfac
         return $this->getReceiver()->countBy($filters, $options);
     }
 
+    /**
+     * @param string|ObjectId $id
+     */
     public function find($id): ?Envelope
     {
         return $this->getReceiver()->find($id);
@@ -91,7 +95,7 @@ class MongoDbTransport implements TransportInterface, SetupableTransportInterfac
         return $this->getReceiver()->getMessageCount();
     }
 
-    public function reset()
+    public function reset(): void
     {
         $this->connection->deleteAll();
     }
