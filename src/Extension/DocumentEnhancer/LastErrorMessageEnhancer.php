@@ -13,7 +13,7 @@ class LastErrorMessageEnhancer implements DocumentEnhancer
     public function enhance(BSONDocument $document, Envelope $envelope): void
     {
         $lastRedeliveryStamp = RedeliveryStampExtractor::getLastWithException($envelope);
-        
+
         if (null === $lastRedeliveryStamp) {
             return;
         }

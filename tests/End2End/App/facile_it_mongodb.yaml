@@ -1,0 +1,12 @@
+mongo_db_bundle:
+  clients:
+    default:
+      uri: 'mongodb://mongo'
+      username: 'root'
+      password: 'rootPass'
+      authSource: 'admin'
+
+  connections:
+    test_default:
+      client_name:    'default'
+      database_name:  'test'

@@ -10,6 +10,8 @@ services:
       - mongo
   mongo:
     image: mongo:3.4.2
+    tmpfs:
+      - /data/db:uid=1001
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=rootPass
+      MONGO_INITDB_ROOT_USERNAME: 'root'
+      MONGO_INITDB_ROOT_PASSWORD: 'rootPass'

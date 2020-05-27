@@ -1,0 +1,18 @@
+framework:
+  messenger:
+    failure_transport: failed
+
+    transports:
+      default: 
+        dsn: 'facile-it-mongodb://test_default'
+        retry_strategy:
+          max_retries: 0
+      retryable:
+        dsn: 'facile-it-mongodb://test_default'
+        retry_strategy:
+          max_retries: 1
+          max_delay: 0
+      failed:
+        dsn: 'facile-it-mongodb://test_default'
+        options:
+          queue_name: 'failed'

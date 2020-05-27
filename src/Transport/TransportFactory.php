@@ -22,13 +22,17 @@ final class TransportFactory implements TransportFactoryInterface
     ];
 
     public const CONNECTION_NAME = 'connection_name';
+
     public const COLLECTION_NAME = 'collection_name';
+
     public const QUEUE_NAME = 'queue_name';
+
     public const REDELIVER_TIMEOUT = 'redeliver_timeout';
+
     public const DOCUMENT_ENHANCERS = 'document_enhancers';
 
     /** @var ContainerInterface */
-    private ContainerInterface $container;
+    private $container;
 
     public function __construct(ContainerInterface $container)
     {
@@ -65,7 +69,7 @@ final class TransportFactory implements TransportFactoryInterface
             $configuration[self::REDELIVER_TIMEOUT]
         );
 
-        $this->addDocumentEnhancers($connection, $options);
+        $this->addDocumentEnhancers($connection, $configuration);
 
         return new MongoDbTransport($connection, $serializer);
     }
@@ -138,7 +142,7 @@ final class TransportFactory implements TransportFactoryInterface
                 continue;
             }
 
-            if (!class_exists($name)) {
+            if (! class_exists($name)) {
                 throw new \InvalidArgumentException(sprintf(
                     'Invalid entry in document_enhancers option: "%s" - value is neither a service reference nor an existing class',
                     $name
@@ -147,13 +151,13 @@ final class TransportFactory implements TransportFactoryInterface
 
             $reflectionClass = new \ReflectionClass($name);
             $constructor = $reflectionClass->getConstructor();
-            
+
             if (null === $constructor) {
                 continue;
             }
 
             foreach ($constructor->getParameters() as $parameter) {
-                if (!$parameter->isDefaultValueAvailable()) {
+                if (! $parameter->isDefaultValueAvailable()) {
                     throw new \InvalidArgumentException(sprintf('Class %s in is not instantiable without arguments; if you want to use it as a DocumentEnhancer please define it as a service and add the service reference in the options instead', $name));
                 }
             }

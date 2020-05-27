@@ -24,6 +24,7 @@ final class Connection
 {
     /** @var Collection */
     private $collection;
+
     /** @var string */
     private $queueName;
 
@@ -34,7 +35,7 @@ final class Connection
     private $documentEnhancers = [];
 
     /** @var string */
-    private string $uniqueId;
+    private $uniqueId;
 
     public function __construct(Collection $collection, string $queueName, int $redeliverTimeout)
     {
@@ -95,8 +96,9 @@ final class Connection
      * @param array<string, mixed> $headers
      * @param int $delay The delay in milliseconds
      *
-     * @return ObjectId The inserted id
      * @throws TransportException
+     *
+     * @return ObjectId The inserted id
      */
     public function send(Envelope $envelope, string $body, array $headers, int $delay = 0): ObjectId
     {
@@ -154,7 +156,7 @@ final class Connection
 
     public function getMessageCount(): int
     {
-        return $this->collection->countDocuments(
+        return $this->collection->count(
             $this->createAvailableMessagesQuery()
         );
     }

@@ -1,4 +1,5 @@
 /composer.lock
+/var/
 /vendor/
 .env
 .php_cs.cache

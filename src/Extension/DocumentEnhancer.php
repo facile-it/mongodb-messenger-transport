@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Facile\MongoDbMessenger\Extension;
-
 
 use MongoDB\Model\BSONDocument;
 use Symfony\Component\Messenger\Envelope;
