@@ -2,8 +2,8 @@ version: "3.1"
 
 services:
   php:
-    image: ilariopierbattista/mongodb-bundle-php:${PHP_IMG:php-7.4-mongoext-1.6.0-20200327}
+    image: ilariopierbattista/mongodb-bundle-php:${PHP_IMG:-php-7.4-mongoext-1.6.0-20200327}
   mongo:
-    image: mongo:${MONGO_IMG:4.0}
+    image: mongo:${MONGO_IMG:-4.0}
     ports:
       - 27017:27017
