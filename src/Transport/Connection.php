@@ -95,7 +95,7 @@ final class Connection
     public function send(Envelope $envelope, string $body, array $headers, int $delay = 0): ObjectId
     {
         $now = new \DateTime();
-        $availableAt = (clone $now)->modify(sprintf('+%d seconds', $delay / 1000));
+        $availableAt = (clone $now)->modify(sprintf('+%d milliseconds', $delay));
 
         $document = new BSONDocument();
 
@@ -206,8 +206,8 @@ final class Connection
     public function setup(): void
     {
         $this->collection->createIndex([
-            'queueName' => 1,
             'availableAt' => 1,
+            'queueName' => 1,
             'deliveredAt' => 1,
         ], [
             'name' => 'facile-it_messenger_index',

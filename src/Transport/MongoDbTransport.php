@@ -33,6 +33,11 @@ class MongoDbTransport implements TransportInterface, SetupableTransportInterfac
         $this->serializer = $serializer;
     }
 
+    /**
+     * @inheritDoc
+     *
+     * @return array{0?: Envelope}
+     */
     public function get(): iterable
     {
         return $this->getReceiver()->get();
@@ -53,6 +58,11 @@ class MongoDbTransport implements TransportInterface, SetupableTransportInterfac
         return $this->getSender()->send($envelope);
     }
 
+    /**
+     * @inheritDoc
+     *
+     * @return \Generator<Envelope>
+     */
     public function all(int $limit = null): iterable
     {
         return $this->getReceiver()->all($limit);
@@ -66,7 +76,7 @@ class MongoDbTransport implements TransportInterface, SetupableTransportInterfac
      *
      * @return \Generator<Envelope>
      */
-    public function findBy($filters, array $options): \Generator
+    public function findBy($filters = [], array $options = []): \Generator
     {
         yield from $this->getReceiver()->findBy($filters, $options);
     }
@@ -77,7 +87,7 @@ class MongoDbTransport implements TransportInterface, SetupableTransportInterfac
      * @param array<string, mixed>|object $filters
      * @param array<string, mixed> $options
      */
-    public function countBy($filters, array $options): int
+    public function countBy($filters = [], array $options = []): int
     {
         return $this->getReceiver()->countBy($filters, $options);
     }
