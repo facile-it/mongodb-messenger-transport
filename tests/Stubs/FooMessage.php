@@ -9,13 +9,22 @@ class FooMessage
     /** @var string */
     private $data;
 
-    public function __construct()
+    /** @var bool */
+    private $shouldFail;
+
+    public function __construct(bool $shouldFail = false)
     {
-        $this->data = uniqid('test-data-');
+        $this->data = uniqid('test-data-', true);
+        $this->shouldFail = $shouldFail;
     }
 
     public function getData(): string
     {
         return $this->data;
+    }
+
+    public function shouldFail(): bool
+    {
+        return $this->shouldFail;
     }
 }

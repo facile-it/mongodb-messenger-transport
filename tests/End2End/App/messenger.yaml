@@ -16,3 +16,7 @@ framework:
         dsn: 'facile-it-mongodb://test_default'
         options:
           queue_name: 'failed'
+
+services:
+  Facile\MongoDbMessenger\Tests\End2End\App\FooHandler:
+    autoconfigure: true
