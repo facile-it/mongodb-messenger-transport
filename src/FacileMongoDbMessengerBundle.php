@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Facile\MongoDbMessenger;
 
 use Facile\MongoDbMessenger\Transport\TransportFactory;

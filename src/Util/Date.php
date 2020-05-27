@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Facile\MongoDbMessenger\Util;
 
 use MongoDB\BSON\UTCDateTime;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Facile\MongoDbMessenger\Tests\Stubs;
 
 class FooMessage

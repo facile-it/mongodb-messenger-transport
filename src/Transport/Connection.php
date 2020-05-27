@@ -91,8 +91,6 @@ final class Connection
     }
 
     /**
-     * @param Envelope $envelope
-     * @param string $body
      * @param array<string, mixed> $headers
      * @param int $delay The delay in milliseconds
      *
