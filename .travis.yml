@@ -25,7 +25,9 @@ before_script:
   - docker-compose run --no-deps --rm php composer validate
 
 script:
-  - docker-compose run --rm php bash -c "sleep 3; -v --coverage-clover=build/coverage-report.xml"
+  - docker-compose up -d mongo
+  - sleep 3
+  - docker-compose run --rm php vendor/bin/phpunit -v --coverage-clover=build/coverage-report.xml
 
 after_script:
   - bash <(curl -s https://codecov.io/bash) -f build/coverage-report.xml
