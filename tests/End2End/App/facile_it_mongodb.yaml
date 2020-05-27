@@ -1,7 +1,9 @@
 mongo_db_bundle:
   clients:
     default:
-      uri: 'mongodb://mongo'
+      hosts: 
+      - host: 'mongo'
+        port: 27017
       username: 'root'
       password: 'rootPass'
       authSource: 'admin'
