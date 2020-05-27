@@ -5,10 +5,14 @@ framework:
     transports:
       default: 
         dsn: 'facile-it-mongodb://test_default'
+        options:
+          queue_name: 'default'
         retry_strategy:
           max_retries: 0
       retryable:
         dsn: 'facile-it-mongodb://test_default'
+        options:
+          queue_name: 'retryable'
         retry_strategy:
           max_retries: 1
           max_delay: 0

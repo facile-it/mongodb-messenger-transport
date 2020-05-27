@@ -196,7 +196,7 @@ final class Connection
 
     public function deleteAll(): void
     {
-        $this->collection->deleteMany([], []);
+        $this->collection->deleteMany(['queueName' => $this->queueName], []);
     }
 
     /**

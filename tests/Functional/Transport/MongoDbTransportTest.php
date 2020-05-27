@@ -9,6 +9,8 @@ use Facile\MongoDbMessenger\Tests\Stubs\FooMessage;
 use MongoDB\BSON\ObjectId;
 use MongoDB\Collection;
 use MongoDB\Model\BSONDocument;
+use MongoDB\Model\CollectionInfo;
+use MongoDB\Model\IndexInfo;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Symfony\Component\Messenger\Stamp\TransportMessageIdStamp;
@@ -189,6 +191,55 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
         $transport->send($envelope);
 
         $this->assertSame(2, $transport->getMessageCount());
+    }
+
+    public function testReset(): void
+    {
+        $transport1 = $this->getTransport();
+        $transport2 = $this->getTransport('retryable');
+        $envelope = new Envelope(new FooMessage());
+
+        $transport1->send($envelope);
+        $transport2->send($envelope);
+
+        $this->assertSame(1, $transport1->getMessageCount());
+        $this->assertSame(1, $transport2->getMessageCount());
+
+        $transport1->reset();
+
+        $this->assertSame(0, $transport1->getMessageCount());
+        $this->assertSame(1, $transport2->getMessageCount());
+    }
+
+    public function testSetup(): void
+    {
+        $database = $this->getMongoDb();
+        $collectionName = 'messenger_messages';
+        $database->dropCollection($collectionName);
+
+        $this->getTransport()->setup();
+
+        $collections = iterator_to_array($database->listCollections());
+
+        $this->assertCount(1, $collections);
+        $collectionInfo = current($collections);
+        $this->assertInstanceOf(CollectionInfo::class, $collectionInfo);
+        $this->assertSame($collectionName, $collectionInfo->getName());
+
+        $collection = $this->getMessageCollection($collectionName);
+        $indexes = iterator_to_array($collection->listIndexes());
+        $this->assertCount(2, $indexes);
+        $index = $indexes[1];
+        $this->assertInstanceOf(IndexInfo::class, $index);
+        $this->assertFalse($index->isUnique());
+        $this->assertEquals(
+            [
+                'availableAt' => 1,
+                'queueName' => 1,
+                'deliveredAt' => 1,
+            ],
+            $index->getKey()
+        );
     }
 
     protected function getMessageCollection(string $collectionName = 'messenger_messages'): Collection
