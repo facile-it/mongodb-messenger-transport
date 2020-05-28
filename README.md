@@ -1,5 +1,5 @@
 # facile-it/mongodb-messenger-transport
-A Symfony Messenger transport on MongoDB, on top of facile-it/mongodb-bundle
+A Symfony Messenger transport on MongoDB, on top of [`facile-it/mongodb-bundle`](https://github.com/facile-it/mongodb-bundle/)
 
 
 [![Build Status](https://travis-ci.com/facile-it/mongodb-messenger-transport.svg?branch=master)](https://travis-ci.com/facile-it/mongodb-messenger-transport)
@@ -49,7 +49,7 @@ services:
 ```
 
 ### Configuration
-1. If you haven't already, configure the MongoDB connection following instructions for [`facile-it/mongodb-bundle`](https://github.com/facile-it/mongodb-bundle/)
+1. If you haven't already, configure the MongoDB connection following instructions for [`facile-it/mongodb-bundle`](https://github.com/facile-it/mongodb-bundle/blob/master/README.MD#configuration)
 2. Using the connection name from that configuration (i.e. `default` in the Flex recipe), configure a new transport for the Messenger like this:
 ```yaml
 # config/packages/messenger.yaml
@@ -95,4 +95,22 @@ The `document_enhancers` option is an extension point of this transport; it acce
 
 It allows the end user to add fields to the document that will be persisted for each message. Each enhancer has to implement the `Facile\MongoDbMessenger\Extension\DocumentEnhancer` interface, which requires the implementation of a `enhance(BSONDocument $document, Envelope $envelope): void` method. The BSONDocument will be persisted afterwards, and it can be enriched with additional properties, which can be useful for searching and indexing for specific information with i.e. `MongoDbTransport::find`.
 
-You can take a look at the provided `\Facile\MongoDbMessenger\Extension\DocumentEnhancer\LastErrorMessageEnhancer` as an example.
+You can take a look at the provided `\Facile\MongoDbMessenger\Extension\DocumentEnhancer\LastErrorMessageEnhancer` as an example, or use it like this:
+```yaml
+framework:
+  messenger:
+    transports:
+      new_transport: 
+        dsn: 'facile-it-mongodb://default'
+        options:
+          document_enhancers:
+          - 'Facile\MongoDbMessenger\Extension\DocumentEnhancer\LastErrorMessageEnhancer'
+          # or
+          - '@my_document_enhancer'
+
+services:
+  my_document_enhancer:
+    class: App\My\Class # which implements the DocumentEnhancer interface
+    arguments:
+    - '...'
+```
