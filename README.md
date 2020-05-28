@@ -6,22 +6,60 @@ A Symfony Messenger transport on MongoDB, on top of facile-it/mongodb-bundle
 [![codecov](https://codecov.io/gh/facile-it/mongodb-messenger-transport/branch/master/graph/badge.svg)](https://codecov.io/gh/facile-it/mongodb-messenger-transport)
 
 ## Installation
-To install this package, use Composer:
+ * To install this package, use Composer:
 ```bash
 composer require facile-it/mongodb-messenger-transport
+```
+This package register itself as a bundle inside Symfony; you have to have both it and the `FacileMongoDbBundle` enabled, if you hadn't it before.
+To do it, you either: 
+ * let Flex enable it automatically, if you're using it:
+```diff
+# config/bundles.php
+
+# ...
+    Facile\MongoDbBundle\FacileMongoDbBundle::class => ['all' => true],
++     Facile\MongoDbMessenger\FacileMongoDbMessengerBundle::class => ['all' => true],
+];
+```
+ * Enable it yourself in your kernel:
+```diff
+<?php
+
+class Kernel extends BaseKernel
+{
+    public function registerBundles(): array
+    {
+        return [
+            new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
+            # ...
+            new Facile\MongoDbBundle\FacileMongoDbBundle(),
++            new Facile\MongoDbMessenger\FacileMongoDbMessengerBundle(),
+        ];
+    }
+}
+```
+ * [ONLY FOR THIS BUNDLE] Register the transport factory manually as a service in your container:
+```yaml
+services:
+    Facile\MongoDbMessenger\Transport\TransportFactory:
+        arguments:
+          - '@service_container'
+        tags:
+          - ['messenger.transport_factory']
 ```
 
 ### Configuration
 1. If you haven't already, configure the MongoDB connection following instructions for [`facile-it/mongodb-bundle`](https://github.com/facile-it/mongodb-bundle/)
 2. Using the connection name from that configuration (i.e. `default` in the Flex recipe), configure a new transport for the Messenger like this:
 ```yaml
+# config/packages/messenger.yaml
 framework:
   messenger:
     transports:
       new_transport: 'facile-it-mongodb://default'
 ```
 
-Note: when using it for the first time, or when calling the `messenger:setup-transports` console command, this transport **creates the collection with an index** for optimal performances, since it's tailored to the fields that are used to retrieve the messages. 
+Note: when using it for the first time, or when calling the `messenger:setup-transports` console command, this transport **creates the collection with an index** for optimal performances, since it's tailored to the properties that are used to retrieve the messages. 
 
 ## Suggestions
 It's suggested to use this transport for failed messages, like the Doctrine one; if you want to do that, you can do it like this:
