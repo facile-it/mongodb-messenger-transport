@@ -3,6 +3,8 @@ version: "3.1"
 services:
   php:
     image: ilariopierbattista/mongodb-bundle-php:${PHP_IMG:-php-7.4-mongoext-1.6.0-20200327}
+    environment:
+      SYMFONY_DEPRECATIONS_HELPER: $SYMFONY_DEPRECATIONS_HELPER
   mongo:
     image: mongo:${MONGO_IMG:-4.0}
     ports:
