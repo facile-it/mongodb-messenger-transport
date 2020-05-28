@@ -20,6 +20,7 @@
         "php": "^7.2",
         "ext-mongodb": "^1.1.5",
         "facile-it/mongodb-bundle": "^0.6 || ^1.0.0-BETA",
+        "mongodb/mongodb": "^1.1.0",
         "symfony/framework-bundle": "^4.4 || ^5.0",
         "symfony/messenger": "^4.4 || ^5.0"
     },
