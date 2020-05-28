@@ -7,7 +7,6 @@ namespace Facile\MongoDbMessenger\Tests\Functional\Transport;
 use Facile\MongoDbMessenger\Tests\Functional\BaseFunctionalTestCase;
 use Facile\MongoDbMessenger\Tests\Stubs\FooMessage;
 use MongoDB\BSON\ObjectId;
-use MongoDB\Collection;
 use MongoDB\Model\BSONDocument;
 use MongoDB\Model\CollectionInfo;
 use MongoDB\Model\IndexInfo;
@@ -240,10 +239,5 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
             ],
             $index->getKey()
         );
-    }
-
-    protected function getMessageCollection(string $collectionName = 'messenger_messages'): Collection
-    {
-        return $this->getMongoDb()->selectCollection($collectionName);
     }
 }

@@ -20,7 +20,14 @@ framework:
         dsn: 'facile-it-mongodb://test_default'
         options:
           queue_name: 'failed'
+          document_enhancers:
+            - 'Facile\MongoDbMessenger\Extension\DocumentEnhancer\LastErrorMessageEnhancer'
+            - '@my_custom_enancer'
 
 services:
   Facile\MongoDbMessenger\Tests\End2End\App\FooHandler:
     autoconfigure: true
+
+  my_custom_enancer:
+    class: 'Facile\MongoDbMessenger\Tests\End2End\App\MyCustomEnhancer'
+    public: true

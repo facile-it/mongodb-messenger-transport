@@ -7,6 +7,7 @@ namespace Facile\MongoDbMessenger\Tests\Functional;
 use Facile\MongoDbMessenger\Tests\End2End\App\Kernel;
 use Facile\MongoDbMessenger\Transport\MongoDbTransport;
 use Facile\SymfonyFunctionalTestCase\WebTestCase as FacileWebTestCase;
+use MongoDB\Collection;
 use MongoDB\Database;
 use Symfony\Component\Messenger\Envelope;
 
@@ -49,5 +50,10 @@ class BaseFunctionalTestCase extends FacileWebTestCase
         $this->assertInstanceOf(Envelope::class, $fetchedEnvelope);
 
         return $fetchedEnvelope;
+    }
+
+    protected function getMessageCollection(string $collectionName = 'messenger_messages'): Collection
+    {
+        return $this->getMongoDb()->selectCollection($collectionName);
     }
 }
