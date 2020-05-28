@@ -6,6 +6,7 @@ namespace Facile\MongoDbMessenger\Tests\End2End;
 
 use Facile\MongoDbMessenger\Tests\Functional\BaseFunctionalTestCase;
 use Facile\MongoDbMessenger\Tests\Stubs\FooMessage;
+use MongoDB\Model\CollectionInfo;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Stamp\SentToFailureTransportStamp;
@@ -36,6 +37,20 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
         $fetchedEnvelope = $this->getOneEnvelope($this->getTransport('failed'));
         $this->assertEquals($envelope->getMessage(), $fetchedEnvelope->getMessage());
         $this->assertInstanceOf(SentToFailureTransportStamp::class, $fetchedEnvelope->last(SentToFailureTransportStamp::class));
+    }
+
+    public function testSetup(): void
+    {
+        $database = $this->getMongoDb();
+        $database->drop();
+
+        $this->runCommand('messenger:setup-transports');
+
+        $collections = iterator_to_array($database->listCollections());
+        $this->assertCount(1, $collections);
+        $collectionInfo = current($collections);
+        $this->assertInstanceOf(CollectionInfo::class, $collectionInfo);
+        $this->assertSame('messenger_messages', $collectionInfo->getName());
     }
 
     private function runMessengerConsume(string $transport = 'default', int $messageCount = 1): CommandTester
