@@ -1,5 +1,6 @@
 framework:
   test: true
+  secret: 'ThisIsNotASecret'
 
 services:
   logger:
