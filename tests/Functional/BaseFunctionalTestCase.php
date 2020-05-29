@@ -4,20 +4,17 @@ declare(strict_types=1);
 
 namespace Facile\MongoDbMessenger\Tests\Functional;
 
-use Facile\MongoDbMessenger\Tests\End2End\App\Kernel;
+use Facile\MongoDbMessenger\Transport\Connection;
 use Facile\MongoDbMessenger\Transport\MongoDbTransport;
-use Facile\SymfonyFunctionalTestCase\WebTestCase as FacileWebTestCase;
 use MongoDB\Collection;
 use MongoDB\Database;
+use MongoDB\Driver\Manager;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\Transport\Serialization\PhpSerializer;
 
-class BaseFunctionalTestCase extends FacileWebTestCase
+class BaseFunctionalTestCase extends TestCase
 {
-    protected static function getKernelClass(): string
-    {
-        return Kernel::class;
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -27,18 +24,20 @@ class BaseFunctionalTestCase extends FacileWebTestCase
 
     protected function getMongoDb(): Database
     {
-        $database = $this->getContainer()->get('mongo.connection.test_default');
+        $database = new Database(new Manager('mongodb://root:rootPass@mongo'), 'test');
         $this->assertInstanceOf(Database::class, $database);
 
         return $database;
     }
 
-    protected function getTransport(string $name = 'default'): MongoDbTransport
+    protected function getTransport(string $queueName = 'default'): MongoDbTransport
     {
-        $transport = $this->getContainer()->get('messenger.transport.' . $name);
-        $this->assertInstanceOf(MongoDbTransport::class, $transport);
+        $collection = $this->getMongoDb()->selectCollection('messenger_messages');
 
-        return $transport;
+        return new MongoDbTransport(
+            new Connection($collection, $queueName, 3600),
+            new PhpSerializer()
+        );
     }
 
     protected function getOneEnvelope(MongoDbTransport $transport): Envelope
