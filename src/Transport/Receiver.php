@@ -69,7 +69,7 @@ final class Receiver implements ReceiverInterface, MessageCountAwareInterface, L
         }
 
         try {
-            $this->connection->ack($stamp->getId());
+            $this->connection->reject($stamp->getId());
         } catch (DriverException $exception) {
             throw new TransportException($exception->getMessage(), 0, $exception);
         }
