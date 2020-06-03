@@ -4,3 +4,8 @@ parameters:
 			message: "#^Method Facile\\\\MongoDbMessenger\\\\Transport\\\\Connection\\:\\:find\\(\\) should return MongoDB\\\\Model\\\\BSONDocument\\|null but returns array\\|object\\|null\\.$#"
 			count: 1
 			path: src/Transport/Connection.php
+
+		-
+			message: "#^Constructor of class Facile\\\\MongoDbMessenger\\\\Tests\\\\Stubs\\\\NotInstantiableDocumentEnhancer has an unused parameter \\$foo\\.$#"
+			count: 1
+			path: tests/Stubs/NotInstantiableDocumentEnhancer.php

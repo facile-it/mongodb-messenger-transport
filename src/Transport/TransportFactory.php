@@ -56,7 +56,7 @@ final class TransportFactory implements TransportFactoryInterface
         }
 
         if (! $database instanceof Database) {
-            throw new \LogicException('Expecting MongoDB\\Database, got ' . get_class($database));
+            throw new \LogicException('Expecting MongoDB\\Database from container, got ' . get_class($database));
         }
 
         $connection = new Connection(
@@ -151,6 +151,10 @@ final class TransportFactory implements TransportFactoryInterface
             }
 
             $reflectionClass = new \ReflectionClass($name);
+            if (! $reflectionClass->implementsInterface(DocumentEnhancer::class)) {
+                throw new \InvalidArgumentException('Expecting class that implements DocumentEnhancer, got: ' . $name);
+            }
+
             $constructor = $reflectionClass->getConstructor();
 
             if (null === $constructor) {
@@ -158,9 +162,11 @@ final class TransportFactory implements TransportFactoryInterface
             }
 
             foreach ($constructor->getParameters() as $parameter) {
-                if (! $parameter->isDefaultValueAvailable()) {
-                    throw new \InvalidArgumentException(sprintf('Class %s in is not instantiable without arguments; if you want to use it as a DocumentEnhancer please define it as a service and add the service reference in the options instead', $name));
+                if ($parameter->isOptional() || $parameter->isDefaultValueAvailable()) {
+                    continue;
                 }
+
+                throw new \InvalidArgumentException(sprintf('Class %s is not instantiable without arguments; if you want to use it as a DocumentEnhancer please define it as a service and add the service reference in the options instead', $name));
             }
         }
     }
