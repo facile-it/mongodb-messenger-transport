@@ -84,6 +84,16 @@ class MongoDbTransportTest extends WebTestCase
         }
     }
 
+    public function testDebugConfiguration(): void
+    {
+        $tester = $this->runCommand('debug:config', ['name' => 'framework']);
+
+        $output = $tester->getDisplay();
+        $this->assertSame(0, $tester->getStatusCode(), $output);
+        $this->assertStringContainsString('messenger', $output);
+        $this->assertStringContainsString('failed', $output);
+    }
+
     private function getMongoDb(): Database
     {
         $database = $this->getContainer()->get('mongo.connection.test_default');
@@ -92,7 +102,7 @@ class MongoDbTransportTest extends WebTestCase
         return $database;
     }
 
-    protected function getMessageCollection(string $collectionName = 'messenger_messages'): Collection
+    private function getMessageCollection(string $collectionName = 'messenger_messages'): Collection
     {
         return $this->getMongoDb()->selectCollection($collectionName);
     }
