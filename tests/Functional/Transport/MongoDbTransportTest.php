@@ -98,6 +98,24 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
         }
     }
 
+    public function testAllReturnsOnlyAvailableMessages(): void
+    {
+        $transport = $this->getTransport();
+
+        $transport->send(new Envelope(new FooMessage()));
+        $transport->send(new Envelope(new FooMessage(), [new DelayStamp(1000000)]));
+        $transport->send(new Envelope(new FooMessage()));
+        $lockedEnvelope = $this->getOneEnvelope($transport);
+
+        $allAvailableEnvelopes = iterator_to_array($transport->all());
+
+        $this->assertCount(1, $allAvailableEnvelopes);
+        $this->assertContainsOnlyInstancesOf(Envelope::class, $allAvailableEnvelopes);
+        foreach ($allAvailableEnvelopes as $i => $envelope) {
+            $this->assertNotEquals($lockedEnvelope->getMessage(), $envelope->getMessage());
+        }
+    }
+
     public function testAllRespectsLimit(): void
     {
         $envelope = new Envelope(new FooMessage());
