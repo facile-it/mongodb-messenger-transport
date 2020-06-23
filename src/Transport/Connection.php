@@ -171,7 +171,7 @@ final class Connection
             $options['limit'] = $limit;
         }
 
-        return $this->findBy([], $options);
+        return $this->findBy($this->createAvailableMessagesQuery(), $options);
     }
 
     /**
