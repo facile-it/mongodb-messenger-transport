@@ -74,7 +74,7 @@ final class Connection
 
         try {
             $updatedDocument = $this->collection->findOneAndUpdate($this->createAvailableMessagesQuery(), $updateStatement, $options);
-        } catch (DriverException $exception) {
+        } catch (\Throwable $exception) {
             throw new TransportException($exception->getMessage(), 0, $exception);
         }
 
@@ -115,7 +115,7 @@ final class Connection
 
         try {
             $insertResult = $this->collection->insertOne($document, $this->getWriteOptions());
-        } catch (DriverException $exception) {
+        } catch (\Throwable $exception) {
             throw new TransportException($exception->getMessage(), 0, $exception);
         }
 
@@ -133,7 +133,7 @@ final class Connection
     {
         try {
             $deleteResult = $this->collection->deleteOne(['_id' => new ObjectId($id)], $this->getWriteOptions());
-        } catch (DriverException $exception) {
+        } catch (\Throwable $exception) {
             throw new TransportException($exception->getMessage(), 0, $exception);
         }
 
@@ -151,7 +151,7 @@ final class Connection
     {
         try {
             $deleteResult = $this->collection->deleteOne(['_id' => new ObjectId($id)], $this->getWriteOptions());
-        } catch (DriverException $exception) {
+        } catch (\Throwable $exception) {
             throw new TransportException($exception->getMessage(), 0, $exception);
         }
 

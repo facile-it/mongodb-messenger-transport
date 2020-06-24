@@ -16,6 +16,7 @@ use MongoDB\Operation\FindOneAndUpdate;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\Exception\TransportException;
 
 class ConnectionTest extends TestCase
 {
@@ -59,6 +60,20 @@ class ConnectionTest extends TestCase
             ->willReturn($document);
 
         $this->assertSame($document, $connection->get());
+    }
+
+    public function testGetWrapsMongoExceptions(): void
+    {
+        $collection = $this->prophesize(Collection::class);
+        $collection->findOneAndUpdate(Argument::cetera())
+            ->willThrow(new \Exception('Foo bar baz'));
+
+        $connection = new Connection($collection->reveal(), 'queueName', 100);
+
+        $this->expectException(TransportException::class);
+        $this->expectExceptionMessage('Foo bar baz');
+
+        $connection->get();
     }
 
     public function testGetWithEmptyCollection(): void
@@ -113,6 +128,48 @@ class ConnectionTest extends TestCase
         $connection = new Connection($collection->reveal(), 'foobar', 3600);
 
         $this->assertSame($objectId, $connection->send(new Envelope(new FooMessage()), 'serializedEnvelope'));
+    }
+
+    public function testSendWrapsMongoExceptions(): void
+    {
+        $collection = $this->prophesize(Collection::class);
+        $collection->insertOne(Argument::cetera())
+            ->willThrow(new \Exception('Foo bar baz'));
+
+        $connection = new Connection($collection->reveal(), 'queueName', 100);
+
+        $this->expectException(TransportException::class);
+        $this->expectExceptionMessage('Foo bar baz');
+
+        $connection->send(new Envelope(new FooMessage()), 'body', 0);
+    }
+
+    public function testAckWrapsMongoExceptions(): void
+    {
+        $collection = $this->prophesize(Collection::class);
+        $collection->deleteOne(Argument::cetera())
+            ->willThrow(new \Exception('Foo bar baz'));
+
+        $connection = new Connection($collection->reveal(), 'queueName', 100);
+
+        $this->expectException(TransportException::class);
+        $this->expectExceptionMessage('Foo bar baz');
+
+        $connection->ack((new ObjectId())->__toString());
+    }
+
+    public function testRejectWrapsMongoExceptions(): void
+    {
+        $collection = $this->prophesize(Collection::class);
+        $collection->deleteOne(Argument::cetera())
+            ->willThrow(new \Exception('Foo bar baz'));
+
+        $connection = new Connection($collection->reveal(), 'queueName', 100);
+
+        $this->expectException(TransportException::class);
+        $this->expectExceptionMessage('Foo bar baz');
+
+        $connection->reject((new ObjectId())->__toString());
     }
 
     private function mockUpdatedDocumentDeliveredTo(string $deliveredTo): BSONDocument

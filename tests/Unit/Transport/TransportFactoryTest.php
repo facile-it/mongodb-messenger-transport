@@ -26,7 +26,10 @@ class TransportFactoryTest extends TestCase
         $this->assertInstanceOf(MongoDbTransport::class, $transport);
     }
 
-    public function testCreateTransportWithWrongDSN(): void
+    /**
+     * @dataProvider invalidDSNDataProvider
+     */
+    public function testCreateTransportWithWrongDSN(string $invalidDSN, string $message): void
     {
         $container = $this->prophesize(ContainerInterface::class);
         $container->get('mongo.connection.foobar')
@@ -34,9 +37,20 @@ class TransportFactoryTest extends TestCase
         $factory = new TransportFactory($container->reveal());
 
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The given MongoDB Messenger DSN ":" is invalid.');
+        $this->expectExceptionMessage($message);
 
-        $factory->createTransport(':', [], $this->mockSerializer());
+        $factory->createTransport($invalidDSN, [], $this->mockSerializer());
+    }
+
+    /**
+     * @return string[][]
+     */
+    public function invalidDSNDataProvider(): array
+    {
+        return [
+            [':', 'The given MongoDB Messenger DSN ":" is invalid.'],
+            ['?foo=bar', 'Error while parsing DSN'],
+        ];
     }
 
     public function testCreateTransportWithWrongConnectionName(): void

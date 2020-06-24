@@ -79,11 +79,8 @@ final class TransportFactory implements TransportFactoryInterface
             if ($this->isServiceDefinition($name)) {
                 $enhancer = $this->container->get(ltrim($name, '@'));
             } else {
+                /** @var class-string<DocumentEnhancer> $name */
                 $enhancer = new $name();
-            }
-
-            if (! $enhancer instanceof DocumentEnhancer) {
-                throw new \InvalidArgumentException('Expecting class that implements DocumentEnhancer, got: ' . get_class($enhancer));
             }
 
             $connection->addDocumentEnhancer($enhancer);
