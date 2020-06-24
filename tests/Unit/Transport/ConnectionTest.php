@@ -72,6 +72,7 @@ class ConnectionTest extends TestCase
 
         $this->expectException(TransportException::class);
         $this->expectExceptionMessage('Foo bar baz');
+        $this->expectExceptionCode(0);
 
         $connection->get();
     }
@@ -140,6 +141,7 @@ class ConnectionTest extends TestCase
 
         $this->expectException(TransportException::class);
         $this->expectExceptionMessage('Foo bar baz');
+        $this->expectExceptionCode(0);
 
         $connection->send(new Envelope(new FooMessage()), 'body', 0);
     }
@@ -154,6 +156,7 @@ class ConnectionTest extends TestCase
 
         $this->expectException(TransportException::class);
         $this->expectExceptionMessage('Foo bar baz');
+        $this->expectExceptionCode(0);
 
         $connection->ack((new ObjectId())->__toString());
     }
@@ -168,6 +171,7 @@ class ConnectionTest extends TestCase
 
         $this->expectException(TransportException::class);
         $this->expectExceptionMessage('Foo bar baz');
+        $this->expectExceptionCode(0);
 
         $connection->reject((new ObjectId())->__toString());
     }
