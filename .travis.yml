@@ -53,9 +53,14 @@ jobs:
         SYMFONY: '4.4.*'
     - env:
         SYMFONY: '5.0.*'
-    - name: 'PHPStan'
+    - stage: 'Additional checks'
+      name: 'PHPStan'
       script:
-        - docker-compose run --rm php vendor/bin/phpstan analyze
+        - make phpstan
+      after_script: false
+    - name: 'Mutation testing'
+      script:
+        - make infection
       after_script: false
     - name: 'Code Style'
       script:
