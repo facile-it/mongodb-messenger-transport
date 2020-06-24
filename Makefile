@@ -17,11 +17,14 @@ start: up
 stop: docker-compose.yml
 	docker-compose stop
 
+infection:
+	docker-compose run --rm php bash -c "vendor/bin/infection --threads=8 --show-mutations"
+
 test: docker-compose.yml phpunit.xml.dist
 	docker-compose run --rm php bash -c "vendor/bin/phpunit -c phpunit.xml.dist"
 
 phpstan: docker-compose.yml
-	docker-compose run --no-deps --rm php bash -c "vendor/bin/phpstan analyze"
+	docker-compose run --no-deps --rm php bash -c "vendor/bin/phpstan analyze --memory-limit=-1"
 
 cs-fix: docker-compose.yml
 	docker-compose run --no-deps --rm php bash -c "composer cs-fix"
@@ -34,4 +37,4 @@ lock-symfony-%:
 
 test-composer-install: lock-symfony-3.4 lock-symfony-4.4 lock-symfony-5.0
 
-pre-commit-checks: cs-fix phpstan test
+pre-commit-checks: cs-fix phpstan test infection

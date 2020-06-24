@@ -6,11 +6,9 @@ namespace Facile\MongoDbMessenger\Transport;
 
 use Facile\MongoDbMessenger\Stamp\ReceivedStamp;
 use MongoDB\BSON\ObjectId;
-use MongoDB\Driver\Exception\RuntimeException as DriverException;
 use MongoDB\Model\BSONDocument;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Exception\MessageDecodingFailedException;
-use Symfony\Component\Messenger\Exception\TransportException;
 use Symfony\Component\Messenger\Stamp\TransportMessageIdStamp;
 use Symfony\Component\Messenger\Transport\Receiver\ListableReceiverInterface;
 use Symfony\Component\Messenger\Transport\Receiver\MessageCountAwareInterface;
@@ -53,11 +51,7 @@ final class Receiver implements ReceiverInterface, MessageCountAwareInterface, L
             throw new \LogicException('Unable to retrieve ReceivedStamp on the envelope');
         }
 
-        try {
-            $this->connection->ack($stamp->getId());
-        } catch (DriverException $exception) {
-            throw new TransportException($exception->getMessage(), 0, $exception);
-        }
+        $this->connection->ack($stamp->getId());
     }
 
     public function reject(Envelope $envelope): void
@@ -68,11 +62,7 @@ final class Receiver implements ReceiverInterface, MessageCountAwareInterface, L
             throw new \LogicException('Unable to retrieve ReceivedStamp on the envelope');
         }
 
-        try {
-            $this->connection->reject($stamp->getId());
-        } catch (DriverException $exception) {
-            throw new TransportException($exception->getMessage(), 0, $exception);
-        }
+        $this->connection->reject($stamp->getId());
     }
 
     /**
@@ -131,10 +121,7 @@ final class Receiver implements ReceiverInterface, MessageCountAwareInterface, L
         $documentID = (string) $document->_id;
 
         try {
-            $envelope = $this->serializer->decode([
-                'body' => $document->body,
-                'headers' => $document->headers,
-            ]);
+            $envelope = $this->serializer->decode(['body' => $document->body ?? null]);
         } catch (MessageDecodingFailedException $exception) {
             $this->connection->reject($documentID);
 

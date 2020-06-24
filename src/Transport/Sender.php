@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Facile\MongoDbMessenger\Transport;
 
-use MongoDB\Driver\Exception\RuntimeException as DriverException;
 use Symfony\Component\Messenger\Envelope;
-use Symfony\Component\Messenger\Exception\TransportException;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Symfony\Component\Messenger\Stamp\TransportMessageIdStamp;
 use Symfony\Component\Messenger\Transport\Sender\SenderInterface;
@@ -34,11 +32,7 @@ class Sender implements SenderInterface
         $delayStamp = $envelope->last(DelayStamp::class);
         $delay = null !== $delayStamp ? $delayStamp->getDelay() : 0;
 
-        try {
-            $id = $this->connection->send($envelope, $encodedMessage['body'], $encodedMessage['headers'] ?? [], $delay);
-        } catch (DriverException $exception) {
-            throw new TransportException($exception->getMessage(), 0, $exception);
-        }
+        $id = $this->connection->send($envelope, $encodedMessage['body'], $delay);
 
         return $envelope->with(new TransportMessageIdStamp($id));
     }

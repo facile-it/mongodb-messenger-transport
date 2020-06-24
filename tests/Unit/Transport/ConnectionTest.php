@@ -6,7 +6,6 @@ namespace Facile\MongoDbMessenger\Tests\Unit\Transport;
 
 use Facile\MongoDbMessenger\Tests\Stubs\FooMessage;
 use Facile\MongoDbMessenger\Transport\Connection;
-use Facile\MongoDbMessenger\Util\Date;
 use MongoDB\BSON\ObjectId;
 use MongoDB\BSON\UTCDateTime;
 use MongoDB\Collection;
@@ -17,6 +16,7 @@ use MongoDB\Operation\FindOneAndUpdate;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\Exception\TransportException;
 
 class ConnectionTest extends TestCase
 {
@@ -62,6 +62,21 @@ class ConnectionTest extends TestCase
         $this->assertSame($document, $connection->get());
     }
 
+    public function testGetWrapsMongoExceptions(): void
+    {
+        $collection = $this->prophesize(Collection::class);
+        $collection->findOneAndUpdate(Argument::cetera())
+            ->willThrow(new \Exception('Foo bar baz'));
+
+        $connection = new Connection($collection->reveal(), 'queueName', 100);
+
+        $this->expectException(TransportException::class);
+        $this->expectExceptionMessage('Foo bar baz');
+        $this->expectExceptionCode(0);
+
+        $connection->get();
+    }
+
     public function testGetWithEmptyCollection(): void
     {
         $collection = $this->prophesize(Collection::class);
@@ -97,7 +112,6 @@ class ConnectionTest extends TestCase
         $expectedDocument = Argument::allOf(
             Argument::type(BSONDocument::class),
             Argument::withEntry('body', 'serializedEnvelope'),
-            Argument::withEntry('headers', ['foo' => 'bar']),
             Argument::withEntry('queueName', 'foobar'),
             Argument::withEntry('createdAt', Argument::allOf(...$inOneSecondFromNow)),
             Argument::withEntry('availableAt', Argument::allOf(...$inOneSecondFromNow))
@@ -110,11 +124,56 @@ class ConnectionTest extends TestCase
         );
         $collection->insertOne($expectedDocument, $expectedOptions)
             ->shouldBeCalledOnce()
-            ->willReturn($insertOneResult);
+            ->willReturn($insertOneResult->reveal());
 
         $connection = new Connection($collection->reveal(), 'foobar', 3600);
 
-        $this->assertSame($objectId, $connection->send(new Envelope(new FooMessage()), 'serializedEnvelope', ['foo' => 'bar']));
+        $this->assertSame($objectId, $connection->send(new Envelope(new FooMessage()), 'serializedEnvelope'));
+    }
+
+    public function testSendWrapsMongoExceptions(): void
+    {
+        $collection = $this->prophesize(Collection::class);
+        $collection->insertOne(Argument::cetera())
+            ->willThrow(new \Exception('Foo bar baz'));
+
+        $connection = new Connection($collection->reveal(), 'queueName', 100);
+
+        $this->expectException(TransportException::class);
+        $this->expectExceptionMessage('Foo bar baz');
+        $this->expectExceptionCode(0);
+
+        $connection->send(new Envelope(new FooMessage()), 'body', 0);
+    }
+
+    public function testAckWrapsMongoExceptions(): void
+    {
+        $collection = $this->prophesize(Collection::class);
+        $collection->deleteOne(Argument::cetera())
+            ->willThrow(new \Exception('Foo bar baz'));
+
+        $connection = new Connection($collection->reveal(), 'queueName', 100);
+
+        $this->expectException(TransportException::class);
+        $this->expectExceptionMessage('Foo bar baz');
+        $this->expectExceptionCode(0);
+
+        $connection->ack((new ObjectId())->__toString());
+    }
+
+    public function testRejectWrapsMongoExceptions(): void
+    {
+        $collection = $this->prophesize(Collection::class);
+        $collection->deleteOne(Argument::cetera())
+            ->willThrow(new \Exception('Foo bar baz'));
+
+        $connection = new Connection($collection->reveal(), 'queueName', 100);
+
+        $this->expectException(TransportException::class);
+        $this->expectExceptionMessage('Foo bar baz');
+        $this->expectExceptionCode(0);
+
+        $connection->reject((new ObjectId())->__toString());
     }
 
     private function mockUpdatedDocumentDeliveredTo(string $deliveredTo): BSONDocument
@@ -143,7 +202,7 @@ class ConnectionTest extends TestCase
         \DateTimeImmutable $higherBound,
         UTCDateTime $val
     ): void {
-        $this->assertGreaterThanOrEqual(Date::toUTC($lowerBound), $val);
-        $this->assertLessThan(Date::toUTC($higherBound), $val);
+        $this->assertGreaterThanOrEqual(new UTCDateTime($lowerBound), $val);
+        $this->assertLessThan(new UTCDateTime($higherBound), $val);
     }
 }

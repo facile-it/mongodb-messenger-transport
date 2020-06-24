@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Facile\MongoDbMessenger\Transport;
 
 use Facile\MongoDbMessenger\Extension\DocumentEnhancer;
-use Facile\MongoDbMessenger\Util\Date;
 use MongoDB\BSON\ObjectId;
 use MongoDB\BSON\UTCDateTime;
 use MongoDB\Collection;
@@ -55,6 +54,9 @@ final class Connection
         return $this->uniqueId;
     }
 
+    /**
+     * @throws TransportException
+     */
     public function get(): ?BSONDocument
     {
         $options = $this->getWriteOptions();
@@ -70,7 +72,11 @@ final class Connection
             ],
         ];
 
-        $updatedDocument = $this->collection->findOneAndUpdate($this->createAvailableMessagesQuery(), $updateStatement, $options);
+        try {
+            $updatedDocument = $this->collection->findOneAndUpdate($this->createAvailableMessagesQuery(), $updateStatement, $options);
+        } catch (\Throwable $exception) {
+            throw new TransportException($exception->getMessage(), 0, $exception);
+        }
 
         if (! $updatedDocument instanceof BSONDocument) {
             return null;
@@ -85,14 +91,13 @@ final class Connection
     }
 
     /**
-     * @param array<string, mixed> $headers
      * @param int $delay The delay in milliseconds
      *
      * @throws TransportException
      *
      * @return ObjectId The inserted id
      */
-    public function send(Envelope $envelope, string $body, array $headers, int $delay = 0): ObjectId
+    public function send(Envelope $envelope, string $body, int $delay = 0): ObjectId
     {
         $now = new \DateTime();
         $availableAt = (clone $now)->modify(sprintf('+%d milliseconds', $delay));
@@ -104,14 +109,13 @@ final class Connection
         }
 
         $document->body = $body;
-        $document->headers = $headers;
         $document->queueName = $this->queueName;
-        $document->createdAt = Date::toUTC($now);
-        $document->availableAt = Date::toUTC($availableAt);
+        $document->createdAt = new UTCDateTime($now);
+        $document->availableAt = new UTCDateTime($availableAt);
 
         try {
             $insertResult = $this->collection->insertOne($document, $this->getWriteOptions());
-        } catch (DriverException $exception) {
+        } catch (\Throwable $exception) {
             throw new TransportException($exception->getMessage(), 0, $exception);
         }
 
@@ -121,13 +125,17 @@ final class Connection
     /**
      * @param string $id The ID of the message to ack; the corresponding document will be removed from the collection
      *
-     * @throws DriverException
+     * @throws TransportException
      *
      * @return bool Returns true if the document has been deleted
      */
     public function ack(string $id): bool
     {
-        $deleteResult = $this->collection->deleteOne(['_id' => new ObjectId($id)], $this->getWriteOptions());
+        try {
+            $deleteResult = $this->collection->deleteOne(['_id' => new ObjectId($id)], $this->getWriteOptions());
+        } catch (\Throwable $exception) {
+            throw new TransportException($exception->getMessage(), 0, $exception);
+        }
 
         return $deleteResult->getDeletedCount() > 0;
     }
@@ -135,13 +143,17 @@ final class Connection
     /**
      * @param string $id The ID of the message to ack; the corresponding document will be removed from the collection
      *
-     * @throws DriverException
+     * @throws TransportException
      *
      * @return bool Returns true if the document has been deleted
      */
     public function reject(string $id): bool
     {
-        $deleteResult = $this->collection->deleteOne(['_id' => new ObjectId($id)], $this->getWriteOptions());
+        try {
+            $deleteResult = $this->collection->deleteOne(['_id' => new ObjectId($id)], $this->getWriteOptions());
+        } catch (\Throwable $exception) {
+            throw new TransportException($exception->getMessage(), 0, $exception);
+        }
 
         return $deleteResult->getDeletedCount() > 0;
     }
@@ -226,10 +238,10 @@ final class Connection
             '$or' => [
                 ['deliveredAt' => null],
                 ['deliveredAt' => [
-                    '$lt' => Date::toUTC($redeliverLimit),
+                    '$lt' => new UTCDateTime($redeliverLimit),
                 ]],
             ],
-            'availableAt' => ['$lte' => Date::toUTC($now)],
+            'availableAt' => ['$lte' => new UTCDateTime($now)],
             'queueName' => $this->queueName,
         ];
     }

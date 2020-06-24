@@ -79,11 +79,8 @@ final class TransportFactory implements TransportFactoryInterface
             if ($this->isServiceDefinition($name)) {
                 $enhancer = $this->container->get(ltrim($name, '@'));
             } else {
+                /** @var class-string<DocumentEnhancer> $name */
                 $enhancer = new $name();
-            }
-
-            if (! $enhancer instanceof DocumentEnhancer) {
-                throw new \InvalidArgumentException('Expecting class that implements DocumentEnhancer, got: ' . get_class($enhancer));
             }
 
             $connection->addDocumentEnhancer($enhancer);
@@ -132,13 +129,13 @@ final class TransportFactory implements TransportFactoryInterface
     }
 
     /**
-     * @param string[] $configuration
+     * @param string[] $enhancers
      *
      * @throws \InvalidArgumentException If any of the document_enhancers values is not valid
      */
-    private function validateDocumentEnhancers(array $configuration): void
+    private function validateDocumentEnhancers(array $enhancers): void
     {
-        foreach ($configuration as $name) {
+        foreach ($enhancers as $name) {
             if ($this->isServiceDefinition($name)) {
                 continue;
             }
@@ -162,7 +159,7 @@ final class TransportFactory implements TransportFactoryInterface
             }
 
             foreach ($constructor->getParameters() as $parameter) {
-                if ($parameter->isOptional() || $parameter->isDefaultValueAvailable()) {
+                if ($parameter->isDefaultValueAvailable()) {
                     continue;
                 }
 

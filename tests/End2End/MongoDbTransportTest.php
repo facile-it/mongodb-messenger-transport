@@ -19,6 +19,14 @@ use Symfony\Component\Messenger\Stamp\SentToFailureTransportStamp;
 
 class MongoDbTransportTest extends WebTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->getMongoDb()->drop();
+        $this->runCommand('cache:clear');
+    }
+
     protected static function getKernelClass(): string
     {
         return Kernel::class;
