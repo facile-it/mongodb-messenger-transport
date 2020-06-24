@@ -131,10 +131,7 @@ final class Receiver implements ReceiverInterface, MessageCountAwareInterface, L
         $documentID = (string) $document->_id;
 
         try {
-            $envelope = $this->serializer->decode([
-                'body' => $document->body,
-                'headers' => $document->headers,
-            ]);
+            $envelope = $this->serializer->decode(['body' => $document->body]);
         } catch (MessageDecodingFailedException $exception) {
             $this->connection->reject($documentID);
 

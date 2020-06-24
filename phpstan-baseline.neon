@@ -6,6 +6,16 @@ parameters:
 			path: src/Transport/Connection.php
 
 		-
+			message: "#^Constructor of class Facile\\\\MongoDbMessenger\\\\Tests\\\\Stubs\\\\InstantiableDocumentEnhancer has an unused parameter \\$foo\\.$#"
+			count: 1
+			path: tests/Stubs/InstantiableDocumentEnhancer.php
+
+		-
+			message: "#^Constructor of class Facile\\\\MongoDbMessenger\\\\Tests\\\\Stubs\\\\NotInstantiableDocumentEnhancer has an unused parameter \\$bar\\.$#"
+			count: 1
+			path: tests/Stubs/NotInstantiableDocumentEnhancer.php
+
+		-
 			message: "#^Constructor of class Facile\\\\MongoDbMessenger\\\\Tests\\\\Stubs\\\\NotInstantiableDocumentEnhancer has an unused parameter \\$foo\\.$#"
 			count: 1
 			path: tests/Stubs/NotInstantiableDocumentEnhancer.php

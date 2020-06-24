@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Facile\MongoDbMessenger\Extension\DocumentEnhancer;
 
 use Facile\MongoDbMessenger\Extension\DocumentEnhancer;
-use Facile\MongoDbMessenger\Util\Date;
 use Facile\MongoDbMessenger\Util\RedeliveryStampExtractor;
+use MongoDB\BSON\UTCDateTime;
 use MongoDB\Model\BSONDocument;
 use Symfony\Component\Messenger\Envelope;
 
@@ -20,7 +20,7 @@ class LastErrorMessageEnhancer implements DocumentEnhancer
             return;
         }
 
-        $document->lastErrorAt = Date::toUTC($lastRedeliveryStamp->getRedeliveredAt());
+        $document->lastErrorAt = new UTCDateTime($lastRedeliveryStamp->getRedeliveredAt());
         $document->lastErrorMessage = $lastRedeliveryStamp->getExceptionMessage();
         $document->retryCount = $lastRedeliveryStamp->getRetryCount();
     }

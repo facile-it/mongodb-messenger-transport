@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Facile\MongoDbMessenger\Transport;
 
 use Facile\MongoDbMessenger\Extension\DocumentEnhancer;
-use Facile\MongoDbMessenger\Util\Date;
 use MongoDB\BSON\ObjectId;
 use MongoDB\BSON\UTCDateTime;
 use MongoDB\Collection;
@@ -85,14 +84,13 @@ final class Connection
     }
 
     /**
-     * @param array<string, mixed> $headers
      * @param int $delay The delay in milliseconds
      *
      * @throws TransportException
      *
      * @return ObjectId The inserted id
      */
-    public function send(Envelope $envelope, string $body, array $headers, int $delay = 0): ObjectId
+    public function send(Envelope $envelope, string $body, int $delay = 0): ObjectId
     {
         $now = new \DateTime();
         $availableAt = (clone $now)->modify(sprintf('+%d milliseconds', $delay));
@@ -104,10 +102,9 @@ final class Connection
         }
 
         $document->body = $body;
-        $document->headers = $headers;
         $document->queueName = $this->queueName;
-        $document->createdAt = Date::toUTC($now);
-        $document->availableAt = Date::toUTC($availableAt);
+        $document->createdAt = new UTCDateTime($now);
+        $document->availableAt = new UTCDateTime($availableAt);
 
         try {
             $insertResult = $this->collection->insertOne($document, $this->getWriteOptions());
@@ -226,10 +223,10 @@ final class Connection
             '$or' => [
                 ['deliveredAt' => null],
                 ['deliveredAt' => [
-                    '$lt' => Date::toUTC($redeliverLimit),
+                    '$lt' => new UTCDateTime($redeliverLimit),
                 ]],
             ],
-            'availableAt' => ['$lte' => Date::toUTC($now)],
+            'availableAt' => ['$lte' => new UTCDateTime($now)],
             'queueName' => $this->queueName,
         ];
     }

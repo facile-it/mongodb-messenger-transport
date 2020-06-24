@@ -6,7 +6,6 @@ namespace Facile\MongoDbMessenger\Tests\Unit\Transport;
 
 use Facile\MongoDbMessenger\Tests\Stubs\FooMessage;
 use Facile\MongoDbMessenger\Transport\Connection;
-use Facile\MongoDbMessenger\Util\Date;
 use MongoDB\BSON\ObjectId;
 use MongoDB\BSON\UTCDateTime;
 use MongoDB\Collection;
@@ -97,7 +96,6 @@ class ConnectionTest extends TestCase
         $expectedDocument = Argument::allOf(
             Argument::type(BSONDocument::class),
             Argument::withEntry('body', 'serializedEnvelope'),
-            Argument::withEntry('headers', ['foo' => 'bar']),
             Argument::withEntry('queueName', 'foobar'),
             Argument::withEntry('createdAt', Argument::allOf(...$inOneSecondFromNow)),
             Argument::withEntry('availableAt', Argument::allOf(...$inOneSecondFromNow))
@@ -110,11 +108,11 @@ class ConnectionTest extends TestCase
         );
         $collection->insertOne($expectedDocument, $expectedOptions)
             ->shouldBeCalledOnce()
-            ->willReturn($insertOneResult);
+            ->willReturn($insertOneResult->reveal());
 
         $connection = new Connection($collection->reveal(), 'foobar', 3600);
 
-        $this->assertSame($objectId, $connection->send(new Envelope(new FooMessage()), 'serializedEnvelope', ['foo' => 'bar']));
+        $this->assertSame($objectId, $connection->send(new Envelope(new FooMessage()), 'serializedEnvelope'));
     }
 
     private function mockUpdatedDocumentDeliveredTo(string $deliveredTo): BSONDocument
@@ -143,7 +141,7 @@ class ConnectionTest extends TestCase
         \DateTimeImmutable $higherBound,
         UTCDateTime $val
     ): void {
-        $this->assertGreaterThanOrEqual(Date::toUTC($lowerBound), $val);
-        $this->assertLessThan(Date::toUTC($higherBound), $val);
+        $this->assertGreaterThanOrEqual(new UTCDateTime($lowerBound), $val);
+        $this->assertLessThan(new UTCDateTime($higherBound), $val);
     }
 }

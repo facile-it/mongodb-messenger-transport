@@ -8,9 +8,9 @@ use Facile\MongoDbMessenger\Extension\DocumentEnhancer;
 use MongoDB\Model\BSONDocument;
 use Symfony\Component\Messenger\Envelope;
 
-class NotInstantiableDocumentEnhancer implements DocumentEnhancer
+class InstantiableDocumentEnhancer implements DocumentEnhancer
 {
-    public function __construct(\DateTime $foo = null, \DateTime $bar)
+    public function __construct(\DateTime $foo = null)
     {
     }
 

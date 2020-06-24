@@ -35,7 +35,7 @@ class Sender implements SenderInterface
         $delay = null !== $delayStamp ? $delayStamp->getDelay() : 0;
 
         try {
-            $id = $this->connection->send($envelope, $encodedMessage['body'], $encodedMessage['headers'] ?? [], $delay);
+            $id = $this->connection->send($envelope, $encodedMessage['body'], $delay);
         } catch (DriverException $exception) {
             throw new TransportException($exception->getMessage(), 0, $exception);
         }

@@ -24,6 +24,7 @@ class MongoDbTransportTest extends WebTestCase
         parent::setUp();
 
         $this->getMongoDb()->drop();
+        $this->runCommand('cache:clear');
     }
 
     protected static function getKernelClass(): string

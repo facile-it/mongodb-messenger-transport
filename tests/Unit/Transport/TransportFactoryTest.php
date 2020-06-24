@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace Facile\MongoDbMessenger\Tests\Unit\Transport;
 
+use Facile\MongoDbMessenger\Extension\DocumentEnhancer\LastErrorMessageEnhancer;
+use Facile\MongoDbMessenger\Tests\Stubs\InstantiableDocumentEnhancer;
 use Facile\MongoDbMessenger\Tests\Stubs\NotInstantiableDocumentEnhancer;
+use Facile\MongoDbMessenger\Transport\MongoDbTransport;
 use Facile\MongoDbMessenger\Transport\TransportFactory;
+use MongoDB\Collection;
 use MongoDB\Database;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -13,6 +17,15 @@ use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
 class TransportFactoryTest extends TestCase
 {
+    public function testCreateTransportWithAdditionalOptionsInQueryString(): void
+    {
+        $factory = new TransportFactory($this->mockContainerWithWorkingCollection('bar'));
+
+        $transport = $factory->createTransport('mongodb://foobar?collection_name=bar', [], $this->mockSerializer());
+
+        $this->assertInstanceOf(MongoDbTransport::class, $transport);
+    }
+
     public function testCreateTransportWithWrongDSN(): void
     {
         $container = $this->prophesize(ContainerInterface::class);
@@ -52,7 +65,7 @@ class TransportFactoryTest extends TestCase
         $factory->createTransport('mongodb://foobar', ['foo' => 'bar'], $this->mockSerializer());
     }
 
-    public function testCreateTransportWithAdditionalOptionsInQueryString(): void
+    public function testCreateTransportWithWrongOptionsInQueryString(): void
     {
         $container = $this->prophesize(ContainerInterface::class);
         $container->get('mongo.connection.foobar')
@@ -104,11 +117,81 @@ class TransportFactoryTest extends TestCase
         $factory->createTransport('mongodb://foobar', $options, $this->mockSerializer());
     }
 
+    public function testCreateTransportWithDocumentEnhancerFQCNWhichHasOptionalConstructorArguments(): void
+    {
+        $options = [
+            'document_enhancers' => [InstantiableDocumentEnhancer::class],
+        ];
+        $factory = new TransportFactory($this->mockContainerWithWorkingCollection());
+
+        $transport = $factory->createTransport('mongodb://foobar', $options, $this->mockSerializer());
+
+        $this->assertInstanceOf(MongoDbTransport::class, $transport);
+    }
+
+    public function testCreateTransportWithDocumentEnhancerInvalidServiceReferenceString(): void
+    {
+        $options = [
+            'document_enhancers' => ['@'],
+        ];
+        $factory = new TransportFactory($this->mockContainer());
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('value is neither a service reference nor an existing class');
+
+        $factory->createTransport('mongodb://foobar', $options, $this->mockSerializer());
+    }
+
+    /**
+     * @dataProvider validEnhancerDataProvider
+     */
+    public function testCreateTransportWithWrongDocumentEnhancerAfterAGoodOne(string $validEnhancer): void
+    {
+        $options = [
+            'document_enhancers' => [
+                $validEnhancer,
+                \DateTime::class,
+            ],
+        ];
+        $factory = new TransportFactory($this->mockContainer());
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Expecting class that implements DocumentEnhancer, got: DateTime');
+
+        $factory->createTransport('mongodb://foobar', $options, $this->mockSerializer());
+    }
+
+    /**
+     * @return array{0: string}[]
+     */
+    public function validEnhancerDataProvider(): array
+    {
+        return [
+            [LastErrorMessageEnhancer::class],
+            [InstantiableDocumentEnhancer::class],
+            ['@acme.service.document_enhancer'],
+        ];
+    }
+
     private function mockContainer(): ContainerInterface
     {
         $container = $this->prophesize(ContainerInterface::class);
         $container->get('mongo.connection.foobar')
             ->willReturn($this->prophesize(Database::class)->reveal());
+
+        return $container->reveal();
+    }
+
+    private function mockContainerWithWorkingCollection(string $collectionName = 'messenger_messages'): ContainerInterface
+    {
+        $container = $this->prophesize(ContainerInterface::class);
+        $database = $this->prophesize(Database::class);
+        $database->selectCollection($collectionName)
+            ->shouldBeCalledOnce()
+            ->willReturn($this->prophesize(Collection::class)->reveal());
+        $container->get('mongo.connection.foobar')
+            ->shouldBeCalledOnce()
+            ->willReturn($database->reveal());
 
         return $container->reveal();
     }
