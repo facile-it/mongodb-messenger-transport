@@ -54,6 +54,9 @@ final class Connection
         return $this->uniqueId;
     }
 
+    /**
+     * @throws TransportException
+     */
     public function get(): ?BSONDocument
     {
         $options = $this->getWriteOptions();
@@ -69,7 +72,11 @@ final class Connection
             ],
         ];
 
-        $updatedDocument = $this->collection->findOneAndUpdate($this->createAvailableMessagesQuery(), $updateStatement, $options);
+        try {
+            $updatedDocument = $this->collection->findOneAndUpdate($this->createAvailableMessagesQuery(), $updateStatement, $options);
+        } catch (DriverException $exception) {
+            throw new TransportException($exception->getMessage(), 0, $exception);
+        }
 
         if (! $updatedDocument instanceof BSONDocument) {
             return null;
@@ -118,13 +125,17 @@ final class Connection
     /**
      * @param string $id The ID of the message to ack; the corresponding document will be removed from the collection
      *
-     * @throws DriverException
+     * @throws TransportException
      *
      * @return bool Returns true if the document has been deleted
      */
     public function ack(string $id): bool
     {
-        $deleteResult = $this->collection->deleteOne(['_id' => new ObjectId($id)], $this->getWriteOptions());
+        try {
+            $deleteResult = $this->collection->deleteOne(['_id' => new ObjectId($id)], $this->getWriteOptions());
+        } catch (DriverException $exception) {
+            throw new TransportException($exception->getMessage(), 0, $exception);
+        }
 
         return $deleteResult->getDeletedCount() > 0;
     }
@@ -132,13 +143,17 @@ final class Connection
     /**
      * @param string $id The ID of the message to ack; the corresponding document will be removed from the collection
      *
-     * @throws DriverException
+     * @throws TransportException
      *
      * @return bool Returns true if the document has been deleted
      */
     public function reject(string $id): bool
     {
-        $deleteResult = $this->collection->deleteOne(['_id' => new ObjectId($id)], $this->getWriteOptions());
+        try {
+            $deleteResult = $this->collection->deleteOne(['_id' => new ObjectId($id)], $this->getWriteOptions());
+        } catch (DriverException $exception) {
+            throw new TransportException($exception->getMessage(), 0, $exception);
+        }
 
         return $deleteResult->getDeletedCount() > 0;
     }
