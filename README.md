@@ -38,15 +38,6 @@ class Kernel extends BaseKernel
     }
 }
 ```
- * [ONLY FOR THIS BUNDLE] Register the transport factory manually as a service in your container:
-```yaml
-services:
-    Facile\MongoDbMessenger\Transport\TransportFactory:
-        arguments:
-          - '@service_container'
-        tags:
-          - ['messenger.transport_factory']
-```
 
 ### Configuration
 1. If you haven't already, configure the MongoDB connection following instructions for [`facile-it/mongodb-bundle`](https://github.com/facile-it/mongodb-bundle/blob/master/README.MD#configuration)
