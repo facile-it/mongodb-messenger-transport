@@ -60,6 +60,8 @@ jobs:
       after_script: false
     - name: 'Mutation testing'
       script:
+        - docker-compose up -d mongo
+        - sleep 3
         - make infection
       after_script: false
     - name: 'Code Style'
