@@ -129,7 +129,7 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
 
         $this->assertCount(1, $allEnvelopes);
         $this->assertContainsOnlyInstancesOf(Envelope::class, $allEnvelopes);
-        $this->assertEquals($envelope->getMessage(), current($allEnvelopes)->getMessage());
+        $this->assertEquals($envelope->getMessage(), $allEnvelopes[0]->getMessage());
     }
 
     public function testFindByRespectsFiltersAndOptions(): void
@@ -144,13 +144,13 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
 
         $this->assertCount(1, $result);
         $this->assertContainsOnlyInstancesOf(Envelope::class, $result);
-        $this->assertEquals($secondMessage, current($result)->getMessage());
+        $this->assertEquals($secondMessage, $result[0]->getMessage());
 
         $result = iterator_to_array($transport->findBy([], ['sort' => ['availableAt' => 1]]));
 
         $this->assertCount(2, $result);
         $this->assertContainsOnlyInstancesOf(Envelope::class, $result);
-        $this->assertEquals($firstAvailableMessage, current($result)->getMessage());
+        $this->assertEquals($firstAvailableMessage, $result[0]->getMessage());
     }
 
     public function testCountByRespectsFiltersAndOptions(): void
