@@ -28,6 +28,7 @@ jobs:
       matrix:
         dependencies: ['highest']
         description: ['Tests']
+        mongo: ['4.4']
         script: ['bin/phpunit --coverage-clover=build/coverage-report.xml']
         include:
           - php: 7.4
