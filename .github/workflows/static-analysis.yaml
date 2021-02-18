@@ -17,8 +17,6 @@ jobs:
             script: composer cs-check
           - description: PHPStan
             script: vendor/bin/phpstan analyze
-          - description: Infection
-            script: make infection
 
     name: ${{ matrix.description }}
     runs-on: ubuntu-latest
