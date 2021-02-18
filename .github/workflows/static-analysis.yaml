@@ -16,7 +16,7 @@ jobs:
           - description: Code style
             script: composer cs-check
           - description: PHPStan
-            script: make phpstan
+            script: vendor/bin/phpstan analyze
           - description: Infection
             script: make infection
 

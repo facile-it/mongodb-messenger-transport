@@ -6,6 +6,36 @@ parameters:
 			path: src/Transport/Connection.php
 
 		-
+			message: "#^Method Facile\\\\MongoDbMessenger\\\\Transport\\\\Connection\\:\\:findBy\\(\\) should return iterable\\<MongoDB\\\\Model\\\\BSONDocument\\>&MongoDB\\\\Driver\\\\Cursor but returns MongoDB\\\\Driver\\\\Cursor\\.$#"
+			count: 1
+			path: src/Transport/Connection.php
+
+		-
+			message: "#^Parameter \\#1 \\$enhancer of method Facile\\\\MongoDbMessenger\\\\Transport\\\\Connection\\:\\:addDocumentEnhancer\\(\\) expects Facile\\\\MongoDbMessenger\\\\Extension\\\\DocumentEnhancer, object\\|null given\\.$#"
+			count: 1
+			path: src/Transport/TransportFactory.php
+
+		-
+			message: "#^Parameter \\#1 \\$object_or_class of function property_exists expects object\\|string, array\\|object given\\.$#"
+			count: 3
+			path: tests/End2End/MongoDbTransportTest.php
+
+		-
+			message: "#^Cannot access property \\$queueName on array\\|object\\.$#"
+			count: 1
+			path: tests/End2End/MongoDbTransportTest.php
+
+		-
+			message: "#^Cannot access property \\$foo on array\\|object\\.$#"
+			count: 1
+			path: tests/End2End/MongoDbTransportTest.php
+
+		-
+			message: "#^Cannot access property \\$lastErrorMessage on array\\|object\\.$#"
+			count: 1
+			path: tests/End2End/MongoDbTransportTest.php
+
+		-
 			message: "#^Constructor of class Facile\\\\MongoDbMessenger\\\\Tests\\\\Stubs\\\\InstantiableDocumentEnhancer has an unused parameter \\$foo\\.$#"
 			count: 1
 			path: tests/Stubs/InstantiableDocumentEnhancer.php
