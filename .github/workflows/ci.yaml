@@ -8,7 +8,7 @@ on:
 
 jobs:
   tests:
-    name: ${{ matrix.description }}
+    name: ${{ matrix.description }} (PHP ${{ matrix.php }}, ext-mongodb ${{ matrix.ext-mongodb }}, Mongo ${{ matrix.mongo }}, Symfony ${{ matrix.symfony }})
     runs-on: ubuntu-latest
     services:
       mongo:
@@ -27,7 +27,7 @@ jobs:
     strategy:
       matrix:
         dependencies: ['highest']
-        description: ['Tests (PHP ${{ matrix.php }}, ext-mongodb ${{ matrix.ext-mongodb }}, Mongo ${{ matrix.mongo }}, Symfony ${{ matrix.symfony }})']
+        description: ['Tests']
         script: ['bin/phpunit --coverage-clover=build/coverage-report.xml']
         include:
           - php: 7.4
