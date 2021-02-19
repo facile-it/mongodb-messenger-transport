@@ -82,8 +82,8 @@ class MongoDbTransportTest extends WebTestCase
 
         $documents = iterator_to_array($this->getMessageCollection()->find());
         $this->assertCount(1, $documents);
-        $this->assertContainsOnlyInstancesOf(BSONDocument::class, $documents);
         foreach ($documents as $document) {
+            $this->assertInstanceOf(BSONDocument::class, $document);
             $this->assertTrue(property_exists($document, 'queueName'));
             $this->assertSame('failed', $document->queueName);
             $this->assertTrue(property_exists($document, 'foo'));

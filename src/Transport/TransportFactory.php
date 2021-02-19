@@ -79,7 +79,7 @@ final class TransportFactory implements TransportFactoryInterface
             if ($this->isServiceDefinition($name)) {
                 $enhancer = $this->container->get(ltrim($name, '@'));
             } else {
-                /** @var class-string<DocumentEnhancer> $name */
+                /** @var DocumentEnhancer $enhancer */
                 $enhancer = new $name();
             }
 

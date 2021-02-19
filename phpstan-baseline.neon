@@ -16,31 +16,6 @@ parameters:
 			path: src/Transport/TransportFactory.php
 
 		-
-			message: "#^Parameter \\#1 \\$object_or_class of function property_exists expects object\\|string, array\\|object given\\.$#"
-			count: 3
-			path: tests/End2End/MongoDbTransportTest.php
-
-		-
-			message: "#^Cannot access property \\$queueName on array\\|object\\.$#"
-			count: 1
-			path: tests/End2End/MongoDbTransportTest.php
-
-		-
-			message: "#^Cannot access property \\$foo on array\\|object\\.$#"
-			count: 1
-			path: tests/End2End/MongoDbTransportTest.php
-
-		-
-			message: "#^Cannot access property \\$lastErrorMessage on array\\|object\\.$#"
-			count: 1
-			path: tests/End2End/MongoDbTransportTest.php
-
-		-
-			message: "#^Constructor of class Facile\\\\MongoDbMessenger\\\\Tests\\\\Stubs\\\\InstantiableDocumentEnhancer has an unused parameter \\$foo\\.$#"
-			count: 1
-			path: tests/Stubs/InstantiableDocumentEnhancer.php
-
-		-
 			message: "#^Constructor of class Facile\\\\MongoDbMessenger\\\\Tests\\\\Stubs\\\\NotInstantiableDocumentEnhancer has an unused parameter \\$bar\\.$#"
 			count: 1
 			path: tests/Stubs/NotInstantiableDocumentEnhancer.php
@@ -49,3 +24,4 @@ parameters:
 			message: "#^Constructor of class Facile\\\\MongoDbMessenger\\\\Tests\\\\Stubs\\\\NotInstantiableDocumentEnhancer has an unused parameter \\$foo\\.$#"
 			count: 1
 			path: tests/Stubs/NotInstantiableDocumentEnhancer.php
+
