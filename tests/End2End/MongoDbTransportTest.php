@@ -15,7 +15,6 @@ use MongoDB\Model\BSONDocument;
 use MongoDB\Model\CollectionInfo;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Messenger\Envelope;
-use Symfony\Component\Messenger\Stamp\ErrorDetailsStamp;
 use Symfony\Component\Messenger\Stamp\SentToFailureTransportStamp;
 
 class MongoDbTransportTest extends WebTestCase
@@ -88,9 +87,6 @@ class MongoDbTransportTest extends WebTestCase
             $this->assertSame('failed', $document->queueName);
             $this->assertTrue(property_exists($document, 'foo'));
             $this->assertSame('bar', $document->foo);
-            if (class_exists(ErrorDetailsStamp::class)) {
-                $this->markTestIncomplete('Need to switch to ErrorDetailsStamp since Symfony 5.2');
-            }
             $this->assertTrue(property_exists($document, 'lastErrorMessage'));
             $this->assertSame(FooHandler::ERROR_MESSAGE, $document->lastErrorMessage);
         }

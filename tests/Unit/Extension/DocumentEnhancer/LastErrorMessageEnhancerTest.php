@@ -7,22 +7,36 @@ namespace Facile\MongoDbMessenger\Tests\Unit\Extension\DocumentEnhancer;
 use Facile\MongoDbMessenger\Extension\DocumentEnhancer\LastErrorMessageEnhancer;
 use MongoDB\Model\BSONDocument;
 use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\Stamp\ErrorDetailsStamp;
 use Symfony\Component\Messenger\Stamp\RedeliveryStamp;
 
 class LastErrorMessageEnhancerTest extends DocumentEnhancerTestCase
 {
     public function testEnhance(): void
     {
+        if (class_exists(ErrorDetailsStamp::class)) {
+            // Symfony 5.2+
+            $stamps = [
+                new RedeliveryStamp(456),
+                new ErrorDetailsStamp(\Exception::class, 500, 'Baz'),
+                $stamp = new RedeliveryStamp(789),
+                new ErrorDetailsStamp(\Exception::class, 500, 'Foo Bar'),
+            ];
+        } else {
+            $stamps = [
+                new RedeliveryStamp(456, 'Baz'),
+                $stamp = new RedeliveryStamp(789, 'Foo Bar'),
+            ];
+        }
+
         $document = new BSONDocument();
-        $stampToBeIgnored = new RedeliveryStamp(456, 'Baz');
-        $stamp = new RedeliveryStamp(789, 'Foo Bar');
         $envelope = new Envelope(new class() {
-        }, [$stampToBeIgnored, $stamp]);
+        }, $stamps);
 
         (new LastErrorMessageEnhancer())->enhance($document, $envelope);
 
         $this->assertPropertyEquals($stamp->getRedeliveredAt(), $document, 'lastErrorAt');
-        $this->assertPropertyEquals($stamp->getExceptionMessage(), $document, 'lastErrorMessage');
+        $this->assertPropertyEquals('Foo Bar', $document, 'lastErrorMessage');
         $this->assertPropertyEquals($stamp->getRetryCount(), $document, 'retryCount');
     }
 
