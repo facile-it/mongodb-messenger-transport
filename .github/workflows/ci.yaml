@@ -66,7 +66,7 @@ jobs:
         with:
           dependency-versions: ${{ matrix.dependencies }}
       - name: Await a bit for Mongo to spin up...
-        run: until nc -z mongo 27017; do sleep 1; done
+        run: timeout 60 nc -z localhost 27017
       - name: Run tests
         if: matrix.description != 'Infection'
         run: vendor/bin/phpunit --coverage-clover=build/coverage-report.xml
