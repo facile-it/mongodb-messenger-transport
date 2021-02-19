@@ -32,7 +32,7 @@ jobs:
           - 7.4
           - 7.3
           - 7.2
-        script: ['bin/phpunit --coverage-clover=build/coverage-report.xml']
+        script: ['']
         include:
           - description: Symfony 4.4 LTS
             php: 7.4
@@ -44,7 +44,6 @@ jobs:
           - description: Infection
             php: 7.4
             dependencies: 'highest'
-            script: sleep 5; vendor/bin/infection --show-mutations
 
     steps:
       - name: Checkout
@@ -66,10 +65,16 @@ jobs:
           dependency-versions: ${{ matrix.dependencies }}
       - name: Await a bit for Mongo to spin up...
         run: sleep 10
+
       - name: Run tests
-        run: ${{ matrix.script }}
+        if: matrix.description != 'Infection'
+        run: vendor/bin/phpunit --coverage-clover=build/coverage-report.xml
       - name: Upload code coverage
         if: matrix.description != 'Infection'
         uses: codecov/codecov-action@v1
         with:
           file: build/coverage-report.xml
+
+      - name: Run mutation testing
+        if: matrix.description = 'Infection'
+        run: sleep 5; vendor/bin/infection --show-mutations
