@@ -76,5 +76,5 @@ jobs:
           file: build/coverage-report.xml
 
       - name: Run mutation testing
-        if: matrix.description = 'Infection'
+        if: matrix.description == 'Infection'
         run: sleep 5; vendor/bin/infection --show-mutations
