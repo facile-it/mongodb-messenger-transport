@@ -18,11 +18,6 @@ jobs:
         env:
           MONGO_INITDB_ROOT_USERNAME: root
           MONGO_INITDB_ROOT_PASSWORD: rootPass
-#        options: >-
-#          --health-cmd '/etc/init.d/mongodb status || exit 1'
-#          --health-interval 5s
-#          --health-timeout 3s
-#          --health-retries 5
 
     strategy:
       matrix:
@@ -32,18 +27,16 @@ jobs:
           - 7.4
           - 7.3
           - 7.2
-        script: ['']
         include:
-          - description: Symfony 4.4 LTS
+          - description: Tests - Symfony 4.4 LTS
             php: 7.4
             symfony: '4.4.*'
           - description: Prefer lowest
             dependencies: 'lowest'
             php: 7.2
             symfony: '4.4.*'
-#          - description: Infection
-#            php: 7.4
-#            dependencies: 'highest'
+          - description: Infection
+            php: 7.4
 
     env:
       MONGO_HOST: localhost
