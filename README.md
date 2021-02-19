@@ -1,8 +1,13 @@
 # facile-it/mongodb-messenger-transport
 A Symfony Messenger transport on MongoDB, on top of [`facile-it/mongodb-bundle`](https://github.com/facile-it/mongodb-bundle/)
 
+[![Latest Stable Version](https://poser.pugx.org/facile-it/mongodb-messenger-transport/v)](//packagist.org/packages/facile-it/mongodb-messenger-transport)
+[![Total Downloads](https://poser.pugx.org/facile-it/mongodb-messenger-transport/downloads)](//packagist.org/packages/facile-it/mongodb-messenger-transport)
+[![Latest Unstable Version](https://poser.pugx.org/facile-it/mongodb-messenger-transport/v/unstable)](//packagist.org/packages/facile-it/mongodb-messenger-transport)
+[![License](https://poser.pugx.org/facile-it/mongodb-messenger-transport/license)](//packagist.org/packages/facile-it/mongodb-messenger-transport)
 
-[![Build Status](https://travis-ci.com/facile-it/mongodb-messenger-transport.svg?branch=master)](https://travis-ci.com/facile-it/mongodb-messenger-transport)
+[![CI](https://github.com/facile-it/mongodb-messenger-transport/actions/workflows/ci.yaml/badge.svg)](https://github.com/facile-it/mongodb-messenger-transport/actions/workflows/ci.yaml)
+[![Static analysis](https://github.com/facile-it/mongodb-messenger-transport/actions/workflows/static-analysis.yaml/badge.svg)](https://github.com/facile-it/mongodb-messenger-transport/actions/workflows/static-analysis.yaml)
 [![codecov](https://codecov.io/gh/facile-it/mongodb-messenger-transport/branch/master/graph/badge.svg)](https://codecov.io/gh/facile-it/mongodb-messenger-transport)
 
 ## Installation
