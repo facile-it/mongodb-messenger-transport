@@ -47,6 +47,7 @@ jobs:
 
     env:
       MONGO_HOST: localhost
+      SYMFONY_DEPRECATIONS_HELPER: disabled
     steps:
       - name: Checkout
         uses: actions/checkout@v2
