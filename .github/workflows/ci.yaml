@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  pull_request: ~
+  push:
+    branches:
+      - 1.x
+
+jobs:
+  tests:
+    name: ${{ matrix.description }} - PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    services:
+      mongo:
+        image: mongo:4.4
+        ports:
+          - 27017:27017
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: rootPass
+
+    strategy:
+      matrix:
+        dependencies: ['highest']
+        description: ['Tests']
+        php:
+          - 7.4
+          - 7.3
+          - 7.2
+        include:
+          - description: Tests - Symfony 4.4 LTS
+            php: 7.4
+            symfony: '4.4.*'
+          - description: Prefer lowest
+            dependencies: 'lowest'
+            php: 7.2
+            symfony: '4.4.*'
+          - description: Infection
+            php: 7.4
+
+    env:
+      MONGO_HOST: localhost
+      SYMFONY_DEPRECATIONS_HELPER: disabled
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mongodb
+      - name: Allow unstable dependencies
+        run: composer config minimum-stability dev
+        if: matrix.symfony == 'dev-master'
+      - name: Restrict Symfony version
+        run: composer require "symfony/symfony:${{ matrix.symfony }}" --no-update
+        if: matrix.symfony
+      - name: Install dependencies
+        uses: "ramsey/composer-install@v1"
+        with:
+          dependency-versions: ${{ matrix.dependencies }}
+      - name: Await a bit for Mongo to spin up...
+        run: timeout 60 nc -z localhost 27017
+      - name: Run tests
+        if: matrix.description != 'Infection'
+        run: vendor/bin/phpunit --coverage-clover=build/coverage-report.xml
+      - name: Upload code coverage
+        if: matrix.description != 'Infection'
+        uses: codecov/codecov-action@v1
+        with:
+          file: build/coverage-report.xml
+
+      - name: Run mutation testing
+        if: matrix.description == 'Infection'
+        run: vendor/bin/infection --show-mutations

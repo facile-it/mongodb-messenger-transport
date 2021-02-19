@@ -15,6 +15,9 @@ use Symfony\Component\Messenger\Transport\Serialization\PhpSerializer;
 
 class BaseFunctionalTestCase extends TestCase
 {
+    /** @var string */
+    private $host = 'mongo';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -24,7 +27,11 @@ class BaseFunctionalTestCase extends TestCase
 
     protected function getMongoDb(): Database
     {
-        $database = new Database(new Manager('mongodb://root:rootPass@mongo'), 'test');
+        if ($hostOverride = getenv('MONGO_HOST')) {
+            $this->host = $hostOverride;
+        }
+
+        $database = new Database(new Manager('mongodb://root:rootPass@' . $this->host), 'test');
         $this->assertInstanceOf(Database::class, $database);
 
         return $database;

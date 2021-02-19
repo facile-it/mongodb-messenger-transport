@@ -6,9 +6,14 @@ parameters:
 			path: src/Transport/Connection.php
 
 		-
-			message: "#^Constructor of class Facile\\\\MongoDbMessenger\\\\Tests\\\\Stubs\\\\InstantiableDocumentEnhancer has an unused parameter \\$foo\\.$#"
+			message: "#^Method Facile\\\\MongoDbMessenger\\\\Transport\\\\Connection\\:\\:findBy\\(\\) should return iterable\\<MongoDB\\\\Model\\\\BSONDocument\\>&MongoDB\\\\Driver\\\\Cursor but returns MongoDB\\\\Driver\\\\Cursor\\.$#"
 			count: 1
-			path: tests/Stubs/InstantiableDocumentEnhancer.php
+			path: src/Transport/Connection.php
+
+		-
+			message: "#^Parameter \\#1 \\$enhancer of method Facile\\\\MongoDbMessenger\\\\Transport\\\\Connection\\:\\:addDocumentEnhancer\\(\\) expects Facile\\\\MongoDbMessenger\\\\Extension\\\\DocumentEnhancer, object\\|null given\\.$#"
+			count: 1
+			path: src/Transport/TransportFactory.php
 
 		-
 			message: "#^Constructor of class Facile\\\\MongoDbMessenger\\\\Tests\\\\Stubs\\\\NotInstantiableDocumentEnhancer has an unused parameter \\$bar\\.$#"
@@ -19,3 +24,4 @@ parameters:
 			message: "#^Constructor of class Facile\\\\MongoDbMessenger\\\\Tests\\\\Stubs\\\\NotInstantiableDocumentEnhancer has an unused parameter \\$foo\\.$#"
 			count: 1
 			path: tests/Stubs/NotInstantiableDocumentEnhancer.php
+
