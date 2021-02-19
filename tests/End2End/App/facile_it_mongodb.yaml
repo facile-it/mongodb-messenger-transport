@@ -1,8 +1,11 @@
+parameters:
+  env(MONGO_HOST): 'mongo'
+
 mongo_db_bundle:
   clients:
     default:
       hosts: 
-      - host: 'mongo'
+      - host: '%env(MONGO_HOST)%'
         port: 27017
       username: 'root'
       password: 'rootPass'
