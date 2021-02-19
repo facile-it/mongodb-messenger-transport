@@ -24,8 +24,8 @@ class LastErrorMessageEnhancerTest extends DocumentEnhancerTestCase
             ];
         } else {
             $stamps = [
-                $stamp = new RedeliveryStamp(456, 'Foo Bar'),
-                new RedeliveryStamp(789, 'Baz'),
+                $stamp = new RedeliveryStamp(456, 'Baz'),
+                new RedeliveryStamp(789, 'Foo Bar'),
             ];
         }
 
