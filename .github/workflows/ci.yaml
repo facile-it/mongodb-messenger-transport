@@ -41,9 +41,9 @@ jobs:
             dependencies: 'lowest'
             php: 7.2
             symfony: '4.4.*'
-          - description: Infection
-            php: 7.4
-            dependencies: 'highest'
+#          - description: Infection
+#            php: 7.4
+#            dependencies: 'highest'
 
     env:
       MONGO_HOST: localhost
