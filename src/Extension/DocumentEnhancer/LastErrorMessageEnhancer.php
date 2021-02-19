@@ -9,19 +9,36 @@ use Facile\MongoDbMessenger\Util\RedeliveryStampExtractor;
 use MongoDB\BSON\UTCDateTime;
 use MongoDB\Model\BSONDocument;
 use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\Stamp\ErrorDetailsStamp;
+use Symfony\Component\Messenger\Stamp\RedeliveryStamp;
 
 class LastErrorMessageEnhancer implements DocumentEnhancer
 {
     public function enhance(BSONDocument $document, Envelope $envelope): void
     {
-        $lastRedeliveryStamp = RedeliveryStampExtractor::getLastWithException($envelope);
+        if (class_exists(ErrorDetailsStamp::class)) {
+            $lastRedeliveryStamp = $envelope->last(RedeliveryStamp::class);
+            $lastErrorStamp = $envelope->last(ErrorDetailsStamp::class);
+            if (! $lastErrorStamp instanceof ErrorDetailsStamp) {
+                return;
+            }
 
-        if (null === $lastRedeliveryStamp) {
-            return;
+            $exceptionMessage = $lastErrorStamp->getExceptionMessage();
+        } else {
+            $lastRedeliveryStamp = RedeliveryStampExtractor::getLastWithException($envelope);
+
+            if (null === $lastRedeliveryStamp) {
+                return;
+            }
+
+            $exceptionMessage = $lastRedeliveryStamp->getExceptionMessage();
         }
 
-        $document->lastErrorAt = new UTCDateTime($lastRedeliveryStamp->getRedeliveredAt());
-        $document->lastErrorMessage = $lastRedeliveryStamp->getExceptionMessage();
-        $document->retryCount = $lastRedeliveryStamp->getRetryCount();
+        if ($lastRedeliveryStamp instanceof RedeliveryStamp) {
+            $document->lastErrorAt = new UTCDateTime($lastRedeliveryStamp->getRedeliveredAt());
+            $document->retryCount = $lastRedeliveryStamp->getRetryCount();
+        }
+
+        $document->lastErrorMessage = $exceptionMessage;
     }
 }
