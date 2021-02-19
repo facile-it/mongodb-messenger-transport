@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mongo:
-        image: mongo:${{ matrix.mongo }}
+        image: mongo:4.4
         ports:
           - 27017:27017
         env:
@@ -28,7 +28,6 @@ jobs:
       matrix:
         dependencies: ['highest']
         description: ['Tests']
-        mongo: ['4.4']
         php:
           - 7.4
           - 7.3
@@ -41,11 +40,10 @@ jobs:
           - description: Prefer lowest
             dependencies: 'lowest'
             php: 7.2
-            mongo: 3.4
             symfony: '4.4.*'
           - description: Infection
             php: 7.4
-            mongo: '4.4'
+            dependencies: 'highest'
             script: sleep 5; vendor/bin/infection --show-mutations
 
     steps:
@@ -55,7 +53,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: mongodb-${{ matrix.ext-mongodb }}
+          extensions: mongodb
       - name: Allow unstable dependencies
         run: composer config minimum-stability dev
         if: matrix.symfony == 'dev-master'
