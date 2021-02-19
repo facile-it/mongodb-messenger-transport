@@ -17,15 +17,15 @@ class LastErrorMessageEnhancerTest extends DocumentEnhancerTestCase
         if (class_exists(ErrorDetailsStamp::class)) {
             // Symfony 5.2+
             $stamps = [
-                $stamp = new RedeliveryStamp(456),
+                new RedeliveryStamp(456),
                 new ErrorDetailsStamp(\Exception::class, 500, 'Baz'),
                 $stamp = new RedeliveryStamp(789),
                 new ErrorDetailsStamp(\Exception::class, 500, 'Foo Bar'),
             ];
         } else {
             $stamps = [
-                $stamp = new RedeliveryStamp(456, 'Baz'),
-                new RedeliveryStamp(789, 'Foo Bar'),
+                new RedeliveryStamp(456, 'Baz'),
+                $stamp = new RedeliveryStamp(789, 'Foo Bar'),
             ];
         }
 
