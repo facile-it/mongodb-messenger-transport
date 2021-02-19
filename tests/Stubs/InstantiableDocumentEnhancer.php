@@ -20,6 +20,5 @@ class InstantiableDocumentEnhancer implements DocumentEnhancer
 
     public function enhance(BSONDocument $document, Envelope $envelope): void
     {
-        
     }
 }
