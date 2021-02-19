@@ -36,6 +36,7 @@ jobs:
         script: ['bin/phpunit --coverage-clover=build/coverage-report.xml']
         include:
           - description: Symfony 4.4 LTS
+            php: 7.4
             symfony: '4.4.*'
           - description: Prefer lowest
             dependencies: 'lowest'
