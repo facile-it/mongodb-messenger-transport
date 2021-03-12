@@ -15,11 +15,14 @@ use MongoDB\Model\BSONDocument;
 use MongoDB\Operation\FindOneAndUpdate;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Exception\TransportException;
 
 class ConnectionTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testGet(): void
     {
         $collection = $this->prophesize(Collection::class);

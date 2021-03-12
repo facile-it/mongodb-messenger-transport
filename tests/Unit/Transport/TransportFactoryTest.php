@@ -12,11 +12,14 @@ use Facile\MongoDbMessenger\Transport\TransportFactory;
 use MongoDB\Collection;
 use MongoDB\Database;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
 class TransportFactoryTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testCreateTransportWithAdditionalOptionsInQueryString(): void
     {
         $factory = new TransportFactory($this->mockContainerWithWorkingCollection('bar'));
