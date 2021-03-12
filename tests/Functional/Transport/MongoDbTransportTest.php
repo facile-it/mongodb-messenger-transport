@@ -248,6 +248,7 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
         $this->assertCount(2, $indexes);
         $index = $indexes[1];
         $this->assertInstanceOf(IndexInfo::class, $index);
+        $this->assertSame('facile-it_messenger_index', $index->getName());
         $this->assertFalse($index->isUnique());
         $this->assertEquals(
             [

@@ -65,12 +65,11 @@ jobs:
       - name: Run tests
         if: matrix.description != 'Infection'
         run: vendor/bin/phpunit --coverage-clover=build/coverage-report.xml
+      - name: Run mutation testing
+        if: matrix.description == 'Infection'
+        run: vendor/bin/infection --show-mutations --min-msi 94
       - name: Upload code coverage
         if: matrix.description != 'Infection'
         uses: codecov/codecov-action@v1
         with:
           file: build/coverage-report.xml
-
-      - name: Run mutation testing
-        if: matrix.description == 'Infection'
-        run: vendor/bin/infection --show-mutations
