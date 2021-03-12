@@ -18,7 +18,7 @@ stop: docker-compose.yml
 	docker-compose stop
 
 infection:
-	docker-compose run --rm php zsh -c "vendor/bin/infection --threads=8 --show-mutations --min-msi 94"
+	docker-compose run --rm php zsh -c "vendor/bin/infection --threads=8 --show-mutations --min-msi 84"
 
 test: docker-compose.yml phpunit.xml.dist
 	docker-compose run --rm php zsh -c "vendor/bin/phpunit -c phpunit.xml.dist"
