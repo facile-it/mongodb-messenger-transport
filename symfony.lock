@@ -1,4 +1,7 @@
 {
+    "composer/package-versions-deprecated": {
+        "version": "1.11.99.1"
+    },
     "composer/semver": {
         "version": "1.7.0"
     },
@@ -67,9 +70,6 @@
     },
     "nikic/php-parser": {
         "version": "v4.5.0"
-    },
-    "ocramius/package-versions": {
-        "version": "1.4.2"
     },
     "phar-io/manifest": {
         "version": "1.0.3"

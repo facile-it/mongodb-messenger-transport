@@ -49,6 +49,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: mongodb
+          coverage: xdebug2
       - name: Allow unstable dependencies
         run: composer config minimum-stability dev
         if: matrix.symfony == 'dev-master'
