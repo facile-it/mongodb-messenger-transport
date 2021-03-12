@@ -35,8 +35,7 @@ jobs:
             dependencies: 'lowest'
             php: 7.2
             symfony: '4.4.*'
-            env:
-              SYMFONY_DEPRECATIONS_HELPER: disabled
+            deprecations: disabled
           - description: Infection
             php: 7.4
 
@@ -66,6 +65,8 @@ jobs:
       - name: Run tests
         if: matrix.description != 'Infection'
         run: vendor/bin/phpunit --coverage-clover=build/coverage-report.xml
+        env:
+          SYMFONY_DEPRECATIONS_HELPER: ${{ matrix.deprecations }}
       - name: Run mutation testing
         if: matrix.description == 'Infection'
         run: vendor/bin/infection --show-mutations --min-msi 94
