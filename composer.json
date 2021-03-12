@@ -53,11 +53,6 @@
     "config": {
         "sort-packages": true
     },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "0.x-dev"
-        }
-    },
     "scripts": {
         "cs-check": "php-cs-fixer fix --dry-run --diff --ansi",
         "cs-fix": "php-cs-fixer fix --verbose --ansi"
