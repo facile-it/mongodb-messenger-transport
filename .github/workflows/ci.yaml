@@ -69,7 +69,7 @@ jobs:
           SYMFONY_DEPRECATIONS_HELPER: ${{ matrix.deprecations }}
       - name: Run mutation testing
         if: matrix.description == 'Infection'
-        run: vendor/bin/infection --show-mutations --min-msi 94
+        run: vendor/bin/infection --show-mutations --min-msi=94
       - name: Upload code coverage
         if: matrix.description != 'Infection'
         uses: codecov/codecov-action@v1
