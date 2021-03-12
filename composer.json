@@ -28,7 +28,7 @@
     "require-dev": {
         "facile-it/facile-coding-standard": "^0.4.1",
         "facile-it/symfony-functional-testcase": "^1.0",
-        "infection/infection": "^0.21",
+        "infection/infection": "^0.18",
         "jangregor/phpstan-prophecy": "^0.8.0",
         "phpstan/extension-installer": "^1.0",
         "phpstan/phpstan": "^0.12.25",
