@@ -13,12 +13,15 @@ use MongoDB\DeleteResult;
 use MongoDB\Model\BSONDocument;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Exception\MessageDecodingFailedException;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
 class ReceiverTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testGetRejectsIfDecodingFails(): void
     {
         $serializer = $this->prophesize(SerializerInterface::class);
