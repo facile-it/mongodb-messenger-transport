@@ -35,12 +35,13 @@ jobs:
             dependencies: 'lowest'
             php: 7.2
             symfony: '4.4.*'
+            env:
+              SYMFONY_DEPRECATIONS_HELPER: disabled
           - description: Infection
             php: 7.4
 
     env:
       MONGO_HOST: localhost
-      SYMFONY_DEPRECATIONS_HELPER: disabled
     steps:
       - name: Checkout
         uses: actions/checkout@v2
