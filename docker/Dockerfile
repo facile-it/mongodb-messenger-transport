@@ -1,4 +1,4 @@
-FROM php:7.2-alpine
+FROM php:7.3-alpine
 
 RUN apk --no-cache add \
         $PHPIZE_DEPS \
@@ -12,7 +12,7 @@ RUN apk --no-cache add \
         zip \
         zsh
 
-RUN pecl install mongodb-1.3.1 \
+RUN pecl install mongodb-1.9.0 \
     && docker-php-ext-enable mongodb
 
 RUN pecl install xdebug-2.9.7 \
