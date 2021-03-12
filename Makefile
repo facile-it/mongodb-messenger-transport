@@ -6,28 +6,28 @@ docker-compose.override.yml:
 docker-compose.yml: docker-compose.override.yml
 
 up: docker-compose.yml
-	docker-compose up -d --force-recreate
+	docker-compose up -d
 
 setup: docker-compose.yml composer.json
 	docker-compose run --no-deps --rm php composer install
 
 start: up
-	docker-compose exec php bash
+	docker-compose exec php zsh
 
 stop: docker-compose.yml
 	docker-compose stop
 
 infection:
-	docker-compose run --rm php bash -c "vendor/bin/infection --threads=8 --show-mutations"
+	docker-compose run --rm php zsh -c "vendor/bin/infection --threads=8 --show-mutations"
 
 test: docker-compose.yml phpunit.xml.dist
-	docker-compose run --rm php bash -c "vendor/bin/phpunit -c phpunit.xml.dist"
+	docker-compose run --rm php zsh -c "vendor/bin/phpunit -c phpunit.xml.dist"
 
 phpstan: docker-compose.yml
-	docker-compose run --no-deps --rm php bash -c "vendor/bin/phpstan analyze --memory-limit=-1"
+	docker-compose run --no-deps --rm php zsh -c "vendor/bin/phpstan analyze --memory-limit=-1"
 
 cs-fix: docker-compose.yml
-	docker-compose run --no-deps --rm php bash -c "composer cs-fix"
+	docker-compose run --no-deps --rm php zsh -c "composer cs-fix"
 
 lock-symfony-%: SYMFONY_VERSION = $*
 lock-symfony-%:
