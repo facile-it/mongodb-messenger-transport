@@ -64,6 +64,7 @@ final class Connection
         $options['sort'] = [
             'availableAt' => 1,
         ];
+        $options = $this->setTypeMapOption($options);
 
         $updateStatement = [
             '$set' => [
@@ -170,7 +171,7 @@ final class Connection
      */
     public function find(string $id): ?BSONDocument
     {
-        return $this->collection->findOne(['_id' => new ObjectId($id)]);
+        return $this->collection->findOne(['_id' => new ObjectId($id)], $this->setTypeMapOption());
     }
 
     /**
@@ -194,7 +195,7 @@ final class Connection
      */
     public function findBy($filters, array $options): Cursor
     {
-        return $this->collection->find($filters, $options);
+        return $this->collection->find($filters, $this->setTypeMapOption($options));
     }
 
     /**
@@ -254,5 +255,19 @@ final class Connection
         return [
             'writeConcern' => new WriteConcern(WriteConcern::MAJORITY),
         ];
+    }
+
+    /**
+     * @param array<string, mixed> $readOptions
+     *
+     * @return array<string, mixed>
+     */
+    private function setTypeMapOption(array $readOptions = []): array
+    {
+        $readOptions['typeMap'] = [
+            'root' => BSONDocument::class,
+        ];
+
+        return $readOptions;
     }
 }
