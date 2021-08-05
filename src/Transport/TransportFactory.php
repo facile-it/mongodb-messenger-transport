@@ -19,6 +19,7 @@ final class TransportFactory implements TransportFactoryInterface
         self::QUEUE_NAME => 'default',
         self::REDELIVER_TIMEOUT => 3600,
         self::DOCUMENT_ENHANCERS => [],
+        self::RESETTABLE => true,
     ];
 
     public const CONNECTION_NAME = 'connection_name';
@@ -26,6 +27,7 @@ final class TransportFactory implements TransportFactoryInterface
     public const QUEUE_NAME = 'queue_name';
     public const REDELIVER_TIMEOUT = 'redeliver_timeout';
     public const DOCUMENT_ENHANCERS = 'document_enhancers';
+    public const RESETTABLE = 'resettable';
 
     /** @var ContainerInterface */
     private $container;
@@ -67,7 +69,11 @@ final class TransportFactory implements TransportFactoryInterface
 
         $this->addDocumentEnhancers($connection, $configuration);
 
-        return new MongoDbTransport($connection, $serializer);
+        if ($configuration[self::RESETTABLE]) {
+            return new MongoDbTransport($connection, $serializer);
+        }
+
+        return  new MongoDbUnresettableTransport($connection, $serializer);
     }
 
     /**
@@ -123,6 +129,13 @@ final class TransportFactory implements TransportFactoryInterface
         $queryExtraKeys = array_diff(array_keys($query), array_keys(self::DEFAULT_OPTIONS));
         if (0 < \count($queryExtraKeys)) {
             throw new \InvalidArgumentException(sprintf('Unknown option found in DSN: [%s]. Allowed options are [%s].', implode(', ', $queryExtraKeys), implode(', ', array_keys(self::DEFAULT_OPTIONS))));
+        }
+
+        if (! in_array($configuration[self::RESETTABLE], [0, 1, true, false], true)) {
+            throw new \InvalidArgumentException(sprintf(
+                'Unknown option value for resettable: [%s]. Allowed values are booleans, 0 or 1.',
+                print_r($configuration[self::RESETTABLE], true)
+            ));
         }
 
         return $configuration;
