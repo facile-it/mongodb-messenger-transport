@@ -7,7 +7,7 @@ namespace Facile\MongoDbMessenger\Tests\End2End;
 use Facile\MongoDbMessenger\Tests\End2End\App\FooHandler;
 use Facile\MongoDbMessenger\Tests\End2End\App\Kernel;
 use Facile\MongoDbMessenger\Tests\Stubs\FooMessage;
-use Facile\MongoDbMessenger\Transport\MongoDbTransport;
+use Facile\MongoDbMessenger\Transport\MongoDbUnresettableTransport;
 use Facile\SymfonyFunctionalTestCase\WebTestCase;
 use MongoDB\Collection;
 use MongoDB\Database;
@@ -115,15 +115,15 @@ class MongoDbTransportTest extends WebTestCase
         return $this->getMongoDb()->selectCollection($collectionName);
     }
 
-    private function getTransport(string $name = 'default'): MongoDbTransport
+    private function getTransport(string $name = 'default'): MongoDbUnresettableTransport
     {
         $transport = $this->getContainer()->get('messenger.transport.' . $name);
-        $this->assertInstanceOf(MongoDbTransport::class, $transport);
+        $this->assertInstanceOf(MongoDbUnresettableTransport::class, $transport);
 
         return $transport;
     }
 
-    private function getOneEnvelope(MongoDbTransport $transport): Envelope
+    private function getOneEnvelope(MongoDbUnresettableTransport $transport): Envelope
     {
         $envelopes = $transport->get();
         $this->assertIsArray($envelopes);

@@ -7,12 +7,14 @@ framework:
         dsn: 'facile-it-mongodb://test_default'
         options:
           queue_name: 'default'
+          resettable: false
         retry_strategy:
           max_retries: 0
       retryable:
         dsn: 'facile-it-mongodb://test_default'
         options:
           queue_name: 'retryable'
+          resettable: false
         retry_strategy:
           max_retries: 1
           max_delay: 0
@@ -20,6 +22,7 @@ framework:
         dsn: 'facile-it-mongodb://test_default'
         options:
           queue_name: 'failed'
+          resettable: false
           document_enhancers:
             - 'Facile\MongoDbMessenger\Extension\DocumentEnhancer\LastErrorMessageEnhancer'
             - '@my_custom_enancer'
