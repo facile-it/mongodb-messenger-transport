@@ -24,7 +24,9 @@ class LastErrorMessageEnhancerTest extends DocumentEnhancerTestCase
             ];
         } else {
             $stamps = [
+                /** @phpstan-ignore-next-line */
                 new RedeliveryStamp(456, 'Baz'),
+                /** @phpstan-ignore-next-line */
                 $stamp = new RedeliveryStamp(789, 'Foo Bar'),
             ];
         }
