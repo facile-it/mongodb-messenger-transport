@@ -190,6 +190,19 @@ class TransportFactoryTest extends TestCase
         ];
     }
 
+    public function testCreateTransportWithWrongResettableOptionValue(): void
+    {
+        $options = [
+            'resettable' => 2,
+        ];
+        $factory = new TransportFactory($this->mockContainer());
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unknown option value for resettable: [2]. Allowed values are booleans, 0 or 1.');
+
+        $factory->createTransport('mongodb://foobar', $options, $this->mockSerializer());
+    }
+
     private function mockContainer(): ContainerInterface
     {
         $container = $this->prophesize(ContainerInterface::class);
