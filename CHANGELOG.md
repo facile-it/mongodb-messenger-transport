@@ -4,10 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## 1.3.0 (TBA)
+## 1.3.0 (2021-08-12)
 * Force `typeMap['root']` to `BSONDocument` ([#8](https://github.com/facile-it/mongodb-messenger-transport/issues/8))
+* Add `resettable` option to add the choice of having a transport that does not implement `ResetInterface` (#10); default is `true` for BC, but it should be a possible fix for tests under Symfony 5.3 that wipe the queue due to that.
 
-## 1.2.0 (TBA)
+## 1.2.0 (2021-03-12)
 * Allow PHP 8 (#9)
 * Drop support for PHP 7.2 (#9)
 
