@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Facile\MongoDbMessenger\Transport;
 
-use MongoDB\BSON\ObjectId;
+#use MongoDB\BSON\ObjectId;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Transport\Receiver\ListableReceiverInterface;
 use Symfony\Component\Messenger\Transport\Receiver\MessageCountAwareInterface;
@@ -92,7 +92,7 @@ class MongoDbUnresettableTransport implements TransportInterface, SetupableTrans
     }
 
     /**
-     * @param string|ObjectId $id
+     * @param string $id
      */
     public function find($id): ?Envelope
     {

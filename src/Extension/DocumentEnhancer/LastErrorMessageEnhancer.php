@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace Facile\MongoDbMessenger\Extension\DocumentEnhancer;
 
+use Facile\MongoDbMessenger\Document\QueueDocument;
 use Facile\MongoDbMessenger\Extension\DocumentEnhancer;
 use Facile\MongoDbMessenger\Util\RedeliveryStampExtractor;
-use MongoDB\BSON\UTCDateTime;
-use MongoDB\Model\BSONDocument;
+#use MongoDB\BSON\UTCDateTime;
+#use MongoDB\Model\BSONDocument;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Stamp\ErrorDetailsStamp;
 use Symfony\Component\Messenger\Stamp\RedeliveryStamp;
+use DateTime;
 
 class LastErrorMessageEnhancer implements DocumentEnhancer
 {
-    public function enhance(BSONDocument $document, Envelope $envelope): void
+    public function enhance(QueueDocument $document, Envelope $envelope): void
     {
         if (class_exists(ErrorDetailsStamp::class)) {
             $lastRedeliveryStamp = $envelope->last(RedeliveryStamp::class);
@@ -35,7 +37,7 @@ class LastErrorMessageEnhancer implements DocumentEnhancer
         }
 
         if ($lastRedeliveryStamp instanceof RedeliveryStamp) {
-            $document->lastErrorAt = new UTCDateTime($lastRedeliveryStamp->getRedeliveredAt());
+            $document->lastErrorAt = new DateTime($lastRedeliveryStamp->getRedeliveredAt());
             $document->retryCount = $lastRedeliveryStamp->getRetryCount();
         }
 

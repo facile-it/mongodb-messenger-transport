@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Facile\MongoDbMessenger\Transport;
 
 use Facile\MongoDbMessenger\Stamp\ReceivedStamp;
-use MongoDB\BSON\ObjectId;
-use MongoDB\Model\BSONDocument;
+use Facile\MongoDbMessenger\Document\QueueDocument;
+#use MongoDB\BSON\ObjectId;
+#use MongoDB\Model\BSONDocument;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Exception\MessageDecodingFailedException;
 use Symfony\Component\Messenger\Stamp\TransportMessageIdStamp;
@@ -116,9 +117,9 @@ final class Receiver implements ReceiverInterface, MessageCountAwareInterface, L
         return $this->connection->getMessageCount();
     }
 
-    private function createEnvelope(BSONDocument $document): Envelope
+    private function createEnvelope(QueueDocument $document): Envelope
     {
-        $documentID = (string) $document->_id;
+        $documentID = (string) $document->id;
 
         try {
             $envelope = $this->serializer->decode(['body' => $document->body ?? null]);

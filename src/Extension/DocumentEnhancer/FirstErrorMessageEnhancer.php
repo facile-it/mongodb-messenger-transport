@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Facile\MongoDbMessenger\Extension\DocumentEnhancer;
 
+use Facile\MongoDbMessenger\Document\QueueDocument;
 use Facile\MongoDbMessenger\Extension\DocumentEnhancer;
 use Facile\MongoDbMessenger\Util\RedeliveryStampExtractor;
-use MongoDB\BSON\UTCDateTime;
-use MongoDB\Model\BSONDocument;
+#use MongoDB\BSON\UTCDateTime;
+#use MongoDB\Model\BSONDocument;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Stamp\ErrorDetailsStamp;
 use Symfony\Component\Messenger\Stamp\RedeliveryStamp;
@@ -15,7 +16,7 @@ use Symfony\Component\Messenger\Stamp\StampInterface;
 
 class FirstErrorMessageEnhancer implements DocumentEnhancer
 {
-    public function enhance(BSONDocument $document, Envelope $envelope): void
+    public function enhance(QueueDocument $document, Envelope $envelope): void
     {
         if (class_exists(ErrorDetailsStamp::class)) {
             $firstRedeliveryStamp = $this->getFirst(RedeliveryStamp::class, $envelope);
@@ -36,7 +37,7 @@ class FirstErrorMessageEnhancer implements DocumentEnhancer
         }
 
         if ($firstRedeliveryStamp) {
-            $document->firstErrorAt = new UTCDateTime($firstRedeliveryStamp->getRedeliveredAt());
+            $document->firstErrorAt = new DateTime($firstRedeliveryStamp->getRedeliveredAt());
         }
         $document->firstErrorMessage = $exceptionMessage;
     }

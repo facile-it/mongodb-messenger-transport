@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace Facile\MongoDbMessenger\Transport;
 
+use Facile\MongoDbMessenger\Document\QueueDocument;
 use Facile\MongoDbMessenger\Extension\DocumentEnhancer;
-use MongoDB\BSON\ObjectId;
-use MongoDB\BSON\UTCDateTime;
-use MongoDB\Collection;
-use MongoDB\Driver\Cursor;
-use MongoDB\Driver\Exception\RuntimeException as DriverException;
-use MongoDB\Driver\WriteConcern;
-use MongoDB\Model\BSONDocument;
-use MongoDB\Operation\FindOneAndUpdate;
+use Facile\MongoDbMessenger\Repository\CollectionRepository;
+#use MongoDB\Driver\Cursor;
+#use MongoDB\Driver\WriteConcern;
+#use MongoDB\Model\BSONDocument;
+#use MongoDB\Operation\FindOneAndUpdate;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Exception\TransportException;
+use DateTime;
 
 /**
  * @internal
@@ -36,7 +35,7 @@ final class Connection
     /** @var string */
     private $uniqueId;
 
-    public function __construct(Collection $collection, string $queueName, int $redeliverTimeout)
+    public function __construct(CollectionRepository $collection, string $queueName, int $redeliverTimeout)
     {
         $this->collection = $collection;
         $this->queueName = $queueName;
@@ -57,38 +56,62 @@ final class Connection
     /**
      * @throws TransportException
      */
-    public function get(): ?BSONDocument
+    public function get(): ?QueueDocument
     {
-        $options = $this->getWriteOptions();
-        $options['returnDocument'] = FindOneAndUpdate::RETURN_DOCUMENT_AFTER;
-        $options['sort'] = [
-            'availableAt' => 1,
-        ];
-        $options = $this->setTypeMapOption($options);
+        # $options = $this->getWriteOptions();
+        # $options['returnDocument'] = FindOneAndUpdate::RETURN_DOCUMENT_AFTER;
+        # $options['sort'] = [
+        #     'availableAt' => 1,
+        # ];
+        # $options = $this->setTypeMapOption($options);
 
         $updateStatement = [
             '$set' => [
                 'deliveredTo' => $this->uniqueId,
-                'deliveredAt' => new UTCDateTime(),
+                'deliveredAt' => new DateTime(),
             ],
         ];
 
         try {
-            $updatedDocument = $this->collection->findOneAndUpdate($this->createAvailableMessagesQuery(), $updateStatement, $options);
+            $updatedDocument = $this->collection->findOneAndUpdate(
+                $this->createAvailableMessagesQuery(),
+                $updateStatement
+                #$options
+            );
         } catch (\Throwable $exception) {
             throw new TransportException($exception->getMessage(), 0, $exception);
         }
 
-        if (! $updatedDocument instanceof BSONDocument) {
+        if (! $updatedDocument instanceof QueueDocument) {
             return null;
         }
 
         if ($updatedDocument->deliveredTo !== $this->uniqueId) {
             // concurrency issue - some other consumer got to this message while we were updating it
-            return null;
+            //return null;
         }
 
         return $updatedDocument;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function createAvailableMessagesQuery(): array
+    {
+        $now = new DateTime();
+        $redeliverLimit = (clone $now)->modify(sprintf('-%d seconds', $this->redeliverTimeout));
+
+        return [
+            '$or' => [
+                ['deliveredAt' => null],
+                ['deliveredAt' => [
+                    '$lt' => $redeliverLimit,
+                ]],
+            ],
+            'availableAt' => ['$lte' => $now],
+            'queueName' => $this->queueName,
+        ];
     }
 
     /**
@@ -96,14 +119,14 @@ final class Connection
      *
      * @throws TransportException
      *
-     * @return ObjectId The inserted id
+     * @return string The inserted id
      */
-    public function send(Envelope $envelope, string $body, int $delay = 0): ObjectId
+    public function send(Envelope $envelope, string $body, int $delay = 0): string
     {
-        $now = new \DateTime();
+        $now = new DateTime();
         $availableAt = (clone $now)->modify(sprintf('+%d milliseconds', $delay));
 
-        $document = new BSONDocument();
+        $document = new QueueDocument();
 
         foreach ($this->documentEnhancers as $documentEnhancer) {
             $documentEnhancer->enhance($document, $envelope);
@@ -111,11 +134,11 @@ final class Connection
 
         $document->body = $body;
         $document->queueName = $this->queueName;
-        $document->createdAt = new UTCDateTime($now);
-        $document->availableAt = new UTCDateTime($availableAt);
+        $document->createdAt = $now;
+        $document->availableAt = $availableAt;
 
         try {
-            $insertResult = $this->collection->insertOne($document, $this->getWriteOptions());
+            $insertResult = $this->collection->insertOne($document);
         } catch (\Throwable $exception) {
             throw new TransportException($exception->getMessage(), 0, $exception);
         }
@@ -133,12 +156,12 @@ final class Connection
     public function ack(string $id): bool
     {
         try {
-            $deleteResult = $this->collection->deleteOne(['_id' => new ObjectId($id)], $this->getWriteOptions());
+            $deleteResult = $this->collection->deleteOne(['id' => $id]);
         } catch (\Throwable $exception) {
             throw new TransportException($exception->getMessage(), 0, $exception);
         }
 
-        return $deleteResult->getDeletedCount() > 0;
+        return is_null($deleteResult);
     }
 
     /**
@@ -151,12 +174,12 @@ final class Connection
     public function reject(string $id): bool
     {
         try {
-            $deleteResult = $this->collection->deleteOne(['_id' => new ObjectId($id)], $this->getWriteOptions());
+            $deleteResult = $this->collection->deleteOne(['id' => $id]);
         } catch (\Throwable $exception) {
             throw new TransportException($exception->getMessage(), 0, $exception);
         }
 
-        return $deleteResult->getDeletedCount() > 0;
+        return true;
     }
 
     public function getMessageCount(): int
@@ -167,15 +190,15 @@ final class Connection
     }
 
     /**
-     * @throws DriverException
+     * @throws Exception
      */
-    public function find(string $id): ?BSONDocument
+    public function find(string $id): ?QueueDocument
     {
-        return $this->collection->findOne(['_id' => new ObjectId($id)], $this->setTypeMapOption());
+        return $this->collection->findOne(['id' => $id]);
     }
 
     /**
-     * @return Cursor<BSONDocument>
+     * @return Cursor<QueueDocument>
      */
     public function findAll(int $limit = null): Cursor
     {
@@ -191,9 +214,9 @@ final class Connection
      * @param array<string, mixed>|object $filters
      * @param array<string, mixed> $options
      *
-     * @return Cursor<BSONDocument>
+     * @return Collection<QueueDocument>
      */
-    public function findBy($filters, array $options): Cursor
+    public function findBy($filters, array $options): Collection
     {
         return $this->collection->find($filters, $this->setTypeMapOption($options));
     }
@@ -218,34 +241,16 @@ final class Connection
      */
     public function setup(): void
     {
-        $this->collection->createIndex([
-            'availableAt' => 1,
-            'queueName' => 1,
-            'deliveredAt' => 1,
-        ], [
-            'name' => 'facile-it_messenger_index',
-        ]);
+        // $this->collection->createIndex([
+        //     'availableAt' => 1,
+        //     'queueName' => 1,
+        //     'deliveredAt' => 1,
+        // ], [
+        //     'name' => 'facile-it_messenger_index',
+        // ]);
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    private function createAvailableMessagesQuery(): array
-    {
-        $now = new \DateTime();
-        $redeliverLimit = (clone $now)->modify(sprintf('-%d seconds', $this->redeliverTimeout));
 
-        return [
-            '$or' => [
-                ['deliveredAt' => null],
-                ['deliveredAt' => [
-                    '$lt' => new UTCDateTime($redeliverLimit),
-                ]],
-            ],
-            'availableAt' => ['$lte' => new UTCDateTime($now)],
-            'queueName' => $this->queueName,
-        ];
-    }
 
     /**
      * @return array<string, mixed>
