@@ -60,17 +60,8 @@ final class TransportFactory implements TransportFactoryInterface
     {
         $configuration = $this->buildConfiguration($dsn, $options);
 
-        $database = $this->container->get('mongo.connection.' . $configuration[self::CONNECTION_NAME]);
-        if ($database === null) {
-            throw new \InvalidArgumentException('Cannot find MongoDB connection with name: ' . $configuration[self::CONNECTION_NAME]);
-        }
-
-        if (! $database instanceof Database) {
-            throw new \LogicException('Expecting MongoDB\\Database from container, got ' . get_class($database));
-        }
-
         $connection = new Connection(
-            #$database->selectCollection($configuration[self::COLLECTION_NAME]),
+        #$database->selectCollection($configuration[self::COLLECTION_NAME]),
             $this->collectionRepository,
             $configuration[self::QUEUE_NAME],
             $configuration[self::REDELIVER_TIMEOUT]
