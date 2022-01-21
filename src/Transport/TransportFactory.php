@@ -6,7 +6,6 @@ namespace Facile\MongoDbMessenger\Transport;
 
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
 use Facile\MongoDbMessenger\Extension\DocumentEnhancer;
-#use MongoDB\Database;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Messenger\Exception\InvalidArgumentException;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
@@ -61,7 +60,6 @@ final class TransportFactory implements TransportFactoryInterface
         $configuration = $this->buildConfiguration($dsn, $options);
 
         $connection = new Connection(
-        #$database->selectCollection($configuration[self::COLLECTION_NAME]),
             $this->collectionRepository,
             $configuration[self::QUEUE_NAME],
             $configuration[self::REDELIVER_TIMEOUT]
