@@ -1,6 +1,6 @@
 {
     "name": "facile-it/mongodb-messenger-transport",
-    "description": "A Symfony Messenger transport on MongoDB, on top of facile-it/mongodb-bundle",
+    "description": "A Symfony Messenger transport on DoctrineMongoDB, on top of facile-it/mongodb-bundle",
     "keywords": [
         "MongoDB",
         "Symfony",
@@ -14,12 +14,15 @@
         {
             "name": "Alessandro Lai",
             "email": "alessandro.lai85@gmail.com"
+        },
+        {
+            "name": "Maycon VM",
+            "email": "mayconvm@gmail.com"
         }
     ],
     "require": {
         "php": "^7.3 || ^8.0",
         "ext-mongodb": "^1.1.5",
-        "facile-it/mongodb-bundle": "^0.6 || ^1.0.0",
         "mongodb/mongodb": "^1.1.0",
         "symfony/deprecation-contracts": "^2.1",
         "symfony/framework-bundle": "^4.4 || ^5.0",
