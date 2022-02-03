@@ -6,6 +6,7 @@ namespace Facile\MongoDbMessenger\Transport;
 
 use Facile\MongoDbMessenger\Stamp\ReceivedStamp;
 use MongoDB\BSON\ObjectId;
+use MongoDB\Model\BSONArray;
 use MongoDB\Model\BSONDocument;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Exception\MessageDecodingFailedException;
@@ -120,8 +121,20 @@ final class Receiver implements ReceiverInterface, MessageCountAwareInterface, L
     {
         $documentID = (string) $document->_id;
 
+        if (
+            $document->offsetExists('headers')
+            && ($headers = $document->offsetGet('headers')) instanceof BSONArray
+        ) {
+            $headers = $headers->getArrayCopy();
+        } else {
+            $headers = null;
+        }
+
         try {
-            $envelope = $this->serializer->decode(['body' => $document->body ?? null]);
+            $envelope = $this->serializer->decode([
+                'body' => $document->body ?? null,
+                'headers' => $headers,
+            ]);
         } catch (MessageDecodingFailedException $exception) {
             $this->connection->reject($documentID);
 

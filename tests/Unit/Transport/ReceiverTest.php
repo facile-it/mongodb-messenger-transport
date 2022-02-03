@@ -10,6 +10,7 @@ use Facile\MongoDbMessenger\Transport\Receiver;
 use MongoDB\BSON\ObjectId;
 use MongoDB\Collection;
 use MongoDB\DeleteResult;
+use MongoDB\Model\BSONArray;
 use MongoDB\Model\BSONDocument;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -21,6 +22,37 @@ use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 class ReceiverTest extends TestCase
 {
     use ProphecyTrait;
+
+    public function testGetPassesBodyAndHeadersToTheSerializer(): void
+    {
+        $serializer = $this->prophesize(SerializerInterface::class);
+        $collection = $this->prophesize(Collection::class);
+        $connection = new Connection($collection->reveal(), 'queueName', 0);
+        $receiver = new Receiver($connection, $serializer->reveal());
+        $document = new BSONDocument();
+        $document->_id = new ObjectId();
+        $document->body = '{document: body}';
+        $headers = ['header1: foo', 'header2: bar'];
+        $document->headers = new BSONArray($headers);
+        $document->deliveredTo = $connection->getUniqueId();
+
+        $collection->findOneAndUpdate(Argument::cetera())
+            ->shouldBeCalledOnce()
+            ->willReturn($document);
+        $serializer->decode(Argument::allOf(
+            Argument::type('array'),
+            Argument::size(2),
+            Argument::withEntry('body', '{document: body}'),
+            Argument::withEntry('headers', $headers)
+        ))
+            ->shouldBeCalledOnce()
+            ->willReturn(new Envelope(new \stdClass()));
+
+        $result = $receiver->get();
+
+        $this->assertContainsOnlyInstancesOf(Envelope::class, $result);
+        $this->assertCount(1, $result);
+    }
 
     public function testGetRejectsIfDecodingFails(): void
     {
