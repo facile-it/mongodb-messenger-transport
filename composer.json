@@ -54,9 +54,9 @@
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            "phpstan/extension-installer": true,
             "facile-it/facile-coding-standard": true,
             "infection/extension-installer": true,
+            "phpstan/extension-installer": true,
             "symfony/flex": true
         }
     },
