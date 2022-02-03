@@ -1,0 +1,9 @@
+framework:
+  serializer: 
+    enabled: true
+    enable_annotations: false
+  messenger:
+    serializer:
+      default_serializer: 'messenger.transport.symfony_serializer'
+      symfony_serializer:
+        format: json

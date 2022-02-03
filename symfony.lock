@@ -371,6 +371,12 @@
     "symfony/process": {
         "version": "v5.1.5"
     },
+    "symfony/property-access": {
+        "version": "v5.4.3"
+    },
+    "symfony/property-info": {
+        "version": "v5.4.3"
+    },
     "symfony/redis-messenger": {
         "version": "v5.1.0"
     },
@@ -387,6 +393,9 @@
             "config/packages/routing.yaml",
             "config/routes.yaml"
         ]
+    },
+    "symfony/serializer": {
+        "version": "v5.4.3"
     },
     "symfony/service-contracts": {
         "version": "v2.2.0"

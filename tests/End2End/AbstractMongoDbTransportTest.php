@@ -6,6 +6,7 @@ namespace Facile\MongoDbMessenger\Tests\End2End;
 
 use Facile\MongoDbMessenger\Tests\End2End\App\FooHandler;
 use Facile\MongoDbMessenger\Tests\End2End\App\Kernel;
+use Facile\MongoDbMessenger\Tests\End2End\App\KernelWithJsonSerializer;
 use Facile\MongoDbMessenger\Tests\Stubs\FooMessage;
 use Facile\MongoDbMessenger\Transport\MongoDbUnresettableTransport;
 use Facile\SymfonyFunctionalTestCase\WebTestCase;
@@ -17,8 +18,9 @@ use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Stamp\SentToFailureTransportStamp;
+use Symfony\Component\Messenger\Stamp\TransportMessageIdStamp;
 
-class MongoDbTransportTest extends WebTestCase
+abstract class AbstractMongoDbTransportTest extends WebTestCase
 {
     public static function setUpBeforeClass(): void
     {
@@ -36,7 +38,29 @@ class MongoDbTransportTest extends WebTestCase
 
     protected static function getKernelClass(): string
     {
-        return Kernel::class;
+        return KernelWithJsonSerializer::class;
+    }
+
+    public function testSendAndGet(): void
+    {
+        $transport = $this->getTransport();
+
+        $envelope = $transport->send(new Envelope(new FooMessage()));
+
+        $stamps = $envelope->all();
+        $this->assertCount(1, $stamps);
+        $this->assertArrayHasKey(TransportMessageIdStamp::class, $stamps);
+        $stamps = $stamps[TransportMessageIdStamp::class];
+        $this->assertIsArray($stamps);
+        $this->assertCount(1, $stamps);
+        $stamp = current($stamps);
+        $this->assertInstanceOf(TransportMessageIdStamp::class, $stamp);
+        $document = $this->getMessageCollection()->findOne(['_id' => $stamp->getId()]);
+        $this->assertInstanceOf(BSONDocument::class, $document);
+
+        $fetchedEnvelope = $this->getOneEnvelope($transport);
+
+        $this->assertEquals($envelope->getMessage()->getData(), $fetchedEnvelope->getMessage()->getData());
     }
 
     public function testAck(): void
