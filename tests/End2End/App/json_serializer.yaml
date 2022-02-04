@@ -7,10 +7,12 @@ services:
   symfony_serializer:
     class: Symfony\Component\Serializer\Serializer
     arguments:
-      - - '@Symfony\Component\Serializer\Normalizer\ArrayDenormalizer'
-        - '@Symfony\Component\Serializer\Normalizer\DateTimeNormalizer'
-        - '@Facile\MongoDbMessenger\Tests\End2End\App\SuppressDeprecationNormalizer'
-      - - '@Symfony\Component\Serializer\Encoder\JsonEncoder'
+      - [
+          '@Symfony\Component\Serializer\Normalizer\ArrayDenormalizer',
+          '@Symfony\Component\Serializer\Normalizer\DateTimeNormalizer',
+          '@Facile\MongoDbMessenger\Tests\End2End\App\SuppressDeprecationNormalizer'
+        ]
+      - ['@Symfony\Component\Serializer\Encoder\JsonEncoder']
 
   Symfony\Component\Serializer\Normalizer\ArrayDenormalizer: ~
   Symfony\Component\Serializer\Normalizer\DateTimeNormalizer: ~
