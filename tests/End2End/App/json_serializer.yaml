@@ -1,9 +1,11 @@
+services:
+  test_serializer:
+    class: \Symfony\Component\Messenger\Transport\Serialization\SerializerInterface
+    factory: ['\Symfony\Component\Messenger\Transport\Serialization\Serializer', 'create']
+
 framework:
-  serializer: 
-    enabled: true
-    enable_annotations: false
   messenger:
     serializer:
-      default_serializer: 'messenger.transport.symfony_serializer'
+      default_serializer: 'test_serializer'
       symfony_serializer:
         format: json

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Facile\MongoDbMessenger\Tests\End2End;
 
 use Facile\MongoDbMessenger\Tests\End2End\App\FooHandler;
-use Facile\MongoDbMessenger\Tests\End2End\App\Kernel;
 use Facile\MongoDbMessenger\Tests\End2End\App\KernelWithJsonSerializer;
 use Facile\MongoDbMessenger\Tests\Stubs\FooMessage;
 use Facile\MongoDbMessenger\Transport\MongoDbUnresettableTransport;
@@ -60,7 +59,7 @@ abstract class AbstractMongoDbTransportTest extends WebTestCase
 
         $fetchedEnvelope = $this->getOneEnvelope($transport);
 
-        $this->assertEquals($envelope->getMessage()->getData(), $fetchedEnvelope->getMessage()->getData());
+        $this->assertEquals($envelope->getMessage(), $fetchedEnvelope->getMessage());
     }
 
     public function testAck(): void

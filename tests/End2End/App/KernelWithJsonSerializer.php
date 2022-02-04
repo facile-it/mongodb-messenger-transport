@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Facile\MongoDbMessenger\Tests\End2End\App;
 
 use Symfony\Component\Config\Loader\LoaderInterface;
