@@ -1,6 +1,7 @@
 services:
   test_serializer:
     class: Symfony\Component\Messenger\Transport\Serialization\Serializer
+    public: true
     arguments:
       - '@symfony_serializer'
 
