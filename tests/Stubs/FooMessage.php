@@ -12,9 +12,19 @@ class FooMessage
     /** @var bool */
     private $shouldFail;
 
-    public function __construct(bool $shouldFail = false, string $data = null)
+    public static function create(): self
     {
-        $this->data = $data ?? uniqid('test-data-', true);
+        return new self(uniqid('test-data-', true), false);
+    }
+
+    public static function createFailing(): self
+    {
+        return new self(uniqid('test-data-', true), true);
+    }
+
+    public function __construct(string $data, bool $shouldFail)
+    {
+        $this->data = $data;
         $this->shouldFail = $shouldFail;
     }
 

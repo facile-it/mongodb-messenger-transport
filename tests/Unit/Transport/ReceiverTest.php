@@ -85,7 +85,7 @@ class ReceiverTest extends TestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Unable to retrieve ReceivedStamp on the envelope');
 
-        $receiver->ack(new Envelope(new FooMessage()));
+        $receiver->ack(new Envelope(FooMessage::create()));
     }
 
     public function testRejectWithoutReceivedStamp(): void
@@ -95,7 +95,7 @@ class ReceiverTest extends TestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Unable to retrieve ReceivedStamp on the envelope');
 
-        $receiver->reject(new Envelope(new FooMessage()));
+        $receiver->reject(new Envelope(FooMessage::create()));
     }
 
     private function createReceiver(): Receiver

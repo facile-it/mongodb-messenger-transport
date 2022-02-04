@@ -18,7 +18,7 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
 {
     public function testSendAndGet(): void
     {
-        $envelope = new Envelope(new FooMessage());
+        $envelope = new Envelope(FooMessage::create());
         $transport = $this->getTransport();
 
         $envelope = $transport->send($envelope);
@@ -41,7 +41,7 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
 
     public function testAck(): void
     {
-        $envelope = new Envelope(new FooMessage());
+        $envelope = new Envelope(FooMessage::create());
         $transport = $this->getTransport();
 
         $envelope = $transport->send($envelope);
@@ -60,7 +60,7 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
 
     public function testReject(): void
     {
-        $envelope = new Envelope(new FooMessage());
+        $envelope = new Envelope(FooMessage::create());
         $transport = $this->getTransport();
 
         $envelope = $transport->send($envelope);
@@ -80,9 +80,9 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
     public function testAll(): void
     {
         $originalEnvelopes = [
-            new Envelope(new FooMessage()),
-            new Envelope(new FooMessage()),
-            new Envelope(new FooMessage()),
+            new Envelope(FooMessage::create()),
+            new Envelope(FooMessage::create()),
+            new Envelope(FooMessage::create()),
         ];
         $transport = $this->getTransport();
         foreach ($originalEnvelopes as $envelope) {
@@ -102,9 +102,9 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
     {
         $transport = $this->getTransport();
 
-        $transport->send(new Envelope(new FooMessage()));
-        $transport->send(new Envelope(new FooMessage(), [new DelayStamp(1000000)]));
-        $transport->send(new Envelope(new FooMessage()));
+        $transport->send(new Envelope(FooMessage::create()));
+        $transport->send(new Envelope(FooMessage::create(), [new DelayStamp(1000000)]));
+        $transport->send(new Envelope(FooMessage::create()));
         $lockedEnvelope = $this->getOneEnvelope($transport);
 
         $allAvailableEnvelopes = iterator_to_array($transport->all());
@@ -118,7 +118,7 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
 
     public function testAllRespectsLimit(): void
     {
-        $envelope = new Envelope(new FooMessage());
+        $envelope = new Envelope(FooMessage::create());
         $transport = $this->getTransport();
         $count = 3;
         do {
@@ -134,8 +134,8 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
 
     public function testFindByRespectsFiltersAndOptions(): void
     {
-        $firstAvailableMessage = new FooMessage();
-        $secondMessage = new FooMessage();
+        $firstAvailableMessage = FooMessage::create();
+        $secondMessage = FooMessage::create();
         $transport = $this->getTransport();
         $transport->send((new Envelope($secondMessage))->with(new DelayStamp(10000)));
         $transport->send(new Envelope($firstAvailableMessage));
@@ -155,9 +155,9 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
 
     public function testCountByRespectsFiltersAndOptions(): void
     {
-        $firstMessage = new FooMessage();
+        $firstMessage = FooMessage::create();
         $transport = $this->getTransport();
-        $transport->send((new Envelope(new FooMessage()))->with(new DelayStamp(10000)));
+        $transport->send((new Envelope(FooMessage::create()))->with(new DelayStamp(10000)));
         $transport->send(new Envelope($firstMessage));
 
         $result = $transport->countBy(['body' => ['$regex' => $firstMessage->getData()]]);
@@ -175,9 +175,9 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
 
     public function testFind(): void
     {
-        $message = new FooMessage();
+        $message = FooMessage::create();
         $transport = $this->getTransport();
-        $transport->send(new Envelope(new FooMessage()));
+        $transport->send(new Envelope(FooMessage::create()));
         $stamp = $transport->send(new Envelope($message))
             ->last(TransportMessageIdStamp::class);
         $this->assertInstanceOf(TransportMessageIdStamp::class, $stamp);
@@ -191,14 +191,14 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
     public function testFindWithNonexistentId(): void
     {
         $transport = $this->getTransport();
-        $transport->send(new Envelope(new FooMessage()));
+        $transport->send(new Envelope(FooMessage::create()));
 
         $this->assertNull($transport->find(new ObjectId()));
     }
 
     public function testMessageCount(): void
     {
-        $envelope = new Envelope(new FooMessage());
+        $envelope = new Envelope(FooMessage::create());
         $transport = $this->getTransport();
 
         $transport->send($envelope);
@@ -214,7 +214,7 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
     {
         $transport1 = $this->getTransport();
         $transport2 = $this->getTransport('retryable');
-        $envelope = new Envelope(new FooMessage());
+        $envelope = new Envelope(FooMessage::create());
 
         $transport1->send($envelope);
         $transport2->send($envelope);

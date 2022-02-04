@@ -131,7 +131,7 @@ class ConnectionTest extends TestCase
 
         $connection = new Connection($collection->reveal(), 'foobar', 3600);
 
-        $this->assertSame($objectId, $connection->send(new Envelope(new FooMessage()), 'serializedEnvelope'));
+        $this->assertSame($objectId, $connection->send(new Envelope(FooMessage::create()), 'serializedEnvelope'));
     }
 
     public function testSendWrapsMongoExceptions(): void
@@ -146,7 +146,7 @@ class ConnectionTest extends TestCase
         $this->expectExceptionMessage('Foo bar baz');
         $this->expectExceptionCode(0);
 
-        $connection->send(new Envelope(new FooMessage()), 'body', 0);
+        $connection->send(new Envelope(FooMessage::create()), 'body', 0);
     }
 
     public function testAckWrapsMongoExceptions(): void

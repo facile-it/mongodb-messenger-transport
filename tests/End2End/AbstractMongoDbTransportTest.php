@@ -44,7 +44,7 @@ abstract class AbstractMongoDbTransportTest extends WebTestCase
     {
         $transport = $this->getTransport();
 
-        $envelope = $transport->send(new Envelope(new FooMessage()));
+        $envelope = $transport->send(new Envelope(FooMessage::create()));
 
         $stamps = $envelope->all();
         $this->assertCount(1, $stamps);
@@ -64,7 +64,7 @@ abstract class AbstractMongoDbTransportTest extends WebTestCase
 
     public function testAck(): void
     {
-        $envelope = new Envelope(new FooMessage());
+        $envelope = new Envelope(FooMessage::create());
         $transport = $this->getTransport();
 
         $transport->send($envelope);
@@ -76,7 +76,7 @@ abstract class AbstractMongoDbTransportTest extends WebTestCase
 
     public function testReject(): void
     {
-        $envelope = new Envelope(new FooMessage(true));
+        $envelope = new Envelope(FooMessage::createFailing());
         $transport = $this->getTransport();
 
         $transport->send($envelope);
@@ -104,7 +104,7 @@ abstract class AbstractMongoDbTransportTest extends WebTestCase
 
     public function testDocumentEnhancers(): void
     {
-        $envelope = new Envelope(new FooMessage(true));
+        $envelope = new Envelope(FooMessage::createFailing());
 
         $this->getTransport()->send($envelope);
         $this->runMessengerConsume();
