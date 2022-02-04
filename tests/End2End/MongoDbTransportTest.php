@@ -14,6 +14,7 @@ use MongoDB\Database;
 use MongoDB\Model\BSONDocument;
 use MongoDB\Model\CollectionInfo;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Stamp\SentToFailureTransportStamp;
 
@@ -136,12 +137,17 @@ class MongoDbTransportTest extends WebTestCase
 
     private function runMessengerConsume(string $transport = 'default', int $messageCount = 1): CommandTester
     {
-        return $this->runCommand('messenger:consume', [
+        $command = [
             'receivers' => [$transport],
-            '--no-reset' => true,
             '--limit' => $messageCount,
             '--time-limit' => 1 * $messageCount,
             '-vv' => true,
-        ]);
+        ];
+
+        if (BaseKernel::VERSION_ID >= 50400) {
+            $command['--no-reset'] = true;
+        }
+
+        return $this->runCommand('messenger:consume', $command);
     }
 }
