@@ -26,7 +26,6 @@
         "symfony/messenger": "^4.4 || ^5.0"
     },
     "require-dev": {
-        "doctrine/annotations": "^1.0",
         "facile-it/facile-coding-standard": "^0.4.1",
         "facile-it/symfony-functional-testcase": "^1.0",
         "infection/infection": "^0.18",
