@@ -10,7 +10,6 @@ use Facile\MongoDbMessenger\Transport\Receiver;
 use MongoDB\BSON\ObjectId;
 use MongoDB\Collection;
 use MongoDB\DeleteResult;
-use MongoDB\Model\BSONArray;
 use MongoDB\Model\BSONDocument;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -32,8 +31,8 @@ class ReceiverTest extends TestCase
         $document = new BSONDocument();
         $document->_id = new ObjectId();
         $document->body = '{document: body}';
-        $headers = ['header1: foo', 'header2: bar'];
-        $document->headers = new BSONArray($headers);
+        $headers = ['header1' => 'foo', 'header2' => 'bar'];
+        $document->headers = (object) $headers;
         $document->deliveredTo = $connection->getUniqueId();
 
         $collection->findOneAndUpdate(Argument::cetera())
