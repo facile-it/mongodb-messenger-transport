@@ -27,6 +27,12 @@ class Kernel extends BaseKernel
 
     public function registerContainerConfiguration(LoaderInterface $loader): void
     {
-        $loader->load(__DIR__ . '/*.{yml,yaml}', 'glob');
+        $loader->load(__DIR__ . '/framework.yaml');
+        $loader->load(__DIR__ . '/facile_it_mongodb.yaml');
+        $loader->load(__DIR__ . '/messenger.yaml');
+
+        if (BaseKernel::VERSION_ID >= 50400) {
+            $loader->load(__DIR__ . '/deprecations.yaml');
+        }
     }
 }

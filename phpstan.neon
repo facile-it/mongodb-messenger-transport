@@ -3,6 +3,8 @@ parameters:
     paths:
         - src/
         - tests/
+    dynamicConstantNames:
+        - Symfony\Component\HttpKernel\Kernel::VERSION_ID
     ignoreErrors:
         - /no value type specified in iterable type MongoDB\\Model\\BSONDocument\./
         - /^Access to an undefined property MongoDB\\Model\\BSONDocument::\$\w+\.$/
