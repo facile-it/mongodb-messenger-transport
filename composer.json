@@ -52,7 +52,13 @@
         }
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "phpstan/extension-installer": true,
+            "facile-it/facile-coding-standard": true,
+            "infection/extension-installer": true,
+            "symfony/flex": true
+        }
     },
     "scripts": {
         "cs-check": "php-cs-fixer fix --dry-run --diff --ansi",
