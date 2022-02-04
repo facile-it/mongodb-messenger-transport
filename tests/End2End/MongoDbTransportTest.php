@@ -138,6 +138,7 @@ class MongoDbTransportTest extends WebTestCase
     {
         return $this->runCommand('messenger:consume', [
             'receivers' => [$transport],
+            '--no-reset' => true,
             '--limit' => $messageCount,
             '--time-limit' => 1 * $messageCount,
             '-vv' => true,
