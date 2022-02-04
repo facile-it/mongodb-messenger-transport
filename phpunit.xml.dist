@@ -4,6 +4,7 @@
          cacheResult="false"
          colors="true"
          bootstrap="vendor/autoload.php"
+         executionOrder="default"
 >
     <php>
         <ini name="error_reporting" value="-1"/>
