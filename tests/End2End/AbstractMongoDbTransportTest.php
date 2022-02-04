@@ -18,6 +18,7 @@ use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Stamp\SentToFailureTransportStamp;
 use Symfony\Component\Messenger\Stamp\TransportMessageIdStamp;
+use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
 abstract class AbstractMongoDbTransportTest extends WebTestCase
 {
@@ -38,6 +39,19 @@ abstract class AbstractMongoDbTransportTest extends WebTestCase
     protected static function getKernelClass(): string
     {
         return KernelWithJsonSerializer::class;
+    }
+
+    public function testMessageSerialization(): void
+    {
+        $serializer = $this->getContainer()->get('test_serializer');
+        $this->assertInstanceOf(SerializerInterface::class, $serializer);
+        $message = FooMessage::create();
+
+        $decodedEnvelope = $serializer->decode(
+            $serializer->encode(new Envelope($message))
+        );
+
+        $this->assertEquals($message, $decodedEnvelope->getMessage());
     }
 
     public function testSendAndGet(): void

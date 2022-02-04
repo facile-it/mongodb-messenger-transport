@@ -13,7 +13,7 @@ class FooHandler implements MessageHandlerInterface
 
     public function __invoke(FooMessage $message): void
     {
-        if ($message->shouldFail()) {
+        if ($message->getShouldFail()) {
             throw new \RuntimeException(self::ERROR_MESSAGE);
         }
     }

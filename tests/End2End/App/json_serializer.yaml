@@ -1,7 +1,21 @@
 services:
   test_serializer:
-    class: \Symfony\Component\Messenger\Transport\Serialization\SerializerInterface
-    factory: ['\Symfony\Component\Messenger\Transport\Serialization\Serializer', 'create']
+    class: Symfony\Component\Messenger\Transport\Serialization\Serializer
+    arguments:
+      - '@symfony_serializer'
+
+  symfony_serializer:
+    class: Symfony\Component\Serializer\Serializer
+    arguments:
+      - - '@Symfony\Component\Serializer\Normalizer\ArrayDenormalizer'
+        - '@Symfony\Component\Serializer\Normalizer\DateTimeNormalizer'
+        - '@Symfony\Component\Serializer\Normalizer\ObjectNormalizer'
+      - - '@Symfony\Component\Serializer\Encoder\JsonEncoder'
+
+  Symfony\Component\Serializer\Normalizer\ArrayDenormalizer: ~
+  Symfony\Component\Serializer\Normalizer\DateTimeNormalizer: ~
+  Symfony\Component\Serializer\Normalizer\ObjectNormalizer: ~
+  Symfony\Component\Serializer\Encoder\JsonEncoder: ~
 
 framework:
   messenger:

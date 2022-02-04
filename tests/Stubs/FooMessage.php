@@ -33,7 +33,7 @@ class FooMessage
         return $this->data;
     }
 
-    public function shouldFail(): bool
+    public function getShouldFail(): bool
     {
         return $this->shouldFail;
     }
