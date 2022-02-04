@@ -17,17 +17,23 @@ class SuppressDeprecationNormalizer extends ObjectNormalizer
      */
     protected function isAllowedAttribute($classOrObject, $attribute, $format = null, array $context = []): bool
     {
-        $result = parent::isAllowedAttribute($classOrObject, $attribute, $format, $context);
+        if ($classOrObject instanceof RedeliveryStamp || $classOrObject === RedeliveryStamp::class) {
+            if (
+                \Symfony\Component\HttpKernel\Kernel::VERSION_ID <= 40400
+                && $attribute === 'flattenException'
+            ) {
+                return false;
+            }
 
-        if (
-            \Symfony\Component\HttpKernel\Kernel::VERSION_ID >= 50200
-            && ($classOrObject instanceof RedeliveryStamp || $classOrObject === RedeliveryStamp::class)
-            && is_string($attribute)
-            && in_array($attribute, ['exceptionMessage', 'flattenException', 'redeliveredAt'])
-        ) {
-            return false;
+            if (
+                \Symfony\Component\HttpKernel\Kernel::VERSION_ID >= 50200
+                && is_string($attribute)
+                && in_array($attribute, ['exceptionMessage', 'flattenException', 'redeliveredAt'])
+            ) {
+                return false;
+            }
         }
 
-        return $result;
+        return parent::isAllowedAttribute($classOrObject, $attribute, $format, $context);
     }
 }
