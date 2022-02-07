@@ -32,7 +32,7 @@ class Sender implements SenderInterface
         $delayStamp = $envelope->last(DelayStamp::class);
         $delay = null !== $delayStamp ? $delayStamp->getDelay() : 0;
 
-        $id = $this->connection->send($envelope, $encodedMessage['body'], $delay);
+        $id = $this->connection->send($envelope, $encodedMessage['body'], $delay, $encodedMessage['headers'] ?? []);
 
         return $envelope->with(new TransportMessageIdStamp($id));
     }

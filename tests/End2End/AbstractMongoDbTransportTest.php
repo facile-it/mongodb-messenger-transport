@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Facile\MongoDbMessenger\Tests\End2End;
 
 use Facile\MongoDbMessenger\Tests\End2End\App\FooHandler;
-use Facile\MongoDbMessenger\Tests\End2End\App\Kernel;
+use Facile\MongoDbMessenger\Tests\End2End\App\KernelWithJsonSerializer;
 use Facile\MongoDbMessenger\Tests\Stubs\FooMessage;
 use Facile\MongoDbMessenger\Transport\MongoDbUnresettableTransport;
 use Facile\SymfonyFunctionalTestCase\WebTestCase;
@@ -17,25 +17,68 @@ use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Stamp\SentToFailureTransportStamp;
+use Symfony\Component\Messenger\Stamp\TransportMessageIdStamp;
+use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
-class MongoDbTransportTest extends WebTestCase
+abstract class AbstractMongoDbTransportTest extends WebTestCase
 {
+    public static function setUpBeforeClass(): void
+    {
+        @unlink(self::createKernel()->getCacheDir());
+
+        parent::setUpBeforeClass();
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->getMongoDb()->drop();
-        $this->runCommand('cache:clear');
     }
 
     protected static function getKernelClass(): string
     {
-        return Kernel::class;
+        return KernelWithJsonSerializer::class;
+    }
+
+    public function testMessageSerialization(): void
+    {
+        $serializer = $this->getContainer()->get('test_serializer');
+        $this->assertInstanceOf(SerializerInterface::class, $serializer);
+        $message = FooMessage::create();
+
+        $decodedEnvelope = $serializer->decode(
+            $serializer->encode(new Envelope($message))
+        );
+
+        $this->assertEquals($message, $decodedEnvelope->getMessage());
+    }
+
+    public function testSendAndGet(): void
+    {
+        $transport = $this->getTransport();
+
+        $envelope = $transport->send(new Envelope(FooMessage::create()));
+
+        $stamps = $envelope->all();
+        $this->assertCount(1, $stamps);
+        $this->assertArrayHasKey(TransportMessageIdStamp::class, $stamps);
+        $stamps = $stamps[TransportMessageIdStamp::class];
+        $this->assertIsArray($stamps);
+        $this->assertCount(1, $stamps);
+        $stamp = current($stamps);
+        $this->assertInstanceOf(TransportMessageIdStamp::class, $stamp);
+        $document = $this->getMessageCollection()->findOne(['_id' => $stamp->getId()]);
+        $this->assertInstanceOf(BSONDocument::class, $document);
+
+        $fetchedEnvelope = $this->getOneEnvelope($transport);
+
+        $this->assertEquals($envelope->getMessage(), $fetchedEnvelope->getMessage());
     }
 
     public function testAck(): void
     {
-        $envelope = new Envelope(new FooMessage());
+        $envelope = new Envelope(FooMessage::create());
         $transport = $this->getTransport();
 
         $transport->send($envelope);
@@ -47,7 +90,7 @@ class MongoDbTransportTest extends WebTestCase
 
     public function testReject(): void
     {
-        $envelope = new Envelope(new FooMessage(true));
+        $envelope = new Envelope(FooMessage::createFailing());
         $transport = $this->getTransport();
 
         $transport->send($envelope);
@@ -75,7 +118,7 @@ class MongoDbTransportTest extends WebTestCase
 
     public function testDocumentEnhancers(): void
     {
-        $envelope = new Envelope(new FooMessage(true));
+        $envelope = new Envelope(FooMessage::createFailing());
 
         $this->getTransport()->send($envelope);
         $this->runMessengerConsume();

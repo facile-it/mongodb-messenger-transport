@@ -93,12 +93,13 @@ final class Connection
 
     /**
      * @param int $delay The delay in milliseconds
+     * @param array<string, string> $headers
      *
      * @throws TransportException
      *
      * @return ObjectId The inserted id
      */
-    public function send(Envelope $envelope, string $body, int $delay = 0): ObjectId
+    public function send(Envelope $envelope, string $body, int $delay = 0, array $headers = []): ObjectId
     {
         $now = new \DateTime();
         $availableAt = (clone $now)->modify(sprintf('+%d milliseconds', $delay));
@@ -110,6 +111,7 @@ final class Connection
         }
 
         $document->body = $body;
+        $document->headers = new BSONDocument($headers);
         $document->queueName = $this->queueName;
         $document->createdAt = new UTCDateTime($now);
         $document->availableAt = new UTCDateTime($availableAt);

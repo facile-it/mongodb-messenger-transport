@@ -38,6 +38,9 @@
         "symfony/browser-kit": "^4.4 || ^5.0",
         "symfony/flex": "^1.12",
         "symfony/phpunit-bridge": "^5.2.4",
+        "symfony/property-access": "^4.4 || ^5.0",
+        "symfony/property-info": "^4.4 || ^5.0",
+        "symfony/serializer": "^4.4 || ^5.0",
         "symfony/yaml": "^4.4 || ^5.0"
     },
     "minimum-stability": "stable",
@@ -54,9 +57,9 @@
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            "phpstan/extension-installer": true,
             "facile-it/facile-coding-standard": true,
             "infection/extension-installer": true,
+            "phpstan/extension-installer": true,
             "symfony/flex": true
         }
     },

@@ -120,8 +120,20 @@ final class Receiver implements ReceiverInterface, MessageCountAwareInterface, L
     {
         $documentID = (string) $document->_id;
 
+        if (
+            $document->offsetExists('headers')
+            && ($headers = $document->offsetGet('headers')) instanceof \stdClass
+        ) {
+            $headers = (array) $headers;
+        } else {
+            $headers = null;
+        }
+
         try {
-            $envelope = $this->serializer->decode(['body' => $document->body ?? null]);
+            $envelope = $this->serializer->decode([
+                'body' => $document->body ?? null,
+                'headers' => $headers,
+            ]);
         } catch (MessageDecodingFailedException $exception) {
             $this->connection->reject($documentID);
 
