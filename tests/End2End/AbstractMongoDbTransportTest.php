@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Facile\MongoDbMessenger\Tests\End2End;
 
 use Facile\MongoDbMessenger\Tests\End2End\App\FooHandler;
-use Facile\MongoDbMessenger\Tests\End2End\App\KernelWithJsonSerializer;
 use Facile\MongoDbMessenger\Tests\Stubs\FooMessage;
 use Facile\MongoDbMessenger\Transport\MongoDbUnresettableTransport;
 use Facile\SymfonyFunctionalTestCase\WebTestCase;
@@ -36,14 +35,9 @@ abstract class AbstractMongoDbTransportTest extends WebTestCase
         $this->getMongoDb()->drop();
     }
 
-    protected static function getKernelClass(): string
-    {
-        return KernelWithJsonSerializer::class;
-    }
-
     public function testMessageSerialization(): void
     {
-        $serializer = $this->getContainer()->get('test_serializer');
+        $serializer = $this->getContainer()->get('messenger.default_serializer');
         $this->assertInstanceOf(SerializerInterface::class, $serializer);
         $message = FooMessage::create();
 
