@@ -11,7 +11,7 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 
-class Kernel extends BaseKernel
+abstract class Kernel extends BaseKernel
 {
     /**
      * @return BundleInterface[]

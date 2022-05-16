@@ -1,0 +1,8 @@
+services:
+  test_serializer:
+    class: Symfony\Component\Messenger\Transport\Serialization\PhpSerializer
+
+framework:
+  messenger:
+    serializer:
+      default_serializer: 'test_serializer'
