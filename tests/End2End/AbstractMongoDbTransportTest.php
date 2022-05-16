@@ -39,7 +39,6 @@ abstract class AbstractMongoDbTransportTest extends WebTestCase
     {
         $serializer = $this->getContainer()->get('messenger.default_serializer');
         $this->assertInstanceOf(SerializerInterface::class, $serializer);
-        $this->assertSerializerIsTheExpectedKind($serializer);
         $message = FooMessage::create();
 
         $decodedEnvelope = $serializer->decode(
@@ -48,8 +47,6 @@ abstract class AbstractMongoDbTransportTest extends WebTestCase
 
         $this->assertEquals($message, $decodedEnvelope->getMessage());
     }
-
-    abstract protected function assertSerializerIsTheExpectedKind(SerializerInterface $serializer): void;
 
     public function testSendAndGet(): void
     {
