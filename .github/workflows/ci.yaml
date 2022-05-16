@@ -29,6 +29,9 @@ jobs:
           - 7.4
           - 7.3
         include:
+          - description: Tests - Symfony 5.4 LTS
+            php: 7.4
+            symfony: '5.4.*'
           - description: Tests - Symfony 4.4 LTS
             php: 7.4
             symfony-version: '4.4.*'
