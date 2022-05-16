@@ -30,17 +30,18 @@ jobs:
         include:
           - description: Tests - Symfony 4.4 LTS
             php: 7.4
-            symfony: '4.4.*'
+            symfony-version: '4.4.*'
           - description: Prefer lowest
             dependencies: 'lowest'
             php: 7.3
-            symfony: '4.4.*'
+            symfony-version: '4.4.*'
             deprecations: disabled
           - description: Infection
             php: 7.4
 
     env:
       MONGO_HOST: localhost
+      SYMFONY_REQUIRE: ${{ matrix.symfony-version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -50,14 +51,12 @@ jobs:
           php-version: ${{ matrix.php }}
           extensions: mongodb
           coverage: xdebug2
+          tools: flex
       - name: Allow unstable dependencies
         run: composer config minimum-stability dev
-        if: matrix.symfony == 'dev-master'
-      - name: Restrict Symfony version
-        run: composer require "symfony/symfony:${{ matrix.symfony }}" --no-update
-        if: matrix.symfony
+        if: matrix.symfony-version == 'dev-master'
       - name: Install dependencies
-        uses: "ramsey/composer-install@v1"
+        uses: "ramsey/composer-install@v2"
         with:
           dependency-versions: ${{ matrix.dependencies }}
       - name: Await a bit for Mongo to spin up...
