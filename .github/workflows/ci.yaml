@@ -28,9 +28,6 @@ jobs:
           - 7.4
           - 7.3
         include:
-          - description: Tests - Symfony 6.0
-            php: 8.0
-            symfony: '6.0.*'
           - description: Tests - Symfony 5.4 LTS
             php: 7.4
             symfony: '5.4.*'
