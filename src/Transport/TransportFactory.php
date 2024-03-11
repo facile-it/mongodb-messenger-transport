@@ -23,10 +23,15 @@ final class TransportFactory implements TransportFactoryInterface
     ];
 
     public const CONNECTION_NAME = 'connection_name';
+
     public const COLLECTION_NAME = 'collection_name';
+
     public const QUEUE_NAME = 'queue_name';
+
     public const REDELIVER_TIMEOUT = 'redeliver_timeout';
+
     public const DOCUMENT_ENHANCERS = 'document_enhancers';
+
     public const RESETTABLE = 'resettable';
 
     /** @var ContainerInterface */

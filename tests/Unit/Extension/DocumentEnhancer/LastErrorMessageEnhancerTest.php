@@ -32,7 +32,7 @@ class LastErrorMessageEnhancerTest extends DocumentEnhancerTestCase
         }
 
         $document = new BSONDocument();
-        $envelope = new Envelope(new class() {
+        $envelope = new Envelope(new class () {
         }, $stamps);
 
         (new LastErrorMessageEnhancer())->enhance($document, $envelope);
@@ -45,7 +45,7 @@ class LastErrorMessageEnhancerTest extends DocumentEnhancerTestCase
     public function testEnhanceWithNoRedeliveryStamp(): void
     {
         $document = new BSONDocument();
-        $envelope = new Envelope(new class() {
+        $envelope = new Envelope(new class () {
         });
 
         (new LastErrorMessageEnhancer())->enhance($document, $envelope);
