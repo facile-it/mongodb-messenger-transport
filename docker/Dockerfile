@@ -30,7 +30,7 @@ RUN adduser -u 1000 -G wheel -D user-dev -s /bin/zsh
 USER user-dev
 
 #Zsh minimal installation
-RUN git clone --depth=1 git://github.com/robbyrussell/oh-my-zsh.git  ~/.oh-my-zsh
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 ADD config/.zshrc /root/
 ADD config/.zshrc /home/user-dev/
 
