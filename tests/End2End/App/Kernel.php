@@ -31,7 +31,7 @@ abstract class Kernel extends BaseKernel
         $loader->load(__DIR__ . '/facile_it_mongodb.yaml');
         $loader->load(__DIR__ . '/messenger.yaml');
 
-        if (BaseKernel::VERSION_ID >= 50400) {
+        if (BaseKernel::VERSION_ID >= 5_04_00) {
             $loader->load(__DIR__ . '/deprecations.yaml');
         }
     }
