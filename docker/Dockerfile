@@ -7,6 +7,7 @@ RUN apk --no-cache add \
         git \
         less \
         libzip-dev \
+        linux-headers \
         nano \
         openssl-dev \
         supervisor \
