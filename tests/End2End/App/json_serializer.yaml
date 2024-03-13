@@ -10,13 +10,13 @@ services:
       - [
           '@Symfony\Component\Serializer\Normalizer\ArrayDenormalizer',
           '@Symfony\Component\Serializer\Normalizer\DateTimeNormalizer',
-          '@Facile\MongoDbMessenger\Tests\End2End\App\SuppressDeprecationNormalizer'
+          '@Symfony\Component\Serializer\Normalizer\ObjectNormalizer'
         ]
       - ['@Symfony\Component\Serializer\Encoder\JsonEncoder']
 
   Symfony\Component\Serializer\Normalizer\ArrayDenormalizer: ~
   Symfony\Component\Serializer\Normalizer\DateTimeNormalizer: ~
-  Facile\MongoDbMessenger\Tests\End2End\App\SuppressDeprecationNormalizer: ~
+  Symfony\Component\Serializer\Normalizer\ObjectNormalizer: ~
   Symfony\Component\Serializer\Encoder\JsonEncoder: ~
 
 framework:
