@@ -24,14 +24,14 @@ jobs:
         dependencies: ['highest']
         description: ['Tests']
         php:
-          - 8.3
-          - 8.2
-          - 8.1
           - 7.4
+          - 8.1
+          - 8.2
+          - 8.3
         include:
           - description: Tests - Symfony 5.4 LTS
             php: 7.4
-            symfony: '5.4.*'
+            symfony-version: '5.4.*'
           - description: Prefer lowest
             dependencies: 'lowest'
             php: 7.4
