@@ -32,6 +32,7 @@ jobs:
           - description: Tests - Symfony 5.4 LTS
             php: 7.4
             symfony-version: '5.4.*'
+            deprecations: disabled
           - description: Prefer lowest
             dependencies: 'lowest'
             php: 7.4
@@ -39,10 +40,13 @@ jobs:
             deprecations: disabled
           - description: Infection
             php: 7.4
+            deprecations: disabled
+
 
     env:
       MONGO_HOST: localhost
       SYMFONY_REQUIRE: ${{ matrix.symfony-version }}
+      SYMFONY_DEPRECATIONS_HELPER: ${{ matrix.deprecations }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -65,8 +69,6 @@ jobs:
       - name: Run tests
         if: matrix.description != 'Infection'
         run: vendor/bin/phpunit --coverage-clover=build/coverage-report.xml
-        env:
-          SYMFONY_DEPRECATIONS_HELPER: ${{ matrix.deprecations }}
       - name: Run mutation testing
         if: matrix.description == 'Infection'
         run: vendor/bin/infection --show-mutations --min-msi=84
