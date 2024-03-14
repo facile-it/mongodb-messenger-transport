@@ -16,7 +16,7 @@ parameters:
 			path: src/Transport/Connection.php
 
 		-
-			message: "#^Method Facile\\\\MongoDbMessenger\\\\Transport\\\\Connection\\:\\:findBy\\(\\) should return iterable\\<MongoDB\\\\Model\\\\BSONDocument\\>&MongoDB\\\\Driver\\\\Cursor but returns MongoDB\\\\Driver\\\\Cursor\\.$#"
+			message: "#^Method Facile\\\\MongoDbMessenger\\\\Transport\\\\Connection\\:\\:findBy\\(\\) should return iterable\\<MongoDB\\\\Model\\\\BSONDocument\\>&MongoDB\\\\Driver\\\\Cursor but returns#"
 			count: 1
 			path: src/Transport/Connection.php
 
