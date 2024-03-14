@@ -21,7 +21,7 @@ abstract class ObjectNormalizerDecorator implements NormalizerInterface, Denorma
         $this->objectNormalizer = new ObjectNormalizer();
     }
 
-    public function denormalize($data, string $type, ?string $format = null, array $context = [])
+    public function denormalize($data, $type, $format = null, array $context = [])
     {
         // inside RedeliveryStamp
         $context[ObjectNormalizer::IGNORED_ATTRIBUTES][] = 'exceptionMessage';
@@ -33,7 +33,7 @@ abstract class ObjectNormalizerDecorator implements NormalizerInterface, Denorma
         return $this->objectNormalizer->denormalize(...func_get_args());
     }
 
-    public function supportsDenormalization($data, string $type, ?string $format = null): bool
+    public function supportsDenormalization($data, $type, $format = null): bool
     {
         return class_exists($type)
             && in_array($type, [
@@ -42,7 +42,7 @@ abstract class ObjectNormalizerDecorator implements NormalizerInterface, Denorma
             ]);
     }
 
-    public function normalize($object, ?string $format = null, array $context = [])
+    public function normalize($object, $format = null, array $context = [])
     {
         // inside RedeliveryStamp
         $context[ObjectNormalizer::IGNORED_ATTRIBUTES][] = 'exceptionMessage';
@@ -51,7 +51,7 @@ abstract class ObjectNormalizerDecorator implements NormalizerInterface, Denorma
         return $this->objectNormalizer->normalize(...func_get_args());
     }
 
-    public function supportsNormalization($data, ?string $format = null): bool
+    public function supportsNormalization($data, $format = null): bool
     {
         return $data instanceof FlattenException
             || $data instanceof RedeliveryStamp
