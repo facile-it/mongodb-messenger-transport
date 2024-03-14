@@ -10,8 +10,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Messenger\Exception\InvalidArgumentException;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 use Symfony\Component\Messenger\Transport\TransportFactoryInterface;
-use Symfony\Component\Messenger\Transport\TransportInterface;
 
+/**
+ * @template-implements TransportFactoryInterface<MongoDbUnresettableTransport>
+ */
 final class TransportFactory implements TransportFactoryInterface
 {
     private const DEFAULT_OPTIONS = [
@@ -53,7 +55,7 @@ final class TransportFactory implements TransportFactoryInterface
     /**
      * @param array<string, mixed> $options
      */
-    public function createTransport(string $dsn, array $options, SerializerInterface $serializer): TransportInterface
+    public function createTransport(string $dsn, array $options, SerializerInterface $serializer): MongoDbUnresettableTransport
     {
         $configuration = $this->buildConfiguration($dsn, $options);
 
@@ -90,8 +92,11 @@ final class TransportFactory implements TransportFactoryInterface
             if ($this->isServiceDefinition($name)) {
                 $enhancer = $this->container->get(ltrim($name, '@'));
             } else {
-                /** @var DocumentEnhancer $enhancer */
                 $enhancer = new $name();
+            }
+
+            if (! $enhancer instanceof DocumentEnhancer) {
+                throw new \InvalidArgumentException('Expecting DocumentEnhancer, got ' . get_debug_type($enhancer));
             }
 
             $connection->addDocumentEnhancer($enhancer);

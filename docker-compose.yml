@@ -2,16 +2,20 @@ version: "3.1"
 
 services:
   php:
+    image: local.example.com/php:${PHP_VERSION:-latest}
     build:
       context: docker/
     volumes:
         - ./:/home/user-dev/project
     tty: true
+    environment:
+      XDEBUG_START_WITH_REQUEST: 'yes'
+      XDEBUG_HOST: host.docker.internal
     
     depends_on:
       - mongo
   mongo:
-    image: mongo:3.4.2
+    image: mongo:4.4
     tmpfs:
       - /data/db:uid=1001
     environment:

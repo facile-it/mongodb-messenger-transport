@@ -1,19 +1,64 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Call to an undefined method Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\RedeliveryStamp\\:\\:getExceptionMessage\\(\\)\\.$#"
+			count: 1
+			path: src/Extension/DocumentEnhancer/FirstErrorMessageEnhancer.php
+
+		-
+			message: "#^Call to an undefined method Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\RedeliveryStamp\\:\\:getExceptionMessage\\(\\)\\.$#"
+			count: 1
+			path: src/Extension/DocumentEnhancer/LastErrorMessageEnhancer.php
+
+		-
 			message: "#^Method Facile\\\\MongoDbMessenger\\\\Transport\\\\Connection\\:\\:find\\(\\) should return MongoDB\\\\Model\\\\BSONDocument\\|null but returns array\\|object\\|null\\.$#"
 			count: 1
 			path: src/Transport/Connection.php
 
 		-
-			message: "#^Method Facile\\\\MongoDbMessenger\\\\Transport\\\\Connection\\:\\:findBy\\(\\) should return iterable\\<MongoDB\\\\Model\\\\BSONDocument\\>&MongoDB\\\\Driver\\\\Cursor but returns MongoDB\\\\Driver\\\\Cursor\\.$#"
+			message: "#^Method Facile\\\\MongoDbMessenger\\\\Transport\\\\Connection\\:\\:findBy\\(\\) should return iterable\\<MongoDB\\\\Model\\\\BSONDocument\\>&MongoDB\\\\Driver\\\\Cursor but returns#"
 			count: 1
 			path: src/Transport/Connection.php
 
 		-
-			message: "#^Parameter \\#1 \\$enhancer of method Facile\\\\MongoDbMessenger\\\\Transport\\\\Connection\\:\\:addDocumentEnhancer\\(\\) expects Facile\\\\MongoDbMessenger\\\\Extension\\\\DocumentEnhancer, object\\|null given\\.$#"
+			message: "#^Method Facile\\\\MongoDbMessenger\\\\Transport\\\\Connection\\:\\:send\\(\\) should return MongoDB\\\\BSON\\\\ObjectId but returns mixed\\.$#"
+			count: 1
+			path: src/Transport/Connection.php
+
+		-
+			message: "#^Method Facile\\\\MongoDbMessenger\\\\Transport\\\\TransportFactory\\:\\:buildConfiguration\\(\\) should return array\\{connection_name\\: string, collection_name\\: string, queue_name\\: string, redeliver_timeout\\: int, document_enhancers\\: array\\<string\\>, resettable\\: 0\\|1\\|bool\\} but returns non\\-empty\\-array\\<int\\|string, mixed\\>\\.$#"
 			count: 1
 			path: src/Transport/TransportFactory.php
+
+		-
+			message: "#^Parameter \\#1 \\$enhancers of method Facile\\\\MongoDbMessenger\\\\Transport\\\\TransportFactory\\:\\:validateDocumentEnhancers\\(\\) expects array\\<string\\>, mixed given\\.$#"
+			count: 1
+			path: src/Transport/TransportFactory.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between object and null will always evaluate to false\\.$#"
+			count: 1
+			path: src/Transport/TransportFactory.php
+
+		-
+			message: "#^Call to an undefined method Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\RedeliveryStamp\\:\\:getExceptionMessage\\(\\)\\.$#"
+			count: 2
+			path: src/Util/RedeliveryStampExtractor.php
+
+		-
+			message: "#^Method Facile\\\\MongoDbMessenger\\\\Tests\\\\End2End\\\\App\\\\ObjectNormalizerDecorator\\:\\:normalize\\(\\) return type with generic class ArrayObject does not specify its types\\: TKey, TValue$#"
+			count: 1
+			path: tests/End2End/App/ObjectNormalizerDecorator.php
+
+		-
+			message: "#^Method Facile\\\\MongoDbMessenger\\\\Tests\\\\End2End\\\\App\\\\ObjectNormalizerDecorator\\:\\:normalize\\(\\) should return \\(ArrayObject&iterable\\)\\|bool\\|float\\|int\\|string\\|null but returns array\\|ArrayObject\\|bool\\|float\\|int\\|string\\|null\\.$#"
+			count: 1
+			path: tests/End2End/App/ObjectNormalizerDecorator.php
+
+		-
+			message: "#^Parameter \\#1 \\$id of method Facile\\\\MongoDbMessenger\\\\Transport\\\\MongoDbUnresettableTransport\\:\\:find\\(\\) expects MongoDB\\\\BSON\\\\ObjectId\\|string, mixed given\\.$#"
+			count: 1
+			path: tests/Functional/Transport/MongoDbTransportTest.php
 
 		-
 			message: "#^Constructor of class Facile\\\\MongoDbMessenger\\\\Tests\\\\Stubs\\\\NotInstantiableDocumentEnhancer has an unused parameter \\$bar\\.$#"
