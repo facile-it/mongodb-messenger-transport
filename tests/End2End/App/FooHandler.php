@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Facile\MongoDbMessenger\Tests\End2End\App;
 
 use Facile\MongoDbMessenger\Tests\Stubs\FooMessage;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
+#[AsMessageHandler]
 class FooHandler implements MessageHandlerInterface
 {
     public const ERROR_MESSAGE = 'Failing on purpose';

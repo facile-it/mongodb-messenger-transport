@@ -36,4 +36,16 @@ class SuppressDeprecationNormalizer extends ObjectNormalizer
 
         return parent::isAllowedAttribute($classOrObject, $attribute, $format, $context);
     }
+
+    /**
+     * @return array<string, bool>
+     */
+    public function getSupportedTypes(?string $format): array
+    {
+        if (method_exists(parent::class, 'getSupportedTypes')) {
+            return parent::getSupportedTypes($format);
+        }
+
+        return ['object' => true];
+    }
 }
