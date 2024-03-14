@@ -29,7 +29,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: 7.4
-          extensions: mongodb
+          extensions: mongodb-1.9.2
       - name: Install dependencies
         uses: "ramsey/composer-install@v1"
       - run: ${{ matrix.script }}
