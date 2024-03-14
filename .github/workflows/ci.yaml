@@ -25,13 +25,14 @@ jobs:
       matrix:
         dependencies: ['highest']
         description: ['Tests']
-        php: ['7.4']
-        mongodb: ['1.9.2']
+        php: ['8.3']
+        mongodb: ['1.17.2']
         include:
-          - description: Tests - Symfony 6.4
-            php: 8.3
-            symfony-version: '6.4.*' # TODO - Symfony 7
-            mongodb: '1.17.2' # latest
+          # TODO - Symfony 7
+#          - description: Tests - Symfony 6.4
+#            php: 8.3
+#            symfony-version: '7.*' 
+#            mongodb: '1.17.2' # latest
           - description: Tests - Symfony 6.4
             php: 8.2
             symfony-version: '6.4.*'
@@ -45,6 +46,7 @@ jobs:
             symfony-version: '5.4.*'
           - description: Tests - Symfony 4.4
             php: 7.4
+            mongodb: ['1.9.2']
             symfony-version: '4.4.*'
           - description: Prefer lowest
             dependencies: 'lowest'
@@ -53,6 +55,7 @@ jobs:
             mongodb: '1.2.0'
             deprecations: disabled
           - description: Infection
+            mongodb: ['1.9.2']
             php: 7.4
             symfony-version: '4.4.*'
 
