@@ -44,6 +44,10 @@ abstract class ObjectNormalizerDecorator implements NormalizerInterface, Denorma
 
     public function normalize($object, ?string $format = null, array $context = [])
     {
+        // inside RedeliveryStamp
+        $context[ObjectNormalizer::IGNORED_ATTRIBUTES][] = 'exceptionMessage';
+        $context[ObjectNormalizer::IGNORED_ATTRIBUTES][] = 'flattenException';
+
         return $this->objectNormalizer->normalize(...func_get_args());
     }
 
