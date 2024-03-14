@@ -4,19 +4,12 @@ declare(strict_types=1);
 
 namespace Facile\MongoDbMessenger\Tests\End2End\App;
 
-use Facile\MongoDbMessenger\Tests\Stubs\FooMessage;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
-#[AsMessageHandler]
-class FooHandler implements MessageHandlerInterface
-{
-    public const ERROR_MESSAGE = 'Failing on purpose';
-
-    public function __invoke(FooMessage $message): void
-    {
-        if ($message->getShouldFail()) {
-            throw new \RuntimeException(self::ERROR_MESSAGE);
-        }
-    }
+if (class_exists(AsMessageHandler::class)) {
+    #[AsMessageHandler]
+    class FooHandler extends AbstractFooHandler {}
+} else {
+    class FooHandler extends AbstractFooHandler implements MessageHandlerInterface {}
 }
