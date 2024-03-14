@@ -68,7 +68,7 @@ class MongoDbUnresettableTransport implements TransportInterface, SetupableTrans
     }
 
     /**
-     * A method to obtain messages filtered in the same way as \MongoDB\Collection::find
+     * A method to obtain messages filtered in the same way as \MongoDB\Collection::find.
      *
      * @param array<string, mixed>|object $filters
      * @param array<string, mixed> $options
@@ -81,7 +81,7 @@ class MongoDbUnresettableTransport implements TransportInterface, SetupableTrans
     }
 
     /**
-     * A method to obtain a message count filtered in the same way as \MongoDB\Collection::count
+     * A method to obtain a message count filtered in the same way as \MongoDB\Collection::count.
      *
      * @param array<string, mixed>|object $filters
      * @param array<string, mixed> $options

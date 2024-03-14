@@ -19,14 +19,14 @@ class SuppressDeprecationNormalizer extends ObjectNormalizer
     {
         if ($classOrObject instanceof RedeliveryStamp || $classOrObject === RedeliveryStamp::class) {
             if (
-                \Symfony\Component\HttpKernel\Kernel::VERSION_ID <= 40400
+                \Symfony\Component\HttpKernel\Kernel::VERSION_ID <= 4_04_00
                 && $attribute === 'flattenException'
             ) {
                 return false;
             }
 
             if (
-                \Symfony\Component\HttpKernel\Kernel::VERSION_ID >= 50200
+                \Symfony\Component\HttpKernel\Kernel::VERSION_ID >= 5_02_00
                 && is_string($attribute)
                 && in_array($attribute, ['exceptionMessage', 'flattenException', 'redeliveredAt'])
             ) {

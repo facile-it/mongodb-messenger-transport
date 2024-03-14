@@ -6,21 +6,7 @@
  */
 
 $additionalRules = [
-    'class_attributes_separation' => [
-        'elements' => ['method', 'property'],
-    ],
     'declare_strict_types' => true,
-    'indentation_type' => true,
-    'no_superfluous_phpdoc_tags' => [
-        'allow_mixed' => true,
-    ],
-    'phpdoc_line_span' => [
-        'const' => 'single',
-        'method' => 'multi',
-        'property' => 'single',
-    ],
-    'phpdoc_to_comment' => false,
-    'phpdoc_trim_consecutive_blank_line_separation' => true,
 ];
 
 $rulesProvider = new Facile\CodingStandards\Rules\CompositeRulesProvider([
@@ -28,11 +14,11 @@ $rulesProvider = new Facile\CodingStandards\Rules\CompositeRulesProvider([
     new Facile\CodingStandards\Rules\ArrayRulesProvider($additionalRules),
 ]);
 
-$config = PhpCsFixer\Config::create();
+$config = new PhpCsFixer\Config();
 $config->setRules($rulesProvider->getRules());
 $config->setRiskyAllowed(true);
 
-$finder = PhpCsFixer\Finder::create();
+$finder = new PhpCsFixer\Finder();
 
 /*
  * You can set manually these paths:
