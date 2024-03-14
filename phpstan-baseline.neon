@@ -6,12 +6,27 @@ parameters:
 			path: src/Transport/Connection.php
 
 		-
-			message: "#^Method Facile\\\\MongoDbMessenger\\\\Transport\\\\Connection\\:\\:findBy\\(\\) should return iterable\\<MongoDB\\\\Model\\\\BSONDocument\\>&MongoDB\\\\Driver\\\\Cursor but returns MongoDB\\\\Driver\\\\Cursor\\.$#"
+			message: "#^Method Facile\\\\MongoDbMessenger\\\\Transport\\\\Connection\\:\\:findBy\\(\\) should return iterable\\<MongoDB\\\\Model\\\\BSONDocument\\>&MongoDB\\\\Driver\\\\Cursor but returns#"
 			count: 1
 			path: src/Transport/Connection.php
 
 		-
+			message: "#^Method Facile\\\\MongoDbMessenger\\\\Transport\\\\Connection\\:\\:send\\(\\) should return MongoDB\\\\BSON\\\\ObjectId but returns mixed\\.$#"
+			count: 1
+			path: src/Transport/Connection.php
+
+		-
+			message: "#^Method Facile\\\\MongoDbMessenger\\\\Transport\\\\TransportFactory\\:\\:buildConfiguration\\(\\) should return array\\{connection_name\\: string, collection_name\\: string, queue_name\\: string, redeliver_timeout\\: int, document_enhancers\\: array\\<string\\>, resettable\\: 0\\|1\\|bool\\} but returns non\\-empty\\-array\\<int\\|string, mixed\\>\\.$#"
+			count: 1
+			path: src/Transport/TransportFactory.php
+
+		-
 			message: "#^Parameter \\#1 \\$enhancer of method Facile\\\\MongoDbMessenger\\\\Transport\\\\Connection\\:\\:addDocumentEnhancer\\(\\) expects Facile\\\\MongoDbMessenger\\\\Extension\\\\DocumentEnhancer, object\\|null given\\.$#"
+			count: 1
+			path: src/Transport/TransportFactory.php
+
+		-
+			message: "#^Parameter \\#1 \\$enhancers of method Facile\\\\MongoDbMessenger\\\\Transport\\\\TransportFactory\\:\\:validateDocumentEnhancers\\(\\) expects array\\<string\\>, mixed given\\.$#"
 			count: 1
 			path: src/Transport/TransportFactory.php
 
