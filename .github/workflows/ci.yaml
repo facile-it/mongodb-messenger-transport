@@ -48,7 +48,7 @@ jobs:
             symfony-version: '4.4.*'
           - description: Prefer lowest
             dependencies: 'lowest'
-            php: 7.3
+            php: 7.4
             symfony-version: '4.4.*'
             mongodb: '1.2.0'
             deprecations: disabled
