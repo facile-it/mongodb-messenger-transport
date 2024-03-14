@@ -21,6 +21,14 @@ abstract class ObjectNormalizerDecorator implements NormalizerInterface, Denorma
         $this->objectNormalizer = new ObjectNormalizer();
     }
 
+    /**
+     * @param mixed $data Data to restore
+     * @param string $type
+     * @param string|null $format
+     * @param array<string, mixed>&array{ignored_attributes?: string[]} $context
+     *
+     * @return mixed
+     */
     public function denormalize($data, $type, $format = null, array $context = [])
     {
         // inside RedeliveryStamp
@@ -33,6 +41,11 @@ abstract class ObjectNormalizerDecorator implements NormalizerInterface, Denorma
         return $this->objectNormalizer->denormalize(...func_get_args());
     }
 
+    /**
+     * @param mixed $data
+     * @param string $type
+     * @param string|null $format
+     */
     public function supportsDenormalization($data, $type, $format = null): bool
     {
         return class_exists($type)
@@ -42,6 +55,13 @@ abstract class ObjectNormalizerDecorator implements NormalizerInterface, Denorma
             ]);
     }
 
+    /**
+     * @param mixed $object
+     * @param string|null $format
+     * @param array<string, mixed>&array{ignored_attributes?: string[]} $context
+     *
+     * @return mixed[]|string|int|float|bool|\ArrayObject|null
+     */
     public function normalize($object, $format = null, array $context = [])
     {
         // inside RedeliveryStamp
@@ -51,6 +71,10 @@ abstract class ObjectNormalizerDecorator implements NormalizerInterface, Denorma
         return $this->objectNormalizer->normalize(...func_get_args());
     }
 
+    /**
+     * @param mixed $data
+     * @param string|null $format
+     */
     public function supportsNormalization($data, $format = null): bool
     {
         return $data instanceof FlattenException
@@ -58,8 +82,8 @@ abstract class ObjectNormalizerDecorator implements NormalizerInterface, Denorma
         ;
     }
 
-    public function setSerializer(SerializerInterface $serializer)
+    public function setSerializer(SerializerInterface $serializer): void
     {
-        $this->objectNormalizer->setSerializer(...func_get_args());
+        $this->objectNormalizer->setSerializer($serializer);
     }
 }

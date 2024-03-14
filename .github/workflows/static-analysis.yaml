@@ -22,14 +22,16 @@ jobs:
 
     name: ${{ matrix.description }}
     runs-on: ubuntu-latest
+    env:
+      SYMFONY_REQUIRE: '6.4.*'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
-          extensions: mongodb-1.9.2
+          php-version: 8.2
+          extensions: mongodb-1.17.2
       - name: Install dependencies
         uses: "ramsey/composer-install@v1"
       - run: ${{ matrix.script }}
