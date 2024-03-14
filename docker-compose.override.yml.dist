@@ -1,6 +1,10 @@
 version: "3.1"
 
 services:
+  php:
+    environment:
+      XDEBUG_SESSION: PHPSTORM
+#      XDEBUG_MODE: debug  
   mongo:
     ports:
     - 27017:27017

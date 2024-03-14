@@ -8,6 +8,9 @@ services:
     volumes:
         - ./:/home/user-dev/project
     tty: true
+    environment:
+      XDEBUG_START_WITH_REQUEST: 'yes'
+      XDEBUG_HOST: host.docker.internal
     
     depends_on:
       - mongo
