@@ -59,6 +59,7 @@
         "allow-plugins": {
             "facile-it/facile-coding-standard": true,
             "infection/extension-installer": true,
+            "ocramius/package-versions": true,
             "phpstan/extension-installer": true,
             "symfony/flex": true
         }
