@@ -37,7 +37,7 @@ class MongoDbUnresettableTransport implements TransportInterface, SetupableTrans
      *
      * @return array{0?: Envelope}
      */
-    public function get(): iterable
+    public function get(): array
     {
         return $this->getReceiver()->get();
     }

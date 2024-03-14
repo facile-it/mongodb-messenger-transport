@@ -32,7 +32,7 @@ final class Receiver implements ReceiverInterface, MessageCountAwareInterface, L
     /**
      * @return array{0?: Envelope}
      */
-    public function get(): iterable
+    public function get(): array
     {
         $document = $this->connection->get();
 
@@ -40,7 +40,7 @@ final class Receiver implements ReceiverInterface, MessageCountAwareInterface, L
             return [];
         }
 
-        yield from [$this->createEnvelope($document)];
+        return [$this->createEnvelope($document)];
     }
 
     public function ack(Envelope $envelope): void
