@@ -103,7 +103,7 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
         $transport = $this->getTransport();
 
         $transport->send(new Envelope(FooMessage::create()));
-        $transport->send(new Envelope(FooMessage::create(), [new DelayStamp(1000000)]));
+        $transport->send(new Envelope(FooMessage::create(), [new DelayStamp(1_000_000)]));
         $transport->send(new Envelope(FooMessage::create()));
         $lockedEnvelope = $this->getOneEnvelope($transport);
 
@@ -137,7 +137,7 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
         $firstAvailableMessage = FooMessage::create();
         $secondMessage = FooMessage::create();
         $transport = $this->getTransport();
-        $transport->send((new Envelope($secondMessage))->with(new DelayStamp(10000)));
+        $transport->send((new Envelope($secondMessage))->with(new DelayStamp(10_000)));
         $transport->send(new Envelope($firstAvailableMessage));
 
         $result = iterator_to_array($transport->findBy(['body' => ['$regex' => $secondMessage->getData()]], []));
@@ -157,7 +157,7 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
     {
         $firstMessage = FooMessage::create();
         $transport = $this->getTransport();
-        $transport->send((new Envelope(FooMessage::create()))->with(new DelayStamp(10000)));
+        $transport->send((new Envelope(FooMessage::create()))->with(new DelayStamp(10_000)));
         $transport->send(new Envelope($firstMessage));
 
         $result = $transport->countBy(['body' => ['$regex' => $firstMessage->getData()]]);

@@ -181,7 +181,7 @@ abstract class AbstractMongoDbTransportTest extends WebTestCase
             '-vv' => true,
         ];
 
-        if (BaseKernel::VERSION_ID >= 50400) {
+        if (BaseKernel::VERSION_ID >= 5_04_00) {
             $command['--no-reset'] = true;
         }
 

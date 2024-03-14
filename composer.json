@@ -26,9 +26,9 @@
         "symfony/messenger": "^4.4 || ^5.0 || ^6.0"
     },
     "require-dev": {
-        "facile-it/facile-coding-standard": "^0.4.1",
+        "facile-it/facile-coding-standard": "^1.2",
         "facile-it/symfony-functional-testcase": "^1.0",
-        "infection/infection": "^0.18",
+        "infection/infection": ">=0.18",
         "jangregor/phpstan-prophecy": "^0.8.0",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpstan/extension-installer": "^1.0",

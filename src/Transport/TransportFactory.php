@@ -17,16 +17,21 @@ final class TransportFactory implements TransportFactoryInterface
     private const DEFAULT_OPTIONS = [
         self::COLLECTION_NAME => 'messenger_messages',
         self::QUEUE_NAME => 'default',
-        self::REDELIVER_TIMEOUT => 3600,
+        self::REDELIVER_TIMEOUT => 3_600,
         self::DOCUMENT_ENHANCERS => [],
         self::RESETTABLE => true,
     ];
 
     public const CONNECTION_NAME = 'connection_name';
+
     public const COLLECTION_NAME = 'collection_name';
+
     public const QUEUE_NAME = 'queue_name';
+
     public const REDELIVER_TIMEOUT = 'redeliver_timeout';
+
     public const DOCUMENT_ENHANCERS = 'document_enhancers';
+
     public const RESETTABLE = 'resettable';
 
     /** @var ContainerInterface */
@@ -73,7 +78,7 @@ final class TransportFactory implements TransportFactoryInterface
             return new MongoDbTransport($connection, $serializer);
         }
 
-        return  new MongoDbUnresettableTransport($connection, $serializer);
+        return new MongoDbUnresettableTransport($connection, $serializer);
     }
 
     /**

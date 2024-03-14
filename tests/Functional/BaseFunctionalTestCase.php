@@ -42,7 +42,7 @@ class BaseFunctionalTestCase extends TestCase
         $collection = $this->getMongoDb()->selectCollection('messenger_messages');
 
         return new MongoDbTransport(
-            new Connection($collection, $queueName, 3600),
+            new Connection($collection, $queueName, 3_600),
             new PhpSerializer()
         );
     }

@@ -86,7 +86,7 @@ class ConnectionTest extends TestCase
         $collection->findOneAndUpdate(Argument::cetera())
             ->shouldBeCalledOnce()
             ->willReturn(null);
-        $connection = new Connection($collection->reveal(), 'default', 3600);
+        $connection = new Connection($collection->reveal(), 'default', 3_600);
 
         $this->assertNull($connection->get());
     }
@@ -97,7 +97,7 @@ class ConnectionTest extends TestCase
         $collection->findOneAndUpdate(Argument::cetera())
             ->shouldBeCalledOnce()
             ->willReturn($this->mockUpdatedDocumentDeliveredTo('someoneElse'));
-        $connection = new Connection($collection->reveal(), 'default', 3600);
+        $connection = new Connection($collection->reveal(), 'default', 3_600);
 
         $this->assertNull($connection->get());
     }
@@ -129,7 +129,7 @@ class ConnectionTest extends TestCase
             ->shouldBeCalledOnce()
             ->willReturn($insertOneResult->reveal());
 
-        $connection = new Connection($collection->reveal(), 'foobar', 3600);
+        $connection = new Connection($collection->reveal(), 'foobar', 3_600);
 
         $this->assertSame($objectId, $connection->send(new Envelope(FooMessage::create()), 'serializedEnvelope'));
     }
