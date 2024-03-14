@@ -27,7 +27,6 @@ jobs:
           - 8.1
           - 8.0
           - 7.4
-          - 7.3
         include:
           - description: Tests - Symfony 5.4 LTS
             php: 7.4
@@ -37,7 +36,7 @@ jobs:
             symfony-version: '4.4.*'
           - description: Prefer lowest
             dependencies: 'lowest'
-            php: 7.3
+            php: 7.4
             symfony-version: '4.4.*'
             deprecations: disabled
           - description: Infection
