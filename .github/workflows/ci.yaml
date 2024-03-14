@@ -28,9 +28,9 @@ jobs:
         php: ['7.4']
         mongodb: ['1.9.2']
         include:
-          - description: Tests - Symfony 7
+          - description: Tests - Symfony 6.4
             php: 8.3
-            symfony-version: '7.*'
+            symfony-version: '6.4.*' # TODO - Symfony 7
             mongodb: '1.17.2' # latest
           - description: Tests - Symfony 6.4
             php: 8.2
