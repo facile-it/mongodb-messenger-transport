@@ -28,22 +28,22 @@ jobs:
         php: ['7.4']
         mongodb: ['1.9.2']
         include:
-          - description: Tests - PHP 8.3 + Symfony 7
+          - description: Tests - Symfony 7
             php: 8.3
             symfony-version: '7.*'
             mongodb: '1.17.2' # latest
-          - description: Tests - PHP 8.2 + Symfony 6.4
+          - description: Tests - Symfony 6.4
             php: 8.2
             symfony-version: '6.4.*'
             mongodb: '1.15.3' # 1.15 introduced PHP 8.2 support 
-          - description: Tests - PHP 8.1 + Symfony 5.4
+          - description: Tests - Symfony 5.4
             php: 8.1
             symfony-version: '5.4.*'
             mongodb: '1.12.1' # 1.12 introduced PHP 8.1 support
-          - description: Tests - PHP 8.0 + Symfony 5.4
+          - description: Tests - Symfony 5.4
             php: 8.0
             symfony-version: '5.4.*'
-          - description: Tests - PHP 7.4 + Symfony 4.4
+          - description: Tests - Symfony 4.4
             php: 7.4
             symfony-version: '4.4.*'
           - description: Prefer lowest
