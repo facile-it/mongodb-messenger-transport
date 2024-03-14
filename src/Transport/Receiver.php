@@ -40,7 +40,7 @@ final class Receiver implements ReceiverInterface, MessageCountAwareInterface, L
             return [];
         }
 
-        return [$this->createEnvelope($document)];
+        yield from [$this->createEnvelope($document)];
     }
 
     public function ack(Envelope $envelope): void
