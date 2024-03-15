@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## 1.4.0 (TBA)
 * Allow Symfony 7 ([#18](https://github.com/facile-it/mongodb-messenger-transport/issues/18))
+* Require at least `facile-it/mongodb-bundle` 1.6
+* Drop support for PHP 7.3
+* Drop support for `ext-mongodb` below 1.6
+* Drop support for `mongodb/mongodb` below 1.5
+* [minor BC break] `\Facile\MongoDbMessenger\Transport\MongoDbUnresettableTransport::get` return type restricted from `iterable` to `array`
+* [minor BC break] `\Facile\MongoDbMessenger\Transport\Receiver::get` return type restricted from `iterable` to `array`
+* [minor BC break] `\Facile\MongoDbMessenger\Transport\TransportFactory::createTransport` return type restricted from `TransportInterface` to `MongoDbUnresettableTransport`
 
 ## 1.3.2 (2022-05-16)
 * Allow Symfony 6 ([#14](https://github.com/facile-it/mongodb-messenger-transport/issues/14))
