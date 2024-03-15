@@ -29,11 +29,9 @@ jobs:
         php: ['8.3']
         mongodb: ['1.17.2']
         include:
-          # TODO - Symfony 7
-#          - description: Tests - Symfony 6.4
-#            php: 8.3
-#            symfony-version: '7.*' 
-#            mongodb: '1.17.2' # latest
+          - description: Tests - Symfony 7
+            php: 8.3
+            symfony-version: '7.*' 
           - description: Tests - Symfony 6.4
             php: 8.2
             symfony-version: '6.4.*'
@@ -47,7 +45,7 @@ jobs:
             symfony-version: '5.4.*'
           - description: Tests - Symfony 4.4
             php: 7.4
-            mongodb: ['1.9.2']
+            mongodb: '1.9.2' # 1.9.0 introduced PHP 8.0 support
             symfony-version: '4.4.*'
           - description: Prefer lowest
             composer: 'composer:v1'
@@ -57,7 +55,7 @@ jobs:
             mongodb: '1.2.0'
             deprecations: disabled
           - description: Infection
-            mongodb: ['1.9.2']
+            mongodb: '1.9.2'
             php: 7.4
             symfony-version: '4.4.*'
 
