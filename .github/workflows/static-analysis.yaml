@@ -33,5 +33,5 @@ jobs:
           php-version: 8.2
           extensions: mongodb-1.17.2
       - name: Install dependencies
-        uses: "ramsey/composer-install@v1"
+        uses: "ramsey/composer-install@v3"
       - run: ${{ matrix.script }}
