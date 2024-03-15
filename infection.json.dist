@@ -8,6 +8,7 @@
     "logs": {
         "text": "infection.log"
     },
+    "minMsi": 84,
     "mutators": {
         "@default": true
     }

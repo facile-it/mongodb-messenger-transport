@@ -5,6 +5,8 @@ on:
   push:
     branches:
       - 1.x
+  schedule:
+    - cron: "42 3 * * 1"
 
 jobs:
   tests:
@@ -21,28 +23,43 @@ jobs:
 
     strategy:
       matrix:
+        composer: ['composer:v2']
         dependencies: ['highest']
         description: ['Tests']
-        php:
-          - 8.3
-          - 8.2
-          - 8.1
-          - 8.0
-          - 7.4
+        php: ['8.3']
+        mongodb: ['1.17.2']
         include:
-          - description: Tests - Symfony 5.4 LTS
+          # TODO - Symfony 7
+#          - description: Tests - Symfony 6.4
+#            php: 8.3
+#            symfony-version: '7.*' 
+#            mongodb: '1.17.2' # latest
+          - description: Tests - Symfony 6.4
+            php: 8.2
+            symfony-version: '6.4.*'
+            mongodb: '1.15.3' # 1.15 introduced PHP 8.2 support 
+          - description: Tests - Symfony 5.4
+            php: 8.1
+            symfony-version: '5.4.*'
+            mongodb: '1.12.1' # 1.12 introduced PHP 8.1 support
+          - description: Tests - Symfony 5.4
+            php: 8.0
+            symfony-version: '5.4.*'
+          - description: Tests - Symfony 4.4
             php: 7.4
-            symfony: '5.4.*'
-          - description: Tests - Symfony 4.4 LTS
-            php: 7.4
+            mongodb: ['1.9.2']
             symfony-version: '4.4.*'
           - description: Prefer lowest
+            composer: 'composer:v1'
             dependencies: 'lowest'
             php: 7.4
-            symfony-version: '4.4.*'
+            symfony-version: '^4.4.1'
+            mongodb: '1.2.0'
             deprecations: disabled
           - description: Infection
+            mongodb: ['1.9.2']
             php: 7.4
+            symfony-version: '4.4.*'
 
     env:
       MONGO_HOST: localhost
@@ -56,7 +73,7 @@ jobs:
           php-version: ${{ matrix.php }}
           extensions: mongodb
           coverage: xdebug2
-          tools: flex
+          tools: flex,${{ matrix.composer }}
       - name: Allow unstable dependencies
         run: composer config minimum-stability dev
         if: matrix.symfony-version == 'dev-master'
@@ -73,7 +90,7 @@ jobs:
           SYMFONY_DEPRECATIONS_HELPER: ${{ matrix.deprecations }}
       - name: Run mutation testing
         if: matrix.description == 'Infection'
-        run: vendor/bin/infection --show-mutations --min-msi=84
+        run: vendor/bin/infection --show-mutations
       - name: Upload code coverage
         if: matrix.description != 'Infection'
         uses: codecov/codecov-action@v1

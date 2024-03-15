@@ -1,4 +1,5 @@
-FROM php:7.4-alpine
+ARG PHP_VERSION=7.4
+FROM php:${PHP_VERSION}-alpine
 
 RUN apk --no-cache add \
         $PHPIZE_DEPS \
@@ -6,19 +7,20 @@ RUN apk --no-cache add \
         git \
         less \
         libzip-dev \
+        linux-headers \
         nano \
         openssl-dev \
         supervisor \
         zip \
         zsh
 
-RUN pecl install mongodb-1.9.0 \
+ARG MONGO_VERSION=1.9.2
+RUN pecl install mongodb-${MONGO_VERSION} \
     && docker-php-ext-enable mongodb
 
-RUN pecl install xdebug-2.9.7 \
+ARG XDEBUG_VERSION=2.9.7
+RUN pecl install xdebug-${XDEBUG_VERSION} \
     && docker-php-ext-enable xdebug
-
-COPY config/php.ini /usr/local/etc/php/conf.d/
 
 #COMPOSER
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer

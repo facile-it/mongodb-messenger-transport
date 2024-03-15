@@ -6,6 +6,4 @@ namespace Facile\MongoDbMessenger\Transport;
 
 use Symfony\Contracts\Service\ResetInterface;
 
-class MongoDbTransport extends MongoDbUnresettableTransport implements ResetInterface
-{
-}
+class MongoDbTransport extends MongoDbUnresettableTransport implements ResetInterface {}

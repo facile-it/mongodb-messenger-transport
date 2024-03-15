@@ -18,7 +18,10 @@ class InstantiableDocumentEnhancer implements DocumentEnhancer
         $this->foo = $foo;
     }
 
-    public function enhance(BSONDocument $document, Envelope $envelope): void
+    public function enhance(BSONDocument $document, Envelope $envelope): void {}
+
+    public function getFoo(): ?\DateTime
     {
+        return $this->foo;
     }
 }

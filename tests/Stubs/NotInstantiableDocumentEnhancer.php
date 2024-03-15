@@ -10,11 +10,7 @@ use Symfony\Component\Messenger\Envelope;
 
 class NotInstantiableDocumentEnhancer implements DocumentEnhancer
 {
-    public function __construct(\DateTime $foo = null, \DateTime $bar)
-    {
-    }
+    public function __construct(\DateTime $foo = null, \DateTime $bar) {}
 
-    public function enhance(BSONDocument $document, Envelope $envelope): void
-    {
-    }
+    public function enhance(BSONDocument $document, Envelope $envelope): void {}
 }
