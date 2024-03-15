@@ -57,8 +57,13 @@ parameters:
 
 		-
 			message: "#^Method Facile\\\\MongoDbMessenger\\\\Tests\\\\End2End\\\\App\\\\SuppressDeprecationNormalizer\\:\\:normalize\\(\\) return type with generic class ArrayObject does not specify its types\\: TKey, TValue$#"
-			count: 2
-			path: tests/End2End/App/SuppressDeprecationNormalizer.php
+			count: 1
+			path: tests/End2End/App/SuppressDeprecationNormalizer.php7.php
+
+		-
+			message: "#^Method Facile\\\\MongoDbMessenger\\\\Tests\\\\End2End\\\\App\\\\SuppressDeprecationNormalizer\\:\\:normalize\\(\\) return type with generic class ArrayObject does not specify its types\\: TKey, TValue$#"
+			count: 1
+			path: tests/End2End/App/SuppressDeprecationNormalizer.php8.php
 
 		-
 			message: "#^Parameter \\#1 \\$id of method Facile\\\\MongoDbMessenger\\\\Transport\\\\MongoDbUnresettableTransport\\:\\:find\\(\\) expects MongoDB\\\\BSON\\\\ObjectId\\|string, mixed given\\.$#"
