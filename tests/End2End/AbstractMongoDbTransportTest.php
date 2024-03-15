@@ -165,6 +165,7 @@ abstract class AbstractMongoDbTransportTest extends WebTestCase
     {
         $envelopes = $transport->get();
         $this->assertIsArray($envelopes);
+
         $this->assertNotEmpty($envelopes, 'No Envelope found');
         $fetchedEnvelope = current($envelopes);
         $this->assertInstanceOf(Envelope::class, $fetchedEnvelope);

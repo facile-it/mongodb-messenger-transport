@@ -46,14 +46,24 @@ parameters:
 			path: src/Util/RedeliveryStampExtractor.php
 
 		-
-			message: "#^Method Facile\\\\MongoDbMessenger\\\\Tests\\\\End2End\\\\App\\\\ObjectNormalizerDecorator\\:\\:normalize\\(\\) return type with generic class ArrayObject does not specify its types\\: TKey, TValue$#"
+			message: "#^Method Facile\\\\MongoDbMessenger\\\\Tests\\\\End2End\\\\App\\\\ObjectNormalizerDecorator\\:\\:doNormalize\\(\\) return type with generic class ArrayObject does not specify its types\\: TKey, TValue$#"
 			count: 1
 			path: tests/End2End/App/ObjectNormalizerDecorator.php
 
 		-
-			message: "#^Method Facile\\\\MongoDbMessenger\\\\Tests\\\\End2End\\\\App\\\\ObjectNormalizerDecorator\\:\\:normalize\\(\\) should return \\(ArrayObject&iterable\\)\\|bool\\|float\\|int\\|string\\|null but returns array\\|ArrayObject\\|bool\\|float\\|int\\|string\\|null\\.$#"
+			message: "#^Method Facile\\\\MongoDbMessenger\\\\Tests\\\\End2End\\\\App\\\\ObjectNormalizerDecorator\\:\\:doNormalize\\(\\) should return \\(ArrayObject&iterable\\)\\|bool\\|float\\|int\\|string\\|null but returns array\\|ArrayObject\\|bool\\|float\\|int\\|string\\|null\\.$#"
 			count: 1
 			path: tests/End2End/App/ObjectNormalizerDecorator.php
+
+		-
+			message: "#^Method Facile\\\\MongoDbMessenger\\\\Tests\\\\End2End\\\\App\\\\SuppressDeprecationNormalizer\\:\\:normalize\\(\\) return type with generic class ArrayObject does not specify its types\\: TKey, TValue$#"
+			count: 1
+			path: tests/End2End/App/SuppressDeprecationNormalizer.php7.php
+
+		-
+			message: "#^Method Facile\\\\MongoDbMessenger\\\\Tests\\\\End2End\\\\App\\\\SuppressDeprecationNormalizer\\:\\:normalize\\(\\) return type with generic class ArrayObject does not specify its types\\: TKey, TValue$#"
+			count: 1
+			path: tests/End2End/App/SuppressDeprecationNormalizer.php8.php
 
 		-
 			message: "#^Parameter \\#1 \\$id of method Facile\\\\MongoDbMessenger\\\\Transport\\\\MongoDbUnresettableTransport\\:\\:find\\(\\) expects MongoDB\\\\BSON\\\\ObjectId\\|string, mixed given\\.$#"

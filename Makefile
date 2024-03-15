@@ -35,6 +35,6 @@ lock-symfony-%:
 	docker-compose run --no-deps --rm php composer config extra.symfony.require "${SYMFONY_VERSION}.*"
 	docker-compose run --no-deps --rm php composer install --prefer-dist --no-interaction ${COMPOSER_FLAGS}
 
-test-composer-install: lock-symfony-3.4 lock-symfony-4.4 lock-symfony-5.0 lock-symfony-6.0
+test-composer-install: lock-symfony-3.4 lock-symfony-4.4 lock-symfony-5.0 lock-symfony-6.0 lock-symfony-7.0
 
 pre-commit-checks: cs-fix phpstan test infection
