@@ -179,7 +179,7 @@ final class Connection
     /**
      * @return Cursor<BSONDocument>
      */
-    public function findAll(int $limit = null): Cursor
+    public function findAll(?int $limit = null): Cursor
     {
         $options = [];
         if ($limit !== null) {

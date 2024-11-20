@@ -62,7 +62,7 @@ class MongoDbUnresettableTransport implements TransportInterface, SetupableTrans
      *
      * @return \Generator<Envelope>
      */
-    public function all(int $limit = null): iterable
+    public function all(?int $limit = null): iterable
     {
         return $this->getReceiver()->all($limit);
     }

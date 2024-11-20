@@ -13,7 +13,7 @@ class InstantiableDocumentEnhancer implements DocumentEnhancer
     /** @var \DateTime|null */
     private $foo;
 
-    public function __construct(\DateTime $foo = null)
+    public function __construct(?\DateTime $foo = null)
     {
         $this->foo = $foo;
     }
