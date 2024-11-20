@@ -7,5 +7,6 @@ updates:
     open-pull-requests-limit: 10
   - package-ecosystem: "composer"
     directory: "/"
+    versioning-strategy: widen
     schedule:
       interval: "weekly"
