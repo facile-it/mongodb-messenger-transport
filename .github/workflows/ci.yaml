@@ -29,6 +29,10 @@ jobs:
         php: ['8.3']
         mongodb: ['1.17.2']
         include:
+          - description: Tests - PHP 8.4
+            php: '8.4'
+            symfony-version: '7.*'
+            mongodb: '1.20.0' # 1.20 introduced PHP 8.4 support 
           - description: Tests - Symfony 6.4
             php: '8.2'
             symfony-version: '6.4.*'

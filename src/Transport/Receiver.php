@@ -68,7 +68,7 @@ final class Receiver implements ReceiverInterface, MessageCountAwareInterface, L
     /**
      * @return \Generator<Envelope>
      */
-    public function all(int $limit = null): iterable
+    public function all(?int $limit = null): iterable
     {
         foreach ($this->connection->findAll($limit) as $document) {
             yield $this->createEnvelope($document);
