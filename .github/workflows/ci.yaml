@@ -61,8 +61,6 @@ jobs:
         run: mv docker-compose.override.yml.dist docker-compose.override.yml
       - name: Starts MongoDB
         run: docker compose up -d mongo
-      - name: Print Containers Info
-        run: docker ps -a
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -77,8 +75,6 @@ jobs:
         uses: "ramsey/composer-install@v3"
         with:
           dependency-versions: ${{ matrix.dependencies }}
-      - name: Print Containers Info 2
-        run: docker ps -a
       - name: Print Containers Info 2
         run: docker logs $(docker ps -a -q | head -n 1)
       - name: Await a bit for Mongo to spin up...
