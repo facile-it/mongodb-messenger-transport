@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Facile\MongoDbMessenger\Transport;
 
 use Facile\MongoDbMessenger\Extension\DocumentEnhancer;
+use Facile\MongoDbMessenger\Stamp\MongoDBSessionStamp;
 use MongoDB\BSON\ObjectId;
 use MongoDB\BSON\UTCDateTime;
 use MongoDB\Collection;
 use MongoDB\Driver\Cursor;
 use MongoDB\Driver\Exception\RuntimeException as DriverException;
+use MongoDB\Driver\Session;
 use MongoDB\Driver\WriteConcern;
 use MongoDB\Model\BSONDocument;
 use MongoDB\Operation\FindOneAndUpdate;
@@ -59,7 +61,7 @@ final class Connection
      */
     public function get(): ?BSONDocument
     {
-        $options = $this->getWriteOptions();
+        $options = $this->getMongoOptions();
         $options['returnDocument'] = FindOneAndUpdate::RETURN_DOCUMENT_AFTER;
         $options['sort'] = [
             'availableAt' => 1,
@@ -117,7 +119,9 @@ final class Connection
         $document->availableAt = new UTCDateTime($availableAt);
 
         try {
-            $insertResult = $this->collection->insertOne($document, $this->getWriteOptions());
+            $sessionStamp = $envelope->last(MongoDBSessionStamp::class);
+            $session = $sessionStamp instanceof MongoDBSessionStamp ? $sessionStamp->getSession() : null;
+            $insertResult = $this->collection->insertOne($document, $this->getMongoOptions($session));
         } catch (\Throwable $exception) {
             throw new TransportException($exception->getMessage(), 0, $exception);
         }
@@ -135,7 +139,7 @@ final class Connection
     public function ack(string $id): bool
     {
         try {
-            $deleteResult = $this->collection->deleteOne(['_id' => new ObjectId($id)], $this->getWriteOptions());
+            $deleteResult = $this->collection->deleteOne(['_id' => new ObjectId($id)], $this->getMongoOptions());
         } catch (\Throwable $exception) {
             throw new TransportException($exception->getMessage(), 0, $exception);
         }
@@ -153,7 +157,7 @@ final class Connection
     public function reject(string $id): bool
     {
         try {
-            $deleteResult = $this->collection->deleteOne(['_id' => new ObjectId($id)], $this->getWriteOptions());
+            $deleteResult = $this->collection->deleteOne(['_id' => new ObjectId($id)], $this->getMongoOptions());
         } catch (\Throwable $exception) {
             throw new TransportException($exception->getMessage(), 0, $exception);
         }
@@ -252,11 +256,9 @@ final class Connection
     /**
      * @return array<string, mixed>
      */
-    private function getWriteOptions(): array
+    private function getMongoOptions(Session $session = null): array
     {
-        return [
-            'writeConcern' => new WriteConcern(WriteConcern::MAJORITY),
-        ];
+        return $session ? ['session' => $session,] : ['writeConcern' => new WriteConcern(WriteConcern::MAJORITY)];
     }
 
     /**

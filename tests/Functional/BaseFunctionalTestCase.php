@@ -58,6 +58,13 @@ class BaseFunctionalTestCase extends TestCase
         return $fetchedEnvelope;
     }
 
+    protected function checkTransportIsEmpty(MongoDbTransport $transport): void
+    {
+        $envelopes = $transport->get();
+        $this->assertIsArray($envelopes);
+        $this->assertEmpty($envelopes, 'There are some Envelopes');
+    }
+
     protected function getMessageCollection(string $collectionName = 'messenger_messages'): Collection
     {
         return $this->getMongoDb()->selectCollection($collectionName);
