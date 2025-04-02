@@ -79,6 +79,8 @@ jobs:
           dependency-versions: ${{ matrix.dependencies }}
       - name: Print Containers Info 2
         run: docker ps -a
+      - name: Print Containers Info 2
+        run: docker logs (docker ps -q --filter "ancestor=mongo")
       - name: Await a bit for Mongo to spin up...
         run: timeout 60 nc -z 127.0.0.1 27017
       - name: Run tests
