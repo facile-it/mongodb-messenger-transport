@@ -8,6 +8,8 @@ else
     mongoArgs="--replSet rs0 --keyFile /mongo.keyfile"
 fi
 
+chmod 400 /mongo.keyfile
+
 if [ "${1:0:1}" = '-' ]; then
 	exec /usr/local/bin/docker-entrypoint.sh $@ ${mongoArgs}
 elif [ "$1" == "mongod" ] ; then
