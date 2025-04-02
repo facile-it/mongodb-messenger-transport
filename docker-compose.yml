@@ -27,8 +27,6 @@ services:
       - ./docker/mongo/mongo.keyfile:/mongo.keyfile
       - ./docker/mongo/facile-entrypoint.sh:/usr/local/bin/facile-entrypoint.sh
       - ./docker/mongo/docker-healthcheck.sh:/usr/local/bin/docker-healthcheck.sh
-    ports:
-      - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: 'root'
       MONGO_INITDB_ROOT_PASSWORD: 'rootPass'
