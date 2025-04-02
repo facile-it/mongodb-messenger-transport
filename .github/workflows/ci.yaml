@@ -52,13 +52,15 @@ jobs:
             symfony-version: '4.4.*'
 
     env:
-      MONGO_HOST: localhost
+      MONGO_HOST: 127.0.0.1
       SYMFONY_REQUIRE: ${{ matrix.symfony-version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Prepare Docker Compose
         run: mv docker-compose.override.yml.dist docker-compose.override.yml
+      - name: Debug 1
+        run: ls -l
       - name: Starts MongoDB
         run: docker compose up -d mongo
       - name: Setup PHP
@@ -75,8 +77,10 @@ jobs:
         uses: "ramsey/composer-install@v3"
         with:
           dependency-versions: ${{ matrix.dependencies }}
+      - name: Print Containers Info
+        run: docker ps
       - name: Await a bit for Mongo to spin up...
-        run: timeout 60 nc -z localhost 27017
+        run: timeout 60 nc -z 127.0.0.1 27017
       - name: Run tests
         if: matrix.description != 'Infection'
         run: vendor/bin/phpunit --coverage-clover=build/coverage-report.xml
