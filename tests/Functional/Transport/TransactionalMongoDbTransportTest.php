@@ -26,6 +26,7 @@ class TransactionalMongoDbTransportTest extends BaseFunctionalTestCase
         $stamps = $envelope->all();
         $this->assertCount(2, $stamps);
         $this->assertArrayHasKey(TransportMessageIdStamp::class, $stamps);
+        $this->assertArrayHasKey(MongoDBSessionStamp::class, $stamps);
         $stamps = $stamps[TransportMessageIdStamp::class];
         $this->assertIsArray($stamps);
         $this->assertCount(1, $stamps);
@@ -38,6 +39,7 @@ class TransactionalMongoDbTransportTest extends BaseFunctionalTestCase
 
         $this->assertEquals($envelope->getMessage(), $fetchedEnvelope->getMessage());
         $this->assertNull($fetchedEnvelope->last(MongoDBSessionStamp::class));
+        $session->endSession();
     }
 
     public function testSendWithRollback(): void
@@ -53,6 +55,7 @@ class TransactionalMongoDbTransportTest extends BaseFunctionalTestCase
         $stamps = $envelope->all();
         $this->assertCount(2, $stamps);
         $this->assertArrayHasKey(TransportMessageIdStamp::class, $stamps);
+        $this->assertArrayHasKey(MongoDBSessionStamp::class, $stamps);
         $stamps = $stamps[TransportMessageIdStamp::class];
         $this->assertIsArray($stamps);
         $this->assertCount(1, $stamps);
@@ -61,6 +64,7 @@ class TransactionalMongoDbTransportTest extends BaseFunctionalTestCase
         $document = $this->getMessageCollection()->findOne(['_id' => $stamp->getId()]);
         $this->assertNull($document);
         $this->assertTransportIsEmpty($transport);
+        $session->endSession();
     }
 
     public function testAllWithCommit(): void
@@ -75,7 +79,11 @@ class TransactionalMongoDbTransportTest extends BaseFunctionalTestCase
 
         $session->startTransaction();
         foreach ($originalEnvelopes as $envelope) {
-            $transport->send($envelope);
+            $tmpEnvelope = $transport->send($envelope);
+            $stamps = $tmpEnvelope->all();
+            $this->assertCount(2, $stamps);
+            $this->assertArrayHasKey(TransportMessageIdStamp::class, $stamps);
+            $this->assertArrayHasKey(MongoDBSessionStamp::class, $stamps);
         }
         $session->commitTransaction();
 
@@ -87,6 +95,7 @@ class TransactionalMongoDbTransportTest extends BaseFunctionalTestCase
             $this->assertEquals($originalEnvelopes[$i]->getMessage(), $envelope->getMessage());
             $this->assertNull($envelope->last(MongoDBSessionStamp::class));
         }
+        $session->endSession();
     }
 
     public function testAllWithRollback(): void
@@ -101,13 +110,18 @@ class TransactionalMongoDbTransportTest extends BaseFunctionalTestCase
 
         $session->startTransaction();
         foreach ($originalEnvelopes as $envelope) {
-            $transport->send($envelope);
+            $tmpEnvelope = $transport->send($envelope);
+            $stamps = $tmpEnvelope->all();
+            $this->assertCount(2, $stamps);
+            $this->assertArrayHasKey(TransportMessageIdStamp::class, $stamps);
+            $this->assertArrayHasKey(MongoDBSessionStamp::class, $stamps);
         }
         $session->abortTransaction();
 
         $allEnvelopes = iterator_to_array($transport->all());
 
         $this->assertCount(0, $allEnvelopes);
+        $session->endSession();
     }
 
     public function testMixedAllWithRollback(): void
@@ -121,8 +135,14 @@ class TransactionalMongoDbTransportTest extends BaseFunctionalTestCase
         $transport = $this->getTransport();
 
         $session->startTransaction();
-        foreach ($originalEnvelopes as $envelope) {
-            $transport->send($envelope);
+        foreach ($originalEnvelopes as $i=>$envelope) {
+            $tmpEnvelope = $transport->send($envelope);
+            $stamps = $tmpEnvelope->all();
+            $this->assertCount($i > 0 ? 2 : 1, $stamps);
+            $this->assertArrayHasKey(TransportMessageIdStamp::class, $stamps);
+            $i > 0
+                ? $this->assertArrayHasKey(MongoDBSessionStamp::class, $stamps)
+                : $this->assertArrayNotHasKey(MongoDBSessionStamp::class, $stamps);
         }
         $session->abortTransaction();
 
@@ -133,6 +153,7 @@ class TransactionalMongoDbTransportTest extends BaseFunctionalTestCase
         $this->assertContainsOnlyInstancesOf(Envelope::class, $allEnvelopes);
         $this->assertEquals($originalEnvelopes[0]->getMessage(), $allEnvelopes[0]->getMessage());
         $this->assertNull($allEnvelopes[0]->last(MongoDBSessionStamp::class));
+        $session->endSession();
     }
 
     public function testMessageCountWithCommit(): void
@@ -155,6 +176,7 @@ class TransactionalMongoDbTransportTest extends BaseFunctionalTestCase
         $session->commitTransaction();
 
         $this->assertSame(2, $transport->getMessageCount());
+        $session->endSession();
     }
 
     public function testMessageCountWithRollback(): void
@@ -177,5 +199,6 @@ class TransactionalMongoDbTransportTest extends BaseFunctionalTestCase
         $session->abortTransaction();
 
         $this->assertSame(0, $transport->getMessageCount());
+        $session->endSession();
     }
 }

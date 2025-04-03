@@ -258,7 +258,10 @@ final class Connection
      */
     private function getMongoOptions(?Session $session = null): array
     {
-        return $session ? ['session' => $session] : ['writeConcern' => new WriteConcern(WriteConcern::MAJORITY)];
+        if($session && $session->isInTransaction()){
+            return ['session' => $session];
+        }
+        return ['session' => $session, 'writeConcern' => new WriteConcern(WriteConcern::MAJORITY)];
     }
 
     /**
