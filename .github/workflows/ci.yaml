@@ -52,7 +52,7 @@ jobs:
             symfony-version: '4.4.*'
 
     env:
-      MONGO_HOST: 127.0.0.1
+      MONGO_HOST: localhost
       SYMFONY_REQUIRE: ${{ matrix.symfony-version }}
     steps:
       - name: Checkout
@@ -75,10 +75,8 @@ jobs:
         uses: "ramsey/composer-install@v3"
         with:
           dependency-versions: ${{ matrix.dependencies }}
-      - name: Print Containers Info 2
-        run: docker logs $(docker ps -a -q | head -n 1)
       - name: Await a bit for Mongo to spin up...
-        run: timeout 60 nc -z 127.0.0.1 27017
+        run: timeout 60 nc -z localhost 27017
       - name: Run tests
         if: matrix.description != 'Infection'
         run: vendor/bin/phpunit --coverage-clover=build/coverage-report.xml
