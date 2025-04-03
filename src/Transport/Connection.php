@@ -256,7 +256,7 @@ final class Connection
     /**
      * @return array<string, mixed>
      */
-    private function getMongoOptions(Session $session = null): array
+    private function getMongoOptions(?Session $session = null): array
     {
         return $session ? ['session' => $session] : ['writeConcern' => new WriteConcern(WriteConcern::MAJORITY)];
     }
