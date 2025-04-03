@@ -58,7 +58,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Prepare Docker Compose
-        run: mv docker-compose.override.yml.dist docker-compose.override.yml && chmod 400 docker/mongo/mongo.keyfile && chown 999:999 docker/mongo/mongo.keyfile && ls -la docker/mongo
+        run: mv docker-compose.override.yml.dist docker-compose.override.yml
       - name: Starts MongoDB
         run: docker compose up -d mongo
       - name: Setup PHP
