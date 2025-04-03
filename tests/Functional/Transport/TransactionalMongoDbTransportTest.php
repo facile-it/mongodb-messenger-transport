@@ -60,7 +60,7 @@ class TransactionalMongoDbTransportTest extends BaseFunctionalTestCase
         $this->assertInstanceOf(TransportMessageIdStamp::class, $stamp);
         $document = $this->getMessageCollection()->findOne(['_id' => $stamp->getId()]);
         $this->assertNull($document);
-        $this->checkTransportIsEmpty($transport);
+        $this->assertTransportIsEmpty($transport);
     }
 
     public function testAllWithCommit(): void

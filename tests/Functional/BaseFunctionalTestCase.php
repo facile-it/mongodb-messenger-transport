@@ -58,7 +58,7 @@ class BaseFunctionalTestCase extends TestCase
         return $fetchedEnvelope;
     }
 
-    protected function checkTransportIsEmpty(MongoDbTransport $transport): void
+    protected function assertTransportIsEmpty(MongoDbTransport $transport): void
     {
         $envelopes = $transport->get();
         $this->assertIsArray($envelopes);

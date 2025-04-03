@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 * Add support to PHP 8.4 (by removing implicit nullable arguments deprecations)
 
 ## 1.5.0 (2025-04-02)
-* [New feature] Add MongoDBSessionStamp for carry a mongodb session up to `\Facile\MongoDbMessenger\Transport\Connection::send`
+[New feature] Add `MongoDBSessionStamp` to publish using a MongoDB transaction, by carrying a `Session` up to `\Facile\MongoDbMessenger\Transport\Connection::send`
 
 ## 1.4.0 (2024-03-15)
 * Allow Symfony 7 ([#18](https://github.com/facile-it/mongodb-messenger-transport/issues/18))

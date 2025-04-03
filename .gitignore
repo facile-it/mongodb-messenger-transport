@@ -1,7 +1,6 @@
 /composer.lock
 /var/
 /vendor/
-.idea/
 .env
 .php_cs.cache
 .phpunit.result.cache
