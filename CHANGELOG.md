@@ -4,11 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## 1.5.0 (2025-04-04)
+[New feature] Add `MongoDBSessionStamp` to publish using a MongoDB transaction, by carrying a `Session` up to `\Facile\MongoDbMessenger\Transport\Connection::send`
+
 ## 1.4.1 (2024-12-09)
 * Add support to PHP 8.4 (by removing implicit nullable arguments deprecations)
-
-## 1.5.0 (2025-04-02)
-[New feature] Add `MongoDBSessionStamp` to publish using a MongoDB transaction, by carrying a `Session` up to `\Facile\MongoDbMessenger\Transport\Connection::send`
 
 ## 1.4.0 (2024-03-15)
 * Allow Symfony 7 ([#18](https://github.com/facile-it/mongodb-messenger-transport/issues/18))
