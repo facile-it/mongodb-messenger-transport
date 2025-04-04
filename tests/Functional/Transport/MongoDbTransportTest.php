@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Facile\MongoDbMessenger\Tests\Functional\Transport;
 
+use Facile\MongoDbMessenger\Stamp\MongoDBSessionStamp;
 use Facile\MongoDbMessenger\Tests\Functional\BaseFunctionalTestCase;
 use Facile\MongoDbMessenger\Tests\Stubs\FooMessage;
 use MongoDB\BSON\ObjectId;
@@ -37,6 +38,33 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
         $fetchedEnvelope = $this->getOneEnvelope($transport);
 
         $this->assertEquals($envelope->getMessage(), $fetchedEnvelope->getMessage());
+    }
+
+    public function testSendWithSessionAndGet(): void
+    {
+        $session = $this->getMongoDb()->getManager()->startSession();
+        $envelope = (new Envelope(FooMessage::create()))->with(new MongoDBSessionStamp($session));
+        $transport = $this->getTransport();
+
+        $envelope = $transport->send($envelope);
+
+        $stamps = $envelope->all();
+        $this->assertCount(2, $stamps);
+        $this->assertArrayHasKey(TransportMessageIdStamp::class, $stamps);
+        $this->assertArrayHasKey(MongoDBSessionStamp::class, $stamps);
+        $stamps = $stamps[TransportMessageIdStamp::class];
+        $this->assertIsArray($stamps);
+        $this->assertCount(1, $stamps);
+        $stamp = current($stamps);
+        $this->assertInstanceOf(TransportMessageIdStamp::class, $stamp);
+        $document = $this->getMessageCollection()->findOne(['_id' => $stamp->getId()]);
+        $this->assertInstanceOf(BSONDocument::class, $document);
+
+        $fetchedEnvelope = $this->getOneEnvelope($transport);
+
+        $this->assertEquals($envelope->getMessage(), $fetchedEnvelope->getMessage());
+        $this->assertNull($fetchedEnvelope->last(MongoDBSessionStamp::class));
+        $session->endSession();
     }
 
     public function testAck(): void
@@ -96,6 +124,64 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
         foreach ($allEnvelopes as $i => $envelope) {
             $this->assertEquals($originalEnvelopes[$i]->getMessage(), $envelope->getMessage());
         }
+    }
+
+    public function testAllWithSession(): void
+    {
+        $session = $this->getMongoDb()->getManager()->startSession();
+        $originalEnvelopes = [
+            (new Envelope(FooMessage::create()))->with(new MongoDBSessionStamp($session)),
+            (new Envelope(FooMessage::create()))->with(new MongoDBSessionStamp($session)),
+            (new Envelope(FooMessage::create()))->with(new MongoDBSessionStamp($session))
+        ];
+        $transport = $this->getTransport();
+        foreach ($originalEnvelopes as $envelope) {
+            $tmpEnvelope = $transport->send($envelope);
+            $stamps = $tmpEnvelope->all();
+            $this->assertCount(2, $stamps);
+            $this->assertArrayHasKey(TransportMessageIdStamp::class, $stamps);
+            $this->assertArrayHasKey(MongoDBSessionStamp::class, $stamps);
+        }
+
+        $allEnvelopes = iterator_to_array($transport->all());
+
+        $this->assertCount(3, $allEnvelopes);
+        $this->assertContainsOnlyInstancesOf(Envelope::class, $allEnvelopes);
+        foreach ($allEnvelopes as $i => $envelope) {
+            $this->assertEquals($originalEnvelopes[$i]->getMessage(), $envelope->getMessage());
+            $this->assertNull($envelope->last(MongoDBSessionStamp::class));
+        }
+        $session->endSession();
+    }
+
+    public function testAllMixed(): void
+    {
+        $session = $this->getMongoDb()->getManager()->startSession();
+        $originalEnvelopes = [
+            new Envelope(FooMessage::create()),
+            (new Envelope(FooMessage::create()))->with(new MongoDBSessionStamp($session)),
+            (new Envelope(FooMessage::create()))->with(new MongoDBSessionStamp($session))
+        ];
+        $transport = $this->getTransport();
+        foreach ($originalEnvelopes as $i=>$envelope) {
+            $tmpEnvelope = $transport->send($envelope);
+            $stamps = $tmpEnvelope->all();
+            $this->assertCount($i > 0 ? 2 : 1, $stamps);
+            $this->assertArrayHasKey(TransportMessageIdStamp::class, $stamps);
+            $i > 0
+                ? $this->assertArrayHasKey(MongoDBSessionStamp::class, $stamps)
+                : $this->assertArrayNotHasKey(MongoDBSessionStamp::class, $stamps);
+        }
+
+        $allEnvelopes = iterator_to_array($transport->all());
+
+        $this->assertCount(3, $allEnvelopes);
+        $this->assertContainsOnlyInstancesOf(Envelope::class, $allEnvelopes);
+        foreach ($allEnvelopes as $i => $envelope) {
+            $this->assertEquals($originalEnvelopes[$i]->getMessage(), $envelope->getMessage());
+            $this->assertNull($envelope->last(MongoDBSessionStamp::class));
+        }
+        $session->endSession();
     }
 
     public function testAllReturnsOnlyAvailableMessages(): void

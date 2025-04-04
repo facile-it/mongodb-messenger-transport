@@ -12,15 +12,6 @@ jobs:
   tests:
     name: ${{ matrix.description }} - PHP ${{ matrix.php }}
     runs-on: ubuntu-latest
-    services:
-      mongo:
-        image: mongo:4.4
-        ports:
-          - 27017:27017
-        env:
-          MONGO_INITDB_ROOT_USERNAME: root
-          MONGO_INITDB_ROOT_PASSWORD: rootPass
-
     strategy:
       matrix:
         composer: ['composer:v2']
@@ -66,6 +57,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Prepare Docker Compose
+        run: mv docker-compose.override.yml.dist docker-compose.override.yml
+      - name: Starts MongoDB
+        run: docker compose up -d mongo
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:

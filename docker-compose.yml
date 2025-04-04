@@ -4,20 +4,18 @@ services:
   php:
     image: local.example.com/php:${PHP_VERSION:-latest}
     build:
-      context: docker/
+      context: docker/php
     volumes:
         - ./:/home/user-dev/project
     tty: true
     environment:
       XDEBUG_START_WITH_REQUEST: 'yes'
       XDEBUG_HOST: host.docker.internal
-    
     depends_on:
       - mongo
   mongo:
-    image: mongo:4.4
-    tmpfs:
-      - /data/db:uid=1001
+    build:
+      context: docker/mongo
     environment:
       MONGO_INITDB_ROOT_USERNAME: 'root'
       MONGO_INITDB_ROOT_PASSWORD: 'rootPass'
