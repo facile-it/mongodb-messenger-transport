@@ -132,7 +132,7 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
         $originalEnvelopes = [
             (new Envelope(FooMessage::create()))->with(new MongoDBSessionStamp($session)),
             (new Envelope(FooMessage::create()))->with(new MongoDBSessionStamp($session)),
-            (new Envelope(FooMessage::create()))->with(new MongoDBSessionStamp($session))
+            (new Envelope(FooMessage::create()))->with(new MongoDBSessionStamp($session)),
         ];
         $transport = $this->getTransport();
         foreach ($originalEnvelopes as $envelope) {
@@ -160,7 +160,7 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
         $originalEnvelopes = [
             new Envelope(FooMessage::create()),
             (new Envelope(FooMessage::create()))->with(new MongoDBSessionStamp($session)),
-            (new Envelope(FooMessage::create()))->with(new MongoDBSessionStamp($session))
+            (new Envelope(FooMessage::create()))->with(new MongoDBSessionStamp($session)),
         ];
         $transport = $this->getTransport();
         foreach ($originalEnvelopes as $i=>$envelope) {

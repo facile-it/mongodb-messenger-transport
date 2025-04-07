@@ -15,6 +15,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
+use Symfony\Contracts\Service\ResetInterface;
 
 class TransportFactoryTest extends TestCase
 {
@@ -188,6 +189,32 @@ class TransportFactoryTest extends TestCase
             [InstantiableDocumentEnhancer::class],
             ['@acme.service.document_enhancer'],
         ];
+    }
+
+    public function testCreateTransportUnresettable(): void
+    {
+        $factory = new TransportFactory($this->mockContainerWithWorkingCollection('bar'));
+
+        $transport = $factory->createTransport(
+            'mongodb://foobar?collection_name=bar', 
+            ['resettable' => 0], 
+            $this->mockSerializer()
+        );
+
+        $this->assertNotInstanceOf(ResetInterface::class, $transport);
+    }
+
+    public function testCreateTransportResettable(): void
+    {
+        $factory = new TransportFactory($this->mockContainerWithWorkingCollection('bar'));
+
+        $transport = $factory->createTransport(
+            'mongodb://foobar?collection_name=bar',
+            ['resettable' => 1], 
+            $this->mockSerializer()
+        );
+
+        $this->assertInstanceOf(ResetInterface::class, $transport);
     }
 
     public function testCreateTransportWithWrongResettableOptionValue(): void
