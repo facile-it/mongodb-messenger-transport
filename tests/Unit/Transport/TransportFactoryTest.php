@@ -196,8 +196,8 @@ class TransportFactoryTest extends TestCase
         $factory = new TransportFactory($this->mockContainerWithWorkingCollection('bar'));
 
         $transport = $factory->createTransport(
-            'mongodb://foobar?collection_name=bar', 
-            ['resettable' => 0], 
+            'mongodb://foobar?collection_name=bar',
+            ['resettable' => 0],
             $this->mockSerializer()
         );
 
@@ -210,7 +210,7 @@ class TransportFactoryTest extends TestCase
 
         $transport = $factory->createTransport(
             'mongodb://foobar?collection_name=bar',
-            ['resettable' => 1], 
+            ['resettable' => 1],
             $this->mockSerializer()
         );
 
