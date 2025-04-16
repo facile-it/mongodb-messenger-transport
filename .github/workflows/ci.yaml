@@ -20,6 +20,10 @@ jobs:
         php: ['8.3']
         ext-mongodb: ['1.17.2']
         include:
+          - description: Tests - PHP 8.4 - driver v2
+            php: '8.4'
+            symfony-version: '7.*'
+            ext-mongodb: '2.0' 
           - description: Tests - PHP 8.4
             php: '8.4'
             symfony-version: '7.*'
