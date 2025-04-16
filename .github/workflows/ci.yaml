@@ -18,36 +18,36 @@ jobs:
         dependencies: ['highest']
         description: ['Tests']
         php: ['8.3']
-        mongodb: ['1.17.2']
+        ext-mongodb: ['1.17.2']
         include:
           - description: Tests - PHP 8.4
             php: '8.4'
             symfony-version: '7.*'
-            mongodb: '1.20.0' # 1.20 introduced PHP 8.4 support 
+            ext-mongodb: '1.20.0' # 1.20 introduced PHP 8.4 support 
           - description: Tests - Symfony 6.4
             php: '8.2'
             symfony-version: '6.4.*'
-            mongodb: '1.15.3' # 1.15 introduced PHP 8.2 support 
+            ext-mongodb: '1.15.3' # 1.15 introduced PHP 8.2 support 
           - description: Tests - Symfony 5.4
             php: '8.1'
             symfony-version: '5.4.*'
-            mongodb: '1.12.1' # 1.12 introduced PHP 8.1 support
+            ext-mongodb: '1.12.1' # 1.12 introduced PHP 8.1 support
           - description: Tests - Symfony 5.4
             php: '8.0'
             symfony-version: '5.4.*'
           - description: Tests - Symfony 4.4
             php: '7.4'
-            mongodb: '1.9.2' # 1.9.0 introduced PHP 8.0 support
+            ext-mongodb: '1.9.2' # 1.9.0 introduced PHP 8.0 support
             symfony-version: '4.4.*'
           - description: Prefer lowest
             composer: 'composer:v1'
             dependencies: 'lowest'
             php: '7.4'
             symfony-version: '^4.4.1'
-            mongodb: '1.2.0'
+            ext-mongodb: '1.6.0'
             deprecations: disabled
           - description: Infection
-            mongodb: '1.9.2'
+            ext-mongodb: '1.9.2'
             php: '7.4'
             symfony-version: '4.4.*'
 
@@ -65,7 +65,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: mongodb
+          extensions: mongodb-${{ matrix.ext-mongodb }}
           coverage: xdebug2
           tools: flex,${{ matrix.composer }}
       - name: Allow unstable dependencies
