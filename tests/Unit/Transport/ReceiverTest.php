@@ -69,9 +69,12 @@ class ReceiverTest extends TestCase
         $serializer->decode(Argument::cetera())
             ->shouldBeCalledOnce()
             ->willThrow(MessageDecodingFailedException::class);
+        $deleteResult = $this->prophesize(DeleteResult::class);
+        $deleteResult->getDeletedCount()
+            ->willReturn(1);
         $collection->deleteOne(Argument::withEntry('_id', $document->_id->__toString()), Argument::cetera())
             ->shouldBeCalledOnce()
-            ->willReturn($this->prophesize(DeleteResult::class)->reveal());
+            ->willReturn($deleteResult->reveal());
 
         $this->expectException(MessageDecodingFailedException::class);
 
