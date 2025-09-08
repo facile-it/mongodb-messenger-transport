@@ -14,7 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        composer: ['composer:v2']
         dependencies: ['highest']
         description: ['Tests']
         php: ['8.3']
@@ -44,7 +43,6 @@ jobs:
             ext-mongodb: '1.9.2' # 1.9.0 introduced PHP 8.0 support
             symfony-version: '4.4.*'
           - description: Prefer lowest
-            composer: 'composer:v1'
             dependencies: 'lowest'
             php: '7.4'
             symfony-version: '^4.4.1'
@@ -71,7 +69,7 @@ jobs:
           php-version: ${{ matrix.php }}
           extensions: mongodb-${{ matrix.ext-mongodb }}
           coverage: xdebug2
-          tools: flex,${{ matrix.composer }}
+          tools: flex,composer:v2
       - name: Allow unstable dependencies
         run: composer config minimum-stability dev
         if: matrix.symfony-version == 'dev-master'
