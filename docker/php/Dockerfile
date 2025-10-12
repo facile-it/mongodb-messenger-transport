@@ -1,4 +1,4 @@
-ARG PHP_VERSION=7.4
+ARG PHP_VERSION=8.1
 FROM php:${PHP_VERSION}-alpine
 
 RUN apk --no-cache add \
@@ -14,11 +14,11 @@ RUN apk --no-cache add \
         zip \
         zsh
 
-ARG MONGO_VERSION=1.9.2
+ARG MONGO_VERSION=1.12.0
 RUN pecl install mongodb-${MONGO_VERSION} \
     && docker-php-ext-enable mongodb
 
-ARG XDEBUG_VERSION=2.9.7
+ARG XDEBUG_VERSION=3.4.6
 RUN pecl install xdebug-${XDEBUG_VERSION} \
     && docker-php-ext-enable xdebug
 
