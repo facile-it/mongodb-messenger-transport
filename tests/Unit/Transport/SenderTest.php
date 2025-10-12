@@ -53,4 +53,42 @@ class SenderTest extends TestCase
 
         $sender->send(new Envelope(new \stdClass()));
     }
+
+    /**
+     * @param mixed $invalidHeaders
+     *
+     * @dataProvider invalidSerializedHeadersProvider
+     */
+    public function testHeadersAreValidated($invalidHeaders, string $expectedError): void
+    {
+        $serializer = $this->prophesize(SerializerInterface::class);
+        $serializer->encode(Argument::cetera())
+            ->willReturn([
+                'body' => '{serialized: "body"}',
+                'headers' => $invalidHeaders,
+            ]);
+
+        $sender = new Sender(
+            new Connection($this->prophesize(Collection::class)->reveal(), 'queueName', 0),
+            $serializer->reveal()
+        );
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage($expectedError);
+
+        $sender->send(new Envelope(new \stdClass()));
+    }
+
+    /**
+     * @return array{mixed, string}[]
+     */
+    public function invalidSerializedHeadersProvider(): array
+    {
+        return [
+            ['directString', 'Encoded headers must be an array, got string'],
+            [[123 => 'non-string key'], 'Encoded message headers must have string keys, got int'],
+            [['test' => false], 'Encoded message headers must be strings, got bool'],
+            [['test1' => 'string', 'test2' => 0.1], 'Encoded message headers must be strings, got double'],
+        ];
+    }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Facile\MongoDbMessenger\Tests\Unit\Extension\DocumentEnhancer;
 
 use Facile\MongoDbMessenger\Extension\DocumentEnhancer\FirstErrorMessageEnhancer;
+use Facile\MongoDbMessenger\Stamp\ReceivedStamp;
 use MongoDB\Model\BSONDocument;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Stamp\ErrorDetailsStamp;
@@ -44,7 +45,7 @@ class FirstErrorMessageEnhancerTest extends DocumentEnhancerTestCase
     public function testEnhanceWithNoRedeliveryStamp(): void
     {
         $document = new BSONDocument();
-        $envelope = new Envelope(new class {});
+        $envelope = new Envelope(new class {}, [new ReceivedStamp('123')]);
 
         (new FirstErrorMessageEnhancer())->enhance($document, $envelope);
 
