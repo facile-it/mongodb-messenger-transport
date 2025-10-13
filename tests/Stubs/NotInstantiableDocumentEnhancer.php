@@ -10,15 +10,10 @@ use Symfony\Component\Messenger\Envelope;
 
 class NotInstantiableDocumentEnhancer implements DocumentEnhancer
 {
-    private \DateTime $bar;
-
-    private ?\DateTime $foo;
-
-    public function __construct(\DateTime $bar, ?\DateTime $foo = null)
-    {
-        $this->bar = $bar;
-        $this->foo = $foo;
-    }
+    public function __construct(
+        private readonly \DateTime $bar,
+        private readonly ?\DateTime $foo = null
+    ) {}
 
     public function enhance(BSONDocument $document, Envelope $envelope): void
     {

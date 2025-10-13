@@ -6,9 +6,10 @@ namespace Facile\MongoDbMessenger\Tests\Stubs;
 
 class FooMessage
 {
-    private string $data;
-
-    private bool $shouldFail;
+    public function __construct(
+        private readonly string $data,
+        private readonly bool $shouldFail
+    ) {}
 
     public static function create(): self
     {
@@ -18,12 +19,6 @@ class FooMessage
     public static function createFailing(): self
     {
         return new self(uniqid('test-data-', true), true);
-    }
-
-    public function __construct(string $data, bool $shouldFail)
-    {
-        $this->data = $data;
-        $this->shouldFail = $shouldFail;
     }
 
     public function getData(): string

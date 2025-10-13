@@ -23,22 +23,16 @@ use Symfony\Component\Messenger\Exception\TransportException;
  */
 final class Connection
 {
-    private Collection $collection;
-
-    private string $queueName;
-
-    private int $redeliverTimeout;
-
     /** @var DocumentEnhancer[] */
     private array $documentEnhancers = [];
 
-    private string $uniqueId;
+    private readonly string $uniqueId;
 
-    public function __construct(Collection $collection, string $queueName, int $redeliverTimeout)
-    {
-        $this->collection = $collection;
-        $this->queueName = $queueName;
-        $this->redeliverTimeout = $redeliverTimeout;
+    public function __construct(
+        private readonly Collection $collection,
+        private readonly string $queueName,
+        private readonly int $redeliverTimeout
+    ) {
         $this->uniqueId = uniqid('consumer_', true);
     }
 

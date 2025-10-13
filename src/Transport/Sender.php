@@ -12,15 +12,10 @@ use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
 class Sender implements SenderInterface
 {
-    private Connection $connection;
-
-    private SerializerInterface $serializer;
-
-    public function __construct(Connection $connection, SerializerInterface $serializer)
-    {
-        $this->connection = $connection;
-        $this->serializer = $serializer;
-    }
+    public function __construct(
+        private readonly Connection $connection,
+        private readonly SerializerInterface $serializer
+    ) {}
 
     public function send(Envelope $envelope): Envelope
     {

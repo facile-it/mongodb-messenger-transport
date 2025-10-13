@@ -10,12 +10,7 @@ use Symfony\Component\Messenger\Envelope;
 
 class InstantiableDocumentEnhancer implements DocumentEnhancer
 {
-    private ?\DateTime $foo;
-
-    public function __construct(?\DateTime $foo = null)
-    {
-        $this->foo = $foo;
-    }
+    public function __construct(private readonly ?\DateTime $foo = null) {}
 
     public function enhance(BSONDocument $document, Envelope $envelope): void {}
 

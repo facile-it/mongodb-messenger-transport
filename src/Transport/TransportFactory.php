@@ -36,19 +36,14 @@ final class TransportFactory implements TransportFactoryInterface
 
     public const RESETTABLE = 'resettable';
 
-    private ContainerInterface $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
+    public function __construct(private readonly ContainerInterface $container) {}
 
     /**
      * @param array<string, mixed> $options
      */
     public function supports(string $dsn, array $options): bool
     {
-        return 0 === strpos($dsn, 'facile-it-mongodb://');
+        return str_starts_with($dsn, 'facile-it-mongodb://');
     }
 
     /**
@@ -64,7 +59,7 @@ final class TransportFactory implements TransportFactoryInterface
         }
 
         if (! $database instanceof Database) {
-            throw new \LogicException('Expecting MongoDB\\Database from container, got ' . get_class($database));
+            throw new \LogicException('Expecting MongoDB\\Database from container, got ' . $database::class);
         }
 
         $connection = new Connection(
@@ -204,6 +199,6 @@ final class TransportFactory implements TransportFactoryInterface
             return false;
         }
 
-        return strpos($name, '@') === 0;
+        return str_starts_with($name, '@');
     }
 }

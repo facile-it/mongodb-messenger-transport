@@ -17,15 +17,10 @@ use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
 final class Receiver implements ReceiverInterface, MessageCountAwareInterface, ListableReceiverInterface
 {
-    private Connection $connection;
-
-    private SerializerInterface $serializer;
-
-    public function __construct(Connection $connection, SerializerInterface $serializer)
-    {
-        $this->connection = $connection;
-        $this->serializer = $serializer;
-    }
+    public function __construct(
+        private readonly Connection $connection,
+        private readonly SerializerInterface $serializer
+    ) {}
 
     /**
      * @return array{0?: Envelope}

@@ -14,19 +14,14 @@ use Symfony\Component\Messenger\Transport\TransportInterface;
 
 class MongoDbUnresettableTransport implements TransportInterface, SetupableTransportInterface, MessageCountAwareInterface, ListableReceiverInterface
 {
-    private Connection $connection;
-
-    private SerializerInterface $serializer;
-
     private ?Receiver $receiver = null;
 
     private ?Sender $sender = null;
 
-    public function __construct(Connection $connection, SerializerInterface $serializer)
-    {
-        $this->connection = $connection;
-        $this->serializer = $serializer;
-    }
+    public function __construct(
+        private readonly Connection $connection,
+        private readonly SerializerInterface $serializer
+    ) {}
 
     /**
      * @inheritDoc

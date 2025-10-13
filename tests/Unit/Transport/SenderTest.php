@@ -55,11 +55,9 @@ class SenderTest extends TestCase
     }
 
     /**
-     * @param mixed $invalidHeaders
-     *
      * @dataProvider invalidSerializedHeadersProvider
      */
-    public function testHeadersAreValidated($invalidHeaders, string $expectedError): void
+    public function testHeadersAreValidated(mixed $invalidHeaders, string $expectedError): void
     {
         $serializer = $this->prophesize(SerializerInterface::class);
         $serializer->encode(Argument::cetera())
