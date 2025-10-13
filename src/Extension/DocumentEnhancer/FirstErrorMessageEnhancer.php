@@ -20,7 +20,7 @@ class FirstErrorMessageEnhancer implements DocumentEnhancer
         if (class_exists(ErrorDetailsStamp::class)) {
             $firstRedeliveryStamp = $this->getFirst(RedeliveryStamp::class, $envelope);
             $firstErrorStamp = $this->getFirst(ErrorDetailsStamp::class, $envelope);
-            if (!$firstErrorStamp instanceof StampInterface) {
+            if (! $firstErrorStamp instanceof StampInterface) {
                 return;
             }
 

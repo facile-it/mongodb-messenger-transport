@@ -34,7 +34,7 @@ final class Receiver implements ReceiverInterface, MessageCountAwareInterface, L
     {
         $document = $this->connection->get();
 
-        if (!$document instanceof BSONDocument) {
+        if (! $document instanceof BSONDocument) {
             return [];
         }
 
@@ -102,7 +102,7 @@ final class Receiver implements ReceiverInterface, MessageCountAwareInterface, L
     {
         $document = $this->connection->find((string) $id);
 
-        if (!$document instanceof BSONDocument) {
+        if (! $document instanceof BSONDocument) {
             return null;
         }
 

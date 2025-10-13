@@ -22,7 +22,7 @@ class NotInstantiableDocumentEnhancer implements DocumentEnhancer
 
     public function enhance(BSONDocument $document, Envelope $envelope): void
     {
-        if (!$this->foo instanceof \DateTime) {
+        if (! $this->foo instanceof \DateTime) {
             throw new \RuntimeException('To avoid no-op constructor ' . $this->bar->getTimestamp());
         }
     }
