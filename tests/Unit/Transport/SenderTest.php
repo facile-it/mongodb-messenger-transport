@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Facile\MongoDbMessenger\Tests\Unit\Transport;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Facile\MongoDbMessenger\Transport\Connection;
 use Facile\MongoDbMessenger\Transport\Sender;
 use MongoDB\BSON\ObjectId;
@@ -54,9 +55,7 @@ class SenderTest extends TestCase
         $sender->send(new Envelope(new \stdClass()));
     }
 
-    /**
-     * @dataProvider invalidSerializedHeadersProvider
-     */
+    #[DataProvider('invalidSerializedHeadersProvider')]
     public function testHeadersAreValidated(mixed $invalidHeaders, string $expectedError): void
     {
         $serializer = $this->prophesize(SerializerInterface::class);
@@ -80,7 +79,7 @@ class SenderTest extends TestCase
     /**
      * @return array{mixed, string}[]
      */
-    public function invalidSerializedHeadersProvider(): array
+    public static function invalidSerializedHeadersProvider(): array
     {
         return [
             ['directString', 'Encoded headers must be an array, got string'],

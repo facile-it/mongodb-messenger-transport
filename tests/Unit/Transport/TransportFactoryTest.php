@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Facile\MongoDbMessenger\Tests\Unit\Transport;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Facile\MongoDbMessenger\Extension\DocumentEnhancer\LastErrorMessageEnhancer;
 use Facile\MongoDbMessenger\Tests\Stubs\InstantiableDocumentEnhancer;
 use Facile\MongoDbMessenger\Tests\Stubs\NotInstantiableDocumentEnhancer;
@@ -30,9 +31,7 @@ class TransportFactoryTest extends TestCase
         $this->assertInstanceOf(MongoDbTransport::class, $transport);
     }
 
-    /**
-     * @dataProvider invalidDSNDataProvider
-     */
+    #[DataProvider('invalidDSNDataProvider')]
     public function testCreateTransportWithWrongDSN(string $invalidDSN, string $message): void
     {
         $container = $this->prophesize(ContainerInterface::class);
@@ -49,7 +48,7 @@ class TransportFactoryTest extends TestCase
     /**
      * @return string[][]
      */
-    public function invalidDSNDataProvider(): array
+    public static function invalidDSNDataProvider(): array
     {
         return [
             [':', 'The given MongoDB Messenger DSN ":" is invalid.'],
@@ -160,9 +159,7 @@ class TransportFactoryTest extends TestCase
         $factory->createTransport('mongodb://foobar', $options, $this->mockSerializer());
     }
 
-    /**
-     * @dataProvider validEnhancerDataProvider
-     */
+    #[DataProvider('validEnhancerDataProvider')]
     public function testCreateTransportWithWrongDocumentEnhancerAfterAGoodOne(string $validEnhancer): void
     {
         $options = [
@@ -182,7 +179,7 @@ class TransportFactoryTest extends TestCase
     /**
      * @return array{0: string}[]
      */
-    public function validEnhancerDataProvider(): array
+    public static function validEnhancerDataProvider(): array
     {
         return [
             [LastErrorMessageEnhancer::class],

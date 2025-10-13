@@ -12,10 +12,20 @@ return RectorConfig::configure()
     ])
     // uncomment to reach your current PHP version
     ->withPhpSets()
-    ->withImportNames(true, true, false, true)
-    ->withPreparedSets(true, true, false, true)
+    ->withComposerBased(
+        phpunit: true
+    )
+    ->withImportNames(
+        importShortClasses: false,
+        removeUnusedImports: true
+    )
+    ->withPreparedSets(
+        deadCode: true, 
+        codeQuality: true,
+        typeDeclarations: true
+    )
     ->withSkip([
         RemoveAlwaysTrueIfConditionRector::class => [
-            __DIR__ . '/tests/End2End/AbstractMongoDbTransportTest.php',
+            __DIR__ . '/tests/End2End/AbstractMongoDbTransportTestCase.php',
         ],
     ]);

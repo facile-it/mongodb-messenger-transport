@@ -19,7 +19,7 @@ use Symfony\Component\Messenger\Stamp\SentToFailureTransportStamp;
 use Symfony\Component\Messenger\Stamp\TransportMessageIdStamp;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
-abstract class AbstractMongoDbTransportTest extends WebTestCase
+abstract class AbstractMongoDbTransportTestCase extends WebTestCase
 {
     public static function setUpBeforeClass(): void
     {

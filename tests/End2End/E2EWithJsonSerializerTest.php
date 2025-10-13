@@ -6,7 +6,7 @@ namespace Facile\MongoDbMessenger\Tests\End2End;
 
 use Facile\MongoDbMessenger\Tests\End2End\App\KernelWithJsonSerializer;
 
-class E2EWithJsonSerializerTest extends AbstractMongoDbTransportTest
+class E2EWithJsonSerializerTest extends AbstractMongoDbTransportTestCase
 {
     protected static function getKernelClass(): string
     {
