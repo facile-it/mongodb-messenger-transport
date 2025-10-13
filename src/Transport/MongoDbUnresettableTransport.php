@@ -107,19 +107,11 @@ class MongoDbUnresettableTransport implements TransportInterface, SetupableTrans
 
     private function getReceiver(): Receiver
     {
-        if (! $this->receiver instanceof Receiver) {
-            $this->receiver = new Receiver($this->connection, $this->serializer);
-        }
-
-        return $this->receiver;
+        return $this->receiver ??= new Receiver($this->connection, $this->serializer);
     }
 
     private function getSender(): Sender
     {
-        if (! $this->sender instanceof Sender) {
-            $this->sender = new Sender($this->connection, $this->serializer);
-        }
-
-        return $this->sender;
+        return $this->sender ??= new Sender($this->connection, $this->serializer);
     }
 }
