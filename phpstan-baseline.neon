@@ -78,15 +78,3 @@ parameters:
 			count: 1
 			path: tests/Functional/Transport/MongoDbTransportTest.php
 
-		-
-			message: '#^Constructor of class Facile\\MongoDbMessenger\\Tests\\Stubs\\NotInstantiableDocumentEnhancer has an unused parameter \$bar\.$#'
-			identifier: constructor.unusedParameter
-			count: 1
-			path: tests/Stubs/NotInstantiableDocumentEnhancer.php
-
-		-
-			message: '#^Constructor of class Facile\\MongoDbMessenger\\Tests\\Stubs\\NotInstantiableDocumentEnhancer has an unused parameter \$foo\.$#'
-			identifier: constructor.unusedParameter
-			count: 1
-			path: tests/Stubs/NotInstantiableDocumentEnhancer.php
-

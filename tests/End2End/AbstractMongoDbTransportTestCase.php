@@ -19,7 +19,7 @@ use Symfony\Component\Messenger\Stamp\SentToFailureTransportStamp;
 use Symfony\Component\Messenger\Stamp\TransportMessageIdStamp;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
-abstract class AbstractMongoDbTransportTest extends WebTestCase
+abstract class AbstractMongoDbTransportTestCase extends WebTestCase
 {
     public static function setUpBeforeClass(): void
     {
@@ -178,7 +178,7 @@ abstract class AbstractMongoDbTransportTest extends WebTestCase
         $command = [
             'receivers' => [$transport],
             '--limit' => $messageCount,
-            '--time-limit' => 1 * $messageCount,
+            '--time-limit' => $messageCount,
             '-vv' => true,
         ];
 

@@ -10,7 +10,15 @@ use Symfony\Component\Messenger\Envelope;
 
 class NotInstantiableDocumentEnhancer implements DocumentEnhancer
 {
-    public function __construct(\DateTime $bar, ?\DateTime $foo = null) {}
+    public function __construct(
+        private readonly \DateTime $bar,
+        private readonly ?\DateTime $foo = null
+    ) {}
 
-    public function enhance(BSONDocument $document, Envelope $envelope): void {}
+    public function enhance(BSONDocument $document, Envelope $envelope): void
+    {
+        if (! $this->foo instanceof \DateTime) {
+            throw new \RuntimeException('To avoid no-op constructor ' . $this->bar->getTimestamp());
+        }
+    }
 }

@@ -19,6 +19,8 @@ jobs:
             script: composer cs-check
           - description: PHPStan
             script: vendor/bin/phpstan analyze
+          - description: Rector
+            script: vendor/bin/rector --dry-run --ansi
 
     name: ${{ matrix.description }}
     runs-on: ubuntu-latest

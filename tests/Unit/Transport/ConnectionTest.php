@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Facile\MongoDbMessenger\Tests\Unit\Transport;
 
+use MongoDB\DeleteResult;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Prophecy\Argument\Token\LogicalAndToken;
 use Facile\MongoDbMessenger\Tests\Stubs\FooMessage;
 use Facile\MongoDbMessenger\Transport\Connection;
 use MongoDB\BSON\ObjectId;
@@ -50,6 +53,7 @@ class ConnectionTest extends TestCase
         );
 
         $expectedOptions = Argument::allOf(
+            Argument::withEntry('session', null),
             Argument::withEntry('writeConcern', Argument::allOf(
                 Argument::type(WriteConcern::class),
                 Argument::which('getW', WriteConcern::MAJORITY)
@@ -130,16 +134,18 @@ class ConnectionTest extends TestCase
         $oneSecondFromNow = new UTCDateTime(new \DateTimeImmutable('+1 second'));
         $inOneSecondFromNow = [
             Argument::type(UTCDateTime::class),
-            Argument::that(static fn(UTCDateTime $dateTime) => self::isLessThan($oneSecondFromNow, $dateTime)),
+            Argument::that(static fn(UTCDateTime $dateTime): bool => self::isLessThan($oneSecondFromNow, $dateTime)),
         ];
         $expectedDocument = Argument::allOf(
             Argument::type(BSONDocument::class),
             Argument::withEntry('body', 'serializedEnvelope'),
             Argument::withEntry('queueName', 'foobar'),
             Argument::withEntry('createdAt', Argument::allOf(...$inOneSecondFromNow)),
-            Argument::withEntry('availableAt', Argument::allOf(...$inOneSecondFromNow))
+            Argument::withEntry('availableAt', Argument::allOf(...$inOneSecondFromNow)),
+            Argument::that(static fn(BSONDocument $document): bool => $document->createdAt == $document->availableAt)
         );
         $expectedOptions = Argument::allOf(
+            Argument::withEntry('session', null),
             Argument::withEntry('writeConcern', Argument::allOf(
                 Argument::type(WriteConcern::class),
                 Argument::which('getW', WriteConcern::MAJORITY)
@@ -165,11 +171,11 @@ class ConnectionTest extends TestCase
         $ninetySecondFromNow = new UTCDateTime(new \DateTimeImmutable('+90 second'));
         $inOneSecondFromNow = [
             Argument::type(UTCDateTime::class),
-            Argument::that(static fn(UTCDateTime $dateTime) => self::isLessThan($oneSecondFromNow, $dateTime)),
+            Argument::that(static fn(UTCDateTime $dateTime): bool => self::isLessThan($oneSecondFromNow, $dateTime)),
         ];
         $inOneHundredSecondFromNow = [
             Argument::type(UTCDateTime::class),
-            Argument::that(static fn(UTCDateTime $dateTime) => self::isLessThan($dateTime, $ninetySecondFromNow)),
+            Argument::that(static fn(UTCDateTime $dateTime): bool => self::isLessThan($dateTime, $ninetySecondFromNow)),
         ];
         $expectedDocument = Argument::allOf(
             Argument::type(BSONDocument::class),
@@ -208,6 +214,35 @@ class ConnectionTest extends TestCase
         $connection->send(new Envelope(FooMessage::create()), 'body', 0);
     }
 
+    /**
+     * @return array{int, bool}[]
+     */
+    public static function deleteCountProvider(): array
+    {
+        return [
+            [2, true],
+            [1, true],
+            [0, false],
+            [-1, false],
+        ];
+    }
+
+    #[DataProvider('deleteCountProvider')]
+    public function testAck(int $deletedCount, bool $expectedResult): void
+    {
+        $collection = $this->prophesize(Collection::class);
+        $objectId = new ObjectId();
+        $deleteResult = $this->prophesize(DeleteResult::class);
+        $deleteResult->getDeletedCount()
+            ->willReturn($deletedCount);
+        $collection->deleteOne(['_id' => $objectId], Argument::cetera())
+            ->willReturn($deleteResult->reveal());
+
+        $connection = new Connection($collection->reveal(), 'queueName', 100);
+
+        $this->assertSame($expectedResult, $connection->ack($objectId->__toString()));
+    }
+
     public function testAckWrapsMongoExceptions(): void
     {
         $collection = $this->prophesize(Collection::class);
@@ -222,6 +257,22 @@ class ConnectionTest extends TestCase
         $this->expectExceptionCode(0);
 
         $connection->ack($objectId->__toString());
+    }
+
+    #[DataProvider('deleteCountProvider')]
+    public function testReject(int $deletedCount, bool $expectedResult): void
+    {
+        $collection = $this->prophesize(Collection::class);
+        $objectId = new ObjectId();
+        $deleteResult = $this->prophesize(DeleteResult::class);
+        $deleteResult->getDeletedCount()
+            ->willReturn($deletedCount);
+        $collection->deleteOne(['_id' => $objectId], Argument::cetera())
+            ->willReturn($deleteResult->reveal());
+
+        $connection = new Connection($collection->reveal(), 'queueName', 100);
+
+        $this->assertSame($expectedResult, $connection->reject($objectId->__toString()));
     }
 
     public function testRejectWrapsMongoExceptions(): void
@@ -248,11 +299,11 @@ class ConnectionTest extends TestCase
         return $document;
     }
 
-    private function argumentIsUTCDateTimeInSeconds(\DateTimeImmutable $reference, int $secondsModifier): Argument\Token\LogicalAndToken
+    private function argumentIsUTCDateTimeInSeconds(\DateTimeImmutable $reference, int $secondsModifier): LogicalAndToken
     {
         return Argument::allOf(
             Argument::type(UTCDateTime::class),
-            Argument::that(function (UTCDateTime $val) use ($reference, $secondsModifier) {
+            Argument::that(function (UTCDateTime $val) use ($reference, $secondsModifier): bool {
                 $lowerBound = $reference->modify($secondsModifier . ' seconds');
                 $this->assertUTCDateTimeIsBetween($lowerBound, $lowerBound->modify('+1 seconds'), $val);
 

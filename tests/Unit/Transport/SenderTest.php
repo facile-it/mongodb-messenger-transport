@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Facile\MongoDbMessenger\Tests\Unit\Transport;
 
+use MongoDB\BSON\UTCDateTime;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Facile\MongoDbMessenger\Transport\Connection;
 use Facile\MongoDbMessenger\Transport\Sender;
 use MongoDB\BSON\ObjectId;
@@ -20,7 +22,7 @@ class SenderTest extends TestCase
 {
     use ProphecyTrait;
 
-    public function testHeadersAreSent(): void
+    public function testSend(): void
     {
         $headers = ['header' => 'headerValue'];
         $body = '{this: "is the body"}';
@@ -37,7 +39,10 @@ class SenderTest extends TestCase
         $collection->insertOne(Argument::allOf(
             Argument::type(BSONDocument::class),
             Argument::withEntry('body', $body),
-            Argument::withEntry('headers', new BSONDocument($headers))
+            Argument::withEntry('headers', new BSONDocument($headers)),
+            Argument::withEntry('createdAt', Argument::type(UTCDateTime::class)),
+            Argument::withEntry('availableAt', Argument::type(UTCDateTime::class)),
+            Argument::that(static fn(BSONDocument $document): bool => $document->createdAt == $document->availableAt)
         ), Argument::cetera())
             ->shouldBeCalledOnce()
             ->willReturn($insertOneResult->reveal())
@@ -54,12 +59,8 @@ class SenderTest extends TestCase
         $sender->send(new Envelope(new \stdClass()));
     }
 
-    /**
-     * @param mixed $invalidHeaders
-     *
-     * @dataProvider invalidSerializedHeadersProvider
-     */
-    public function testHeadersAreValidated($invalidHeaders, string $expectedError): void
+    #[DataProvider('invalidSerializedHeadersProvider')]
+    public function testHeadersAreValidated(mixed $invalidHeaders, string $expectedError): void
     {
         $serializer = $this->prophesize(SerializerInterface::class);
         $serializer->encode(Argument::cetera())
@@ -82,7 +83,7 @@ class SenderTest extends TestCase
     /**
      * @return array{mixed, string}[]
      */
-    public function invalidSerializedHeadersProvider(): array
+    public static function invalidSerializedHeadersProvider(): array
     {
         return [
             ['directString', 'Encoded headers must be an array, got string'],

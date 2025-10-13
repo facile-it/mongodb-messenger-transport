@@ -9,12 +9,7 @@ use Symfony\Component\Messenger\Stamp\NonSendableStampInterface;
 
 final class MongoDBSessionStamp implements NonSendableStampInterface
 {
-    private Session $session;
-
-    public function __construct(Session $session)
-    {
-        $this->session = $session;
-    }
+    public function __construct(private readonly Session $session) {}
 
     public function getSession(): Session
     {

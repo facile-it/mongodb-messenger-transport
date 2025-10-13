@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+* Bump minimum requirement to:
+    * PHP 8.1+
+    * `ext-mongodb` 1.12+
+    * `mongodb/mongodb` 1.11+
+    * `symfony/framework-bundle` 4.4.23+
+* Upgrade test suite to PHPUnit 10+
+* Adopt Rector and update the codebase accordingly
 * Improve config & serialization validation thanks to PHPStan v2 upgrade
 
 ## 1.6.0 (2025-04-23)

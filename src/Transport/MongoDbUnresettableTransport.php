@@ -14,23 +14,14 @@ use Symfony\Component\Messenger\Transport\TransportInterface;
 
 class MongoDbUnresettableTransport implements TransportInterface, SetupableTransportInterface, MessageCountAwareInterface, ListableReceiverInterface
 {
-    /** @var Connection */
-    private $connection;
+    private ?Receiver $receiver = null;
 
-    /** @var SerializerInterface */
-    private $serializer;
+    private ?Sender $sender = null;
 
-    /** @var Receiver */
-    private $receiver;
-
-    /** @var Sender */
-    private $sender;
-
-    public function __construct(Connection $connection, SerializerInterface $serializer)
-    {
-        $this->connection = $connection;
-        $this->serializer = $serializer;
-    }
+    public function __construct(
+        private readonly Connection $connection,
+        private readonly SerializerInterface $serializer
+    ) {}
 
     /**
      * @inheritDoc
@@ -116,19 +107,11 @@ class MongoDbUnresettableTransport implements TransportInterface, SetupableTrans
 
     private function getReceiver(): Receiver
     {
-        if ($this->receiver === null) {
-            $this->receiver = new Receiver($this->connection, $this->serializer);
-        }
-
-        return $this->receiver;
+        return $this->receiver ??= new Receiver($this->connection, $this->serializer);
     }
 
     private function getSender(): Sender
     {
-        if ($this->sender === null) {
-            $this->sender = new Sender($this->connection, $this->serializer);
-        }
-
-        return $this->sender;
+        return $this->sender ??= new Sender($this->connection, $this->serializer);
     }
 }

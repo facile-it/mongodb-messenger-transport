@@ -23,26 +23,16 @@ use Symfony\Component\Messenger\Exception\TransportException;
  */
 final class Connection
 {
-    /** @var Collection */
-    private $collection;
-
-    /** @var string */
-    private $queueName;
-
-    /** @var int */
-    private $redeliverTimeout;
-
     /** @var DocumentEnhancer[] */
-    private $documentEnhancers = [];
+    private array $documentEnhancers = [];
 
-    /** @var string */
-    private $uniqueId;
+    private readonly string $uniqueId;
 
-    public function __construct(Collection $collection, string $queueName, int $redeliverTimeout)
-    {
-        $this->collection = $collection;
-        $this->queueName = $queueName;
-        $this->redeliverTimeout = $redeliverTimeout;
+    public function __construct(
+        private readonly Collection $collection,
+        private readonly string $queueName,
+        private readonly int $redeliverTimeout
+    ) {
         $this->uniqueId = uniqid('consumer_', true);
     }
 
@@ -119,8 +109,7 @@ final class Connection
         $document->availableAt = new UTCDateTime($availableAt);
 
         try {
-            $sessionStamp = $envelope->last(MongoDBSessionStamp::class);
-            $session = $sessionStamp instanceof MongoDBSessionStamp ? $sessionStamp->getSession() : null;
+            $session = $envelope->last(MongoDBSessionStamp::class)?->getSession();
             $insertResult = $this->collection->insertOne($document, $this->getMongoOptions($session));
         } catch (\Throwable $exception) {
             throw new TransportException($exception->getMessage(), 0, $exception);
