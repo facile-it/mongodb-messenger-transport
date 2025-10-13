@@ -11,6 +11,7 @@ use MongoDB\Model\BSONDocument;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Stamp\ErrorDetailsStamp;
 use Symfony\Component\Messenger\Stamp\RedeliveryStamp;
+use Webmozart\Assert\Assert;
 
 class LastErrorMessageEnhancer implements DocumentEnhancer
 {
@@ -34,11 +35,9 @@ class LastErrorMessageEnhancer implements DocumentEnhancer
             $exceptionMessage = $lastRedeliveryStamp->getExceptionMessage();
         }
 
-        if ($lastRedeliveryStamp instanceof RedeliveryStamp) {
-            $document->lastErrorAt = new UTCDateTime($lastRedeliveryStamp->getRedeliveredAt());
-            $document->retryCount = $lastRedeliveryStamp->getRetryCount();
-        }
-
+        Assert::isInstanceOf($lastRedeliveryStamp, RedeliveryStamp::class);
+        $document->lastErrorAt = new UTCDateTime($lastRedeliveryStamp->getRedeliveredAt());
+        $document->retryCount = $lastRedeliveryStamp->getRetryCount();
         $document->lastErrorMessage = $exceptionMessage;
     }
 }

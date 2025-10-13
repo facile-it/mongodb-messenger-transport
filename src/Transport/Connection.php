@@ -109,8 +109,7 @@ final class Connection
         $document->availableAt = new UTCDateTime($availableAt);
 
         try {
-            $sessionStamp = $envelope->last(MongoDBSessionStamp::class);
-            $session = $sessionStamp instanceof MongoDBSessionStamp ? $sessionStamp->getSession() : null;
+            $session = $envelope->last(MongoDBSessionStamp::class)?->getSession();
             $insertResult = $this->collection->insertOne($document, $this->getMongoOptions($session));
         } catch (\Throwable $exception) {
             throw new TransportException($exception->getMessage(), 0, $exception);

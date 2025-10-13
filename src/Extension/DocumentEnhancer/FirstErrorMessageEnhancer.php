@@ -12,6 +12,7 @@ use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Stamp\ErrorDetailsStamp;
 use Symfony\Component\Messenger\Stamp\RedeliveryStamp;
 use Symfony\Component\Messenger\Stamp\StampInterface;
+use Webmozart\Assert\Assert;
 
 class FirstErrorMessageEnhancer implements DocumentEnhancer
 {
@@ -28,16 +29,15 @@ class FirstErrorMessageEnhancer implements DocumentEnhancer
         } else {
             $firstRedeliveryStamp = RedeliveryStampExtractor::getFirstWithException($envelope);
 
-            if (null == $firstRedeliveryStamp) {
+            if (! $firstRedeliveryStamp instanceof RedeliveryStamp) {
                 return;
             }
 
             $exceptionMessage = $firstRedeliveryStamp->getExceptionMessage();
         }
 
-        if ($firstRedeliveryStamp instanceof RedeliveryStamp) {
-            $document->firstErrorAt = new UTCDateTime($firstRedeliveryStamp->getRedeliveredAt());
-        }
+        Assert::isInstanceOf($firstRedeliveryStamp, RedeliveryStamp::class);
+        $document->firstErrorAt = new UTCDateTime($firstRedeliveryStamp->getRedeliveredAt());
         $document->firstErrorMessage = $exceptionMessage;
     }
 
@@ -51,9 +51,7 @@ class FirstErrorMessageEnhancer implements DocumentEnhancer
     private function getFirst(string $stampName, Envelope $envelope): ?StampInterface
     {
         foreach ($envelope->all($stampName) as $stamp) {
-            if ($stamp instanceof $stampName) {
-                return $stamp;
-            }
+            return $stamp;
         }
 
         return null;

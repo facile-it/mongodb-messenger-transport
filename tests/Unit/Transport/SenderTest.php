@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Facile\MongoDbMessenger\Tests\Unit\Transport;
 
+use MongoDB\BSON\UTCDateTime;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Facile\MongoDbMessenger\Transport\Connection;
 use Facile\MongoDbMessenger\Transport\Sender;
@@ -21,7 +22,7 @@ class SenderTest extends TestCase
 {
     use ProphecyTrait;
 
-    public function testHeadersAreSent(): void
+    public function testSend(): void
     {
         $headers = ['header' => 'headerValue'];
         $body = '{this: "is the body"}';
@@ -38,7 +39,10 @@ class SenderTest extends TestCase
         $collection->insertOne(Argument::allOf(
             Argument::type(BSONDocument::class),
             Argument::withEntry('body', $body),
-            Argument::withEntry('headers', new BSONDocument($headers))
+            Argument::withEntry('headers', new BSONDocument($headers)),
+            Argument::withEntry('createdAt', Argument::type(UTCDateTime::class)),
+            Argument::withEntry('availableAt', Argument::type(UTCDateTime::class)),
+            Argument::that(static fn(BSONDocument $document): bool => $document->createdAt == $document->availableAt)
         ), Argument::cetera())
             ->shouldBeCalledOnce()
             ->willReturn($insertOneResult->reveal())
