@@ -68,7 +68,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: mongodb-${{ matrix.ext-mongodb }}
-          coverage: xdebug2
+          coverage: xdebug
           tools: flex,composer:v2
       - name: Allow unstable dependencies
         run: composer config minimum-stability dev
