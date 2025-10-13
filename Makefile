@@ -9,7 +9,7 @@ up: docker-compose.yml
 	docker-compose up -d
 
 setup: docker-compose.yml composer.json
-	docker-compose run --no-deps --rm php composer install
+	docker-compose run --no-deps --rm php composer update
 
 start: up
 	docker-compose exec php zsh
@@ -22,6 +22,9 @@ infection:
 
 test: docker-compose.yml phpunit.xml.dist wait-mongodb
 	docker-compose run --rm php zsh -c "vendor/bin/phpunit -c phpunit.xml.dist"
+
+rector: docker-compose.yml
+	docker-compose run --no-deps --rm php zsh -c "vendor/bin/rector --ansi"
 
 phpstan: docker-compose.yml
 	docker-compose run --no-deps --rm php zsh -c "vendor/bin/phpstan analyze --memory-limit=-1"
@@ -37,7 +40,7 @@ lock-symfony-%:
 
 test-composer-install: lock-symfony-3.4 lock-symfony-4.4 lock-symfony-5.0 lock-symfony-6.0 lock-symfony-7.0
 
-pre-commit-checks: cs-fix phpstan test infection
+pre-commit-checks: rector cs-fix phpstan test infection
 
 wait-mongodb:
 	docker compose up --wait --no-deps mongo

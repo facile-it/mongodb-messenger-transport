@@ -17,11 +17,9 @@ use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
 final class Receiver implements ReceiverInterface, MessageCountAwareInterface, ListableReceiverInterface
 {
-    /** @var Connection */
-    private $connection;
+    private Connection $connection;
 
-    /** @var SerializerInterface */
-    private $serializer;
+    private SerializerInterface $serializer;
 
     public function __construct(Connection $connection, SerializerInterface $serializer)
     {
@@ -36,7 +34,7 @@ final class Receiver implements ReceiverInterface, MessageCountAwareInterface, L
     {
         $document = $this->connection->get();
 
-        if ($document === null) {
+        if (! $document instanceof BSONDocument) {
             return [];
         }
 
@@ -104,7 +102,7 @@ final class Receiver implements ReceiverInterface, MessageCountAwareInterface, L
     {
         $document = $this->connection->find((string) $id);
 
-        if ($document === null) {
+        if (! $document instanceof BSONDocument) {
             return null;
         }
 

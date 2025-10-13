@@ -197,7 +197,7 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
 
         $this->assertCount(1, $allAvailableEnvelopes);
         $this->assertContainsOnlyInstancesOf(Envelope::class, $allAvailableEnvelopes);
-        foreach ($allAvailableEnvelopes as $i => $envelope) {
+        foreach ($allAvailableEnvelopes as $envelope) {
             $this->assertNotEquals($lockedEnvelope->getMessage(), $envelope->getMessage());
         }
     }

@@ -10,8 +10,7 @@ use Symfony\Component\Messenger\Envelope;
 
 class InstantiableDocumentEnhancer implements DocumentEnhancer
 {
-    /** @var \DateTime|null */
-    private $foo;
+    private ?\DateTime $foo;
 
     public function __construct(?\DateTime $foo = null)
     {

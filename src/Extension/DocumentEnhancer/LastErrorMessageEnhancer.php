@@ -27,7 +27,7 @@ class LastErrorMessageEnhancer implements DocumentEnhancer
         } else {
             $lastRedeliveryStamp = RedeliveryStampExtractor::getLastWithException($envelope);
 
-            if (null === $lastRedeliveryStamp) {
+            if (! $lastRedeliveryStamp instanceof RedeliveryStamp) {
                 return;
             }
 

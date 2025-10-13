@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Facile\MongoDbMessenger\Tests\Unit\Transport;
 
+use Prophecy\Argument\Token\LogicalAndToken;
 use Facile\MongoDbMessenger\Tests\Stubs\FooMessage;
 use Facile\MongoDbMessenger\Transport\Connection;
 use MongoDB\BSON\ObjectId;
@@ -102,6 +103,24 @@ class ConnectionTest extends TestCase
         $this->assertNull($connection->get());
     }
 
+    private static function toTimestamp(UTCDateTime $dateTime): int
+    {
+        $jsonSerialized = $dateTime->jsonSerialize();
+        self::assertIsArray($jsonSerialized);
+        self::assertArrayHasKey('$date', $jsonSerialized);
+        self::assertIsArray($jsonSerialized['$date']);
+        self::assertArrayHasKey('$numberLong', $jsonSerialized['$date']);
+        $timestamp = $jsonSerialized['$date']['$numberLong'] ?? false;
+        self::assertIsNumeric($timestamp, 'Unable to extract timestamp from UTCDateTime');
+
+        return (int) $timestamp;
+    }
+
+    private static function isLessThan(UTCDateTime $expected, UTCDateTime $actual): bool
+    {
+        return self::toTimestamp($expected) > self::toTimestamp($actual);
+    }
+
     public function testSend(): void
     {
         $insertOneResult = $this->prophesize(InsertOneResult::class);
@@ -109,8 +128,10 @@ class ConnectionTest extends TestCase
         $insertOneResult->getInsertedId()
             ->willReturn($objectId);
         $collection = $this->prophesize(Collection::class);
+        $oneSecondFromNow = new UTCDateTime(new \DateTimeImmutable('+1 second'));
         $inOneSecondFromNow = [
             Argument::type(UTCDateTime::class),
+            Argument::that(static fn(UTCDateTime $dateTime): bool => self::isLessThan($oneSecondFromNow, $dateTime)),
         ];
         $expectedDocument = Argument::allOf(
             Argument::type(BSONDocument::class),
@@ -134,6 +155,45 @@ class ConnectionTest extends TestCase
         $this->assertSame($objectId, $connection->send(new Envelope(FooMessage::create()), 'serializedEnvelope'));
     }
 
+    public function testSendWithDelay(): void
+    {
+        $insertOneResult = $this->prophesize(InsertOneResult::class);
+        $objectId = new ObjectId();
+        $insertOneResult->getInsertedId()
+            ->willReturn($objectId);
+        $collection = $this->prophesize(Collection::class);
+        $oneSecondFromNow = new UTCDateTime(new \DateTimeImmutable('+1 second'));
+        $ninetySecondFromNow = new UTCDateTime(new \DateTimeImmutable('+90 second'));
+        $inOneSecondFromNow = [
+            Argument::type(UTCDateTime::class),
+            Argument::that(static fn(UTCDateTime $dateTime): bool => self::isLessThan($oneSecondFromNow, $dateTime)),
+        ];
+        $inOneHundredSecondFromNow = [
+            Argument::type(UTCDateTime::class),
+            Argument::that(static fn(UTCDateTime $dateTime): bool => self::isLessThan($dateTime, $ninetySecondFromNow)),
+        ];
+        $expectedDocument = Argument::allOf(
+            Argument::type(BSONDocument::class),
+            Argument::withEntry('body', 'serializedEnvelope'),
+            Argument::withEntry('queueName', 'foobar'),
+            Argument::withEntry('createdAt', Argument::allOf(...$inOneSecondFromNow)),
+            Argument::withEntry('availableAt', Argument::allOf(...$inOneHundredSecondFromNow))
+        );
+        $expectedOptions = Argument::allOf(
+            Argument::withEntry('writeConcern', Argument::allOf(
+                Argument::type(WriteConcern::class),
+                Argument::which('getW', WriteConcern::MAJORITY)
+            ))
+        );
+        $collection->insertOne($expectedDocument, $expectedOptions)
+            ->shouldBeCalledOnce()
+            ->willReturn($insertOneResult->reveal());
+
+        $connection = new Connection($collection->reveal(), 'foobar', 3_600);
+
+        $this->assertSame($objectId, $connection->send(new Envelope(FooMessage::create()), 'serializedEnvelope', 100_000));
+    }
+
     public function testSendWrapsMongoExceptions(): void
     {
         $collection = $this->prophesize(Collection::class);
@@ -152,7 +212,8 @@ class ConnectionTest extends TestCase
     public function testAckWrapsMongoExceptions(): void
     {
         $collection = $this->prophesize(Collection::class);
-        $collection->deleteOne(Argument::cetera())
+        $objectId = new ObjectId();
+        $collection->deleteOne(['_id' => $objectId], Argument::cetera())
             ->willThrow(new \Exception('Foo bar baz'));
 
         $connection = new Connection($collection->reveal(), 'queueName', 100);
@@ -161,13 +222,14 @@ class ConnectionTest extends TestCase
         $this->expectExceptionMessage('Foo bar baz');
         $this->expectExceptionCode(0);
 
-        $connection->ack((new ObjectId())->__toString());
+        $connection->ack($objectId->__toString());
     }
 
     public function testRejectWrapsMongoExceptions(): void
     {
         $collection = $this->prophesize(Collection::class);
-        $collection->deleteOne(Argument::cetera())
+        $objectId = new ObjectId();
+        $collection->deleteOne(['_id' => $objectId], Argument::cetera())
             ->willThrow(new \Exception('Foo bar baz'));
 
         $connection = new Connection($collection->reveal(), 'queueName', 100);
@@ -176,7 +238,7 @@ class ConnectionTest extends TestCase
         $this->expectExceptionMessage('Foo bar baz');
         $this->expectExceptionCode(0);
 
-        $connection->reject((new ObjectId())->__toString());
+        $connection->reject($objectId->__toString());
     }
 
     private function mockUpdatedDocumentDeliveredTo(string $deliveredTo): BSONDocument
@@ -187,11 +249,11 @@ class ConnectionTest extends TestCase
         return $document;
     }
 
-    private function argumentIsUTCDateTimeInSeconds(\DateTimeImmutable $reference, int $secondsModifier): Argument\Token\LogicalAndToken
+    private function argumentIsUTCDateTimeInSeconds(\DateTimeImmutable $reference, int $secondsModifier): LogicalAndToken
     {
         return Argument::allOf(
             Argument::type(UTCDateTime::class),
-            Argument::that(function (UTCDateTime $val) use ($reference, $secondsModifier) {
+            Argument::that(function (UTCDateTime $val) use ($reference, $secondsModifier): bool {
                 $lowerBound = $reference->modify($secondsModifier . ' seconds');
                 $this->assertUTCDateTimeIsBetween($lowerBound, $lowerBound->modify('+1 seconds'), $val);
 

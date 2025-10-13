@@ -53,7 +53,7 @@ class TransportFactoryTest extends TestCase
     {
         return [
             [':', 'The given MongoDB Messenger DSN ":" is invalid.'],
-            ['?foo=bar', 'Error while parsing DSN'],
+            ['?foo=bar', 'Error while parsing DSN: ?foo=bar'],
         ];
     }
 

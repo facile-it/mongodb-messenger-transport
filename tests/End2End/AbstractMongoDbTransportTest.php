@@ -178,7 +178,7 @@ abstract class AbstractMongoDbTransportTest extends WebTestCase
         $command = [
             'receivers' => [$transport],
             '--limit' => $messageCount,
-            '--time-limit' => 1 * $messageCount,
+            '--time-limit' => $messageCount,
             '-vv' => true,
         ];
 
