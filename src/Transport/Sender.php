@@ -12,11 +12,9 @@ use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
 class Sender implements SenderInterface
 {
-    /** @var Connection */
-    private $connection;
+    private Connection $connection;
 
-    /** @var SerializerInterface */
-    private $serializer;
+    private SerializerInterface $serializer;
 
     public function __construct(Connection $connection, SerializerInterface $serializer)
     {

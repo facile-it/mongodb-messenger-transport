@@ -6,11 +6,9 @@ namespace Facile\MongoDbMessenger\Tests\Stubs;
 
 class FooMessage
 {
-    /** @var string */
-    private $data;
+    private string $data;
 
-    /** @var bool */
-    private $shouldFail;
+    private bool $shouldFail;
 
     public static function create(): self
     {

@@ -36,8 +36,7 @@ final class TransportFactory implements TransportFactoryInterface
 
     public const RESETTABLE = 'resettable';
 
-    /** @var ContainerInterface */
-    private $container;
+    private ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {
@@ -89,11 +88,9 @@ final class TransportFactory implements TransportFactoryInterface
     private function addDocumentEnhancers(Connection $connection, array $options): void
     {
         foreach ($options[self::DOCUMENT_ENHANCERS] as $name) {
-            if ($this->isServiceDefinition($name)) {
-                $enhancer = $this->container->get(ltrim($name, '@'));
-            } else {
-                $enhancer = new $name();
-            }
+            $enhancer = $this->isServiceDefinition($name)
+                ? $this->container->get(ltrim($name, '@'))
+                : new $name();
 
             if (! $enhancer instanceof DocumentEnhancer) {
                 throw new \InvalidArgumentException('Expecting DocumentEnhancer, got ' . get_debug_type($enhancer));

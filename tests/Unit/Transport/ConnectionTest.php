@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Facile\MongoDbMessenger\Tests\Unit\Transport;
 
+use Prophecy\Argument\Token\LogicalAndToken;
 use Facile\MongoDbMessenger\Tests\Stubs\FooMessage;
 use Facile\MongoDbMessenger\Transport\Connection;
 use MongoDB\BSON\ObjectId;
@@ -130,7 +131,7 @@ class ConnectionTest extends TestCase
         $oneSecondFromNow = new UTCDateTime(new \DateTimeImmutable('+1 second'));
         $inOneSecondFromNow = [
             Argument::type(UTCDateTime::class),
-            Argument::that(static fn(UTCDateTime $dateTime) => self::isLessThan($oneSecondFromNow, $dateTime)),
+            Argument::that(static fn(UTCDateTime $dateTime): bool => self::isLessThan($oneSecondFromNow, $dateTime)),
         ];
         $expectedDocument = Argument::allOf(
             Argument::type(BSONDocument::class),
@@ -165,11 +166,11 @@ class ConnectionTest extends TestCase
         $ninetySecondFromNow = new UTCDateTime(new \DateTimeImmutable('+90 second'));
         $inOneSecondFromNow = [
             Argument::type(UTCDateTime::class),
-            Argument::that(static fn(UTCDateTime $dateTime) => self::isLessThan($oneSecondFromNow, $dateTime)),
+            Argument::that(static fn(UTCDateTime $dateTime): bool => self::isLessThan($oneSecondFromNow, $dateTime)),
         ];
         $inOneHundredSecondFromNow = [
             Argument::type(UTCDateTime::class),
-            Argument::that(static fn(UTCDateTime $dateTime) => self::isLessThan($dateTime, $ninetySecondFromNow)),
+            Argument::that(static fn(UTCDateTime $dateTime): bool => self::isLessThan($dateTime, $ninetySecondFromNow)),
         ];
         $expectedDocument = Argument::allOf(
             Argument::type(BSONDocument::class),
@@ -248,11 +249,11 @@ class ConnectionTest extends TestCase
         return $document;
     }
 
-    private function argumentIsUTCDateTimeInSeconds(\DateTimeImmutable $reference, int $secondsModifier): Argument\Token\LogicalAndToken
+    private function argumentIsUTCDateTimeInSeconds(\DateTimeImmutable $reference, int $secondsModifier): LogicalAndToken
     {
         return Argument::allOf(
             Argument::type(UTCDateTime::class),
-            Argument::that(function (UTCDateTime $val) use ($reference, $secondsModifier) {
+            Argument::that(function (UTCDateTime $val) use ($reference, $secondsModifier): bool {
                 $lowerBound = $reference->modify($secondsModifier . ' seconds');
                 $this->assertUTCDateTimeIsBetween($lowerBound, $lowerBound->modify('+1 seconds'), $val);
 
