@@ -30,6 +30,7 @@
         "facile-it/symfony-functional-testcase": "^1.0",
         "infection/infection": ">=0.23",
         "jangregor/phpstan-prophecy": "2.2.0",
+        "nikic/php-parser": ">=5",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan": "2.1.31",
