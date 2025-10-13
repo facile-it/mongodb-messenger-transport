@@ -152,13 +152,23 @@ final class TransportFactory implements TransportFactoryInterface
     }
 
     /**
-     * @param string[] $enhancers
+     * @param mixed $enhancers
      *
      * @throws \InvalidArgumentException If any of the document_enhancers values is not valid
+     *
+     * @phpstan-assert array<array-key, string> $enhancers
      */
-    private function validateDocumentEnhancers(array $enhancers): void
+    private function validateDocumentEnhancers($enhancers): void
     {
+        if (! is_array($enhancers)) {
+            throw new \InvalidArgumentException('Document enhancers should array, got ' . get_debug_type($enhancers));
+        }
+
         foreach ($enhancers as $name) {
+            if (! is_string($name)) {
+                throw new \InvalidArgumentException('Document enhancers should be strings, got ' . get_debug_type($name));
+            }
+
             if ($this->isServiceDefinition($name)) {
                 continue;
             }

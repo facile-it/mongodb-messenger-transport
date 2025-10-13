@@ -9,7 +9,7 @@ up: docker-compose.yml
 	docker-compose up -d
 
 setup: docker-compose.yml composer.json
-	docker-compose run --no-deps --rm php composer install
+	docker-compose run --no-deps --rm php composer update
 
 start: up
 	docker-compose exec php zsh

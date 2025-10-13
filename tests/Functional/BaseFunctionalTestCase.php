@@ -31,10 +31,7 @@ class BaseFunctionalTestCase extends TestCase
             $this->host = $hostOverride;
         }
 
-        $database = new Database(new Manager('mongodb://root:rootPass@' . $this->host), 'test');
-        $this->assertInstanceOf(Database::class, $database);
-
-        return $database;
+        return new Database(new Manager('mongodb://root:rootPass@' . $this->host), 'test');
     }
 
     protected function getTransport(string $queueName = 'default'): MongoDbTransport
