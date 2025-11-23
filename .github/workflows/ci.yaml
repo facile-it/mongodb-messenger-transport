@@ -78,6 +78,8 @@ jobs:
         if: matrix.description != 'Infection'
       - name: Install dependencies
         uses: "ramsey/composer-install@v3"
+        env:
+          COMPOSER_NO_SECURITY_BLOCKING: "1"
         with:
           dependency-versions: ${{ matrix.dependencies }}
           composer-options: ${{ matrix.composer_options }}
