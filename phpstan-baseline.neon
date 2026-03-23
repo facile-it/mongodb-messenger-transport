@@ -37,7 +37,7 @@ parameters:
 			path: src/Transport/Receiver.php
 
 		-
-			message: '#^Method Facile\\MongoDbMessenger\\Transport\\TransportFactory\:\:buildConfiguration\(\) should return array\{connection_name\: string, collection_name\: string, queue_name\: string, redeliver_timeout\: int, document_enhancers\: array\<string\>, resettable\: 0\|1\|bool\} but returns non\-empty\-array\.$#'
+			message: '#^Method Facile\\MongoDbMessenger\\Transport\\TransportFactory\:\:buildConfiguration\(\) should return array\{connection_name\: string, collection_name\: string, queue_name\: string, redeliver_timeout\: int, document_enhancers\: array\<string\>, resettable\: 0\|1\|bool\} but returns non\-empty\-array\<int\|string, mixed\>\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Transport/TransportFactory.php
