@@ -95,7 +95,7 @@ jobs:
         run: vendor/bin/infection --show-mutations
       - name: Upload code coverage
         if: matrix.description != 'Infection'
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           files: build/coverage-report.xml
           fail_ci_if_error: true
