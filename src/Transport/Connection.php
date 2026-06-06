@@ -31,7 +31,7 @@ final class Connection
     public function __construct(
         private readonly Collection $collection,
         private readonly string $queueName,
-        private readonly int $redeliverTimeout
+        private readonly int $redeliverTimeout,
     ) {
         $this->uniqueId = uniqid('consumer_', true);
     }
@@ -157,7 +157,7 @@ final class Connection
     public function getMessageCount(): int
     {
         return $this->collection->count(
-            $this->createAvailableMessagesQuery()
+            $this->createAvailableMessagesQuery(),
         );
     }
 

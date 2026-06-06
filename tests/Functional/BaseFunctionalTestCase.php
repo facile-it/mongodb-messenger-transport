@@ -40,7 +40,7 @@ class BaseFunctionalTestCase extends TestCase
 
         return new MongoDbTransport(
             new Connection($collection, $queueName, 3_600),
-            new PhpSerializer()
+            new PhpSerializer(),
         );
     }
 

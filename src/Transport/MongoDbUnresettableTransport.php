@@ -20,7 +20,7 @@ class MongoDbUnresettableTransport implements TransportInterface, SetupableTrans
 
     public function __construct(
         private readonly Connection $connection,
-        private readonly SerializerInterface $serializer
+        private readonly SerializerInterface $serializer,
     ) {}
 
     /**

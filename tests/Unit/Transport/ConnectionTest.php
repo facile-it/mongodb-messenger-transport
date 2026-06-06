@@ -38,28 +38,28 @@ class ConnectionTest extends TestCase
                 Argument::withEntry(0, ['deliveredAt' => null]),
                 Argument::withEntry(1, Argument::withEntry(
                     'deliveredAt',
-                    Argument::withEntry('$lt', $this->argumentIsUTCDateTimeInSeconds($now, -100))
-                ))
+                    Argument::withEntry('$lt', $this->argumentIsUTCDateTimeInSeconds($now, -100)),
+                )),
             )),
             Argument::withEntry('availableAt', Argument::withEntry('$lte', Argument::type(UTCDateTime::class))),
-            Argument::withEntry('queueName', 'foobar')
+            Argument::withEntry('queueName', 'foobar'),
         );
 
         $expectedUpdateStatement = Argument::allOf(
             Argument::withEntry('$set', Argument::allOf(
                 Argument::withEntry('deliveredTo', $connection->getUniqueId()),
-                Argument::withEntry('deliveredAt', $this->argumentIsUTCDateTimeInSeconds($now, 0))
-            ))
+                Argument::withEntry('deliveredAt', $this->argumentIsUTCDateTimeInSeconds($now, 0)),
+            )),
         );
 
         $expectedOptions = Argument::allOf(
             Argument::withEntry('session', null),
             Argument::withEntry('writeConcern', Argument::allOf(
                 Argument::type(WriteConcern::class),
-                Argument::which('getW', WriteConcern::MAJORITY)
+                Argument::which('getW', WriteConcern::MAJORITY),
             )),
             Argument::withEntry('returnDocument', FindOneAndUpdate::RETURN_DOCUMENT_AFTER),
-            Argument::withEntry('sort', ['availableAt' => 1])
+            Argument::withEntry('sort', ['availableAt' => 1]),
         );
 
         $collection->findOneAndUpdate($expectedFilter, $expectedUpdateStatement, $expectedOptions)
@@ -142,14 +142,14 @@ class ConnectionTest extends TestCase
             Argument::withEntry('queueName', 'foobar'),
             Argument::withEntry('createdAt', Argument::allOf(...$inOneSecondFromNow)),
             Argument::withEntry('availableAt', Argument::allOf(...$inOneSecondFromNow)),
-            Argument::that(static fn(BSONDocument $document): bool => $document->createdAt == $document->availableAt)
+            Argument::that(static fn(BSONDocument $document): bool => $document->createdAt == $document->availableAt),
         );
         $expectedOptions = Argument::allOf(
             Argument::withEntry('session', null),
             Argument::withEntry('writeConcern', Argument::allOf(
                 Argument::type(WriteConcern::class),
-                Argument::which('getW', WriteConcern::MAJORITY)
-            ))
+                Argument::which('getW', WriteConcern::MAJORITY),
+            )),
         );
         $collection->insertOne($expectedDocument, $expectedOptions)
             ->shouldBeCalledOnce()
@@ -182,13 +182,13 @@ class ConnectionTest extends TestCase
             Argument::withEntry('body', 'serializedEnvelope'),
             Argument::withEntry('queueName', 'foobar'),
             Argument::withEntry('createdAt', Argument::allOf(...$inOneSecondFromNow)),
-            Argument::withEntry('availableAt', Argument::allOf(...$inOneHundredSecondFromNow))
+            Argument::withEntry('availableAt', Argument::allOf(...$inOneHundredSecondFromNow)),
         );
         $expectedOptions = Argument::allOf(
             Argument::withEntry('writeConcern', Argument::allOf(
                 Argument::type(WriteConcern::class),
-                Argument::which('getW', WriteConcern::MAJORITY)
-            ))
+                Argument::which('getW', WriteConcern::MAJORITY),
+            )),
         );
         $collection->insertOne($expectedDocument, $expectedOptions)
             ->shouldBeCalledOnce()
@@ -308,14 +308,14 @@ class ConnectionTest extends TestCase
                 $this->assertUTCDateTimeIsBetween($lowerBound, $lowerBound->modify('+1 seconds'), $val);
 
                 return true;
-            })
+            }),
         );
     }
 
     private function assertUTCDateTimeIsBetween(
         \DateTimeImmutable $lowerBound,
         \DateTimeImmutable $higherBound,
-        UTCDateTime $val
+        UTCDateTime $val,
     ): void {
         $this->assertGreaterThanOrEqual(new UTCDateTime($lowerBound), $val);
         $this->assertLessThan(new UTCDateTime($higherBound), $val);

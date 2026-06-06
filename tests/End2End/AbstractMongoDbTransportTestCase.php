@@ -42,7 +42,7 @@ abstract class AbstractMongoDbTransportTestCase extends WebTestCase
         $message = FooMessage::create();
 
         $decodedEnvelope = $serializer->decode(
-            $serializer->encode(new Envelope($message))
+            $serializer->encode(new Envelope($message)),
         );
 
         $this->assertEquals($message, $decodedEnvelope->getMessage());
@@ -101,7 +101,7 @@ abstract class AbstractMongoDbTransportTestCase extends WebTestCase
         $database = $this->getMongoDb();
         $database->drop();
 
-        $this->runCommand('messenger:setup-transports');
+        $this->runCommandTester('messenger:setup-transports');
 
         $collections = iterator_to_array($database->listCollections());
         $this->assertCount(1, $collections);
@@ -132,7 +132,7 @@ abstract class AbstractMongoDbTransportTestCase extends WebTestCase
 
     public function testDebugConfiguration(): void
     {
-        $tester = $this->runCommand('debug:config', ['name' => 'framework']);
+        $tester = $this->runCommandTester('debug:config', ['name' => 'framework']);
 
         $output = $tester->getDisplay();
         $this->assertSame(0, $tester->getStatusCode(), $output);
@@ -186,6 +186,6 @@ abstract class AbstractMongoDbTransportTestCase extends WebTestCase
             $command['--no-reset'] = true;
         }
 
-        return $this->runCommand('messenger:consume', $command);
+        return $this->runCommandTester('messenger:consume', $command);
     }
 }

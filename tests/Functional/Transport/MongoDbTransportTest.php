@@ -342,7 +342,7 @@ class MongoDbTransportTest extends BaseFunctionalTestCase
                 'queueName' => 1,
                 'deliveredAt' => 1,
             ],
-            $index->getKey()
+            $index->getKey(),
         );
     }
 }

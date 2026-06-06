@@ -12,7 +12,7 @@ class NotInstantiableDocumentEnhancer implements DocumentEnhancer
 {
     public function __construct(
         private readonly \DateTime $bar,
-        private readonly ?\DateTime $foo = null
+        private readonly ?\DateTime $foo = null,
     ) {}
 
     public function enhance(BSONDocument $document, Envelope $envelope): void

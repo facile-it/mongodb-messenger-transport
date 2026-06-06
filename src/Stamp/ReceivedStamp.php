@@ -8,7 +8,9 @@ use Symfony\Component\Messenger\Stamp\NonSendableStampInterface;
 
 final class ReceivedStamp implements NonSendableStampInterface
 {
-    public function __construct(private readonly string $id) {}
+    public function __construct(
+        private readonly string $id,
+    ) {}
 
     public function getId(): string
     {
