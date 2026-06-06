@@ -14,7 +14,7 @@ class Sender implements SenderInterface
 {
     public function __construct(
         private readonly Connection $connection,
-        private readonly SerializerInterface $serializer
+        private readonly SerializerInterface $serializer,
     ) {}
 
     public function send(Envelope $envelope): Envelope

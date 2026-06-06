@@ -42,7 +42,7 @@ class ReceiverTest extends TestCase
             Argument::type('array'),
             Argument::size(2),
             Argument::withEntry('body', '{document: body}'),
-            Argument::withEntry('headers', $headers)
+            Argument::withEntry('headers', $headers),
         ))
             ->shouldBeCalledOnce()
             ->willReturn(new Envelope(new \stdClass()));
@@ -107,9 +107,9 @@ class ReceiverTest extends TestCase
             new Connection(
                 $this->prophesize(Collection::class)->reveal(),
                 'queueName',
-                0
+                0,
             ),
-            $this->prophesize(SerializerInterface::class)->reveal()
+            $this->prophesize(SerializerInterface::class)->reveal(),
         );
     }
 }

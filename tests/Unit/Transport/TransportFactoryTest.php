@@ -195,7 +195,7 @@ class TransportFactoryTest extends TestCase
         $transport = $factory->createTransport(
             'mongodb://foobar?collection_name=bar',
             ['resettable' => 0],
-            $this->mockSerializer()
+            $this->mockSerializer(),
         );
 
         $this->assertNotInstanceOf(ResetInterface::class, $transport);
@@ -208,7 +208,7 @@ class TransportFactoryTest extends TestCase
         $transport = $factory->createTransport(
             'mongodb://foobar?collection_name=bar',
             ['resettable' => 1],
-            $this->mockSerializer()
+            $this->mockSerializer(),
         );
 
         $this->assertInstanceOf(ResetInterface::class, $transport);

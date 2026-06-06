@@ -19,7 +19,7 @@ final class Receiver implements ReceiverInterface, MessageCountAwareInterface, L
 {
     public function __construct(
         private readonly Connection $connection,
-        private readonly SerializerInterface $serializer
+        private readonly SerializerInterface $serializer,
     ) {}
 
     /**
@@ -135,7 +135,7 @@ final class Receiver implements ReceiverInterface, MessageCountAwareInterface, L
 
         return $envelope->with(
             new ReceivedStamp($documentID),
-            new TransportMessageIdStamp($documentID)
+            new TransportMessageIdStamp($documentID),
         );
     }
 }

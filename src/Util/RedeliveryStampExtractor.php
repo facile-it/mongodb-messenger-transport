@@ -47,7 +47,7 @@ class RedeliveryStampExtractor
             trigger_deprecation(
                 'symfony/messenger',
                 '5.2',
-                'using RedeliveryStamp::getExceptionMessage is deprecated; use ErrorDetailsStamp instead, which is now added to failed messages to retain information about the failures'
+                'using RedeliveryStamp::getExceptionMessage is deprecated; use ErrorDetailsStamp instead, which is now added to failed messages to retain information about the failures',
             );
         }
     }

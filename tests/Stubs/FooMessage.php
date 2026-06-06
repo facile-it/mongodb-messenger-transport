@@ -8,7 +8,7 @@ class FooMessage
 {
     public function __construct(
         private readonly string $data,
-        private readonly bool $shouldFail
+        private readonly bool $shouldFail,
     ) {}
 
     public static function create(): self

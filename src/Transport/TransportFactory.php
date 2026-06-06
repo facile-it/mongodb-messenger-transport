@@ -36,7 +36,9 @@ final class TransportFactory implements TransportFactoryInterface
 
     public const RESETTABLE = 'resettable';
 
-    public function __construct(private readonly ContainerInterface $container) {}
+    public function __construct(
+        private readonly ContainerInterface $container,
+    ) {}
 
     /**
      * @param array<string, mixed> $options
@@ -65,7 +67,7 @@ final class TransportFactory implements TransportFactoryInterface
         $connection = new Connection(
             $database->selectCollection($configuration[self::COLLECTION_NAME]),
             $configuration[self::QUEUE_NAME],
-            $configuration[self::REDELIVER_TIMEOUT]
+            $configuration[self::REDELIVER_TIMEOUT],
         );
 
         $this->addDocumentEnhancers($connection, $configuration);
@@ -136,7 +138,7 @@ final class TransportFactory implements TransportFactoryInterface
         if (! in_array($configuration[self::RESETTABLE], [0, 1, true, false], true)) {
             throw new \InvalidArgumentException(sprintf(
                 'Unknown option value for resettable: [%s]. Allowed values are booleans, 0 or 1.',
-                print_r($configuration[self::RESETTABLE], true)
+                print_r($configuration[self::RESETTABLE], true),
             ));
         }
 
@@ -168,7 +170,7 @@ final class TransportFactory implements TransportFactoryInterface
             if (! class_exists($name)) {
                 throw new \InvalidArgumentException(sprintf(
                     'Invalid entry in document_enhancers option: "%s" - value is neither a service reference nor an existing class',
-                    $name
+                    $name,
                 ));
             }
 

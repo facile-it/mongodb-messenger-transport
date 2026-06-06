@@ -42,7 +42,7 @@ abstract class AbstractMongoDbTransportTestCase extends WebTestCase
         $message = FooMessage::create();
 
         $decodedEnvelope = $serializer->decode(
-            $serializer->encode(new Envelope($message))
+            $serializer->encode(new Envelope($message)),
         );
 
         $this->assertEquals($message, $decodedEnvelope->getMessage());

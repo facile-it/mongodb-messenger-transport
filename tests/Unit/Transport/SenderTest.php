@@ -42,7 +42,7 @@ class SenderTest extends TestCase
             Argument::withEntry('headers', new BSONDocument($headers)),
             Argument::withEntry('createdAt', Argument::type(UTCDateTime::class)),
             Argument::withEntry('availableAt', Argument::type(UTCDateTime::class)),
-            Argument::that(static fn(BSONDocument $document): bool => $document->createdAt == $document->availableAt)
+            Argument::that(static fn(BSONDocument $document): bool => $document->createdAt == $document->availableAt),
         ), Argument::cetera())
             ->shouldBeCalledOnce()
             ->willReturn($insertOneResult->reveal())
@@ -53,7 +53,7 @@ class SenderTest extends TestCase
 
         $sender = new Sender(
             new Connection($collection->reveal(), 'queueName', 0),
-            $serializer->reveal()
+            $serializer->reveal(),
         );
 
         $sender->send(new Envelope(new \stdClass()));
@@ -71,7 +71,7 @@ class SenderTest extends TestCase
 
         $sender = new Sender(
             new Connection($this->prophesize(Collection::class)->reveal(), 'queueName', 0),
-            $serializer->reveal()
+            $serializer->reveal(),
         );
 
         $this->expectException(\InvalidArgumentException::class);
