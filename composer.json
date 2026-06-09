@@ -32,7 +32,7 @@
         "jangregor/phpstan-prophecy": "2.3.0",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpstan/extension-installer": "^1.1",
-        "phpstan/phpstan": "2.1.55",
+        "phpstan/phpstan": "2.2.2",
         "phpstan/phpstan-phpunit": "2.0.16",
         "phpunit/phpunit": "^10.5.58 || ^11 || ^12",
         "rector/rector": "2.4.4",
