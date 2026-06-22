@@ -58,7 +58,7 @@ jobs:
       SYMFONY_REQUIRE: ${{ matrix.symfony-version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Prepare Docker Compose
         run: mv docker-compose.override.yml.dist docker-compose.override.yml
       - name: Starts MongoDB
