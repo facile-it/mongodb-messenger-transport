@@ -14,7 +14,7 @@ RUN apk --no-cache add \
         zip \
         zsh
 
-ARG MONGO_VERSION=1.12.0
+ARG MONGO_VERSION=1.21.9
 RUN pecl install mongodb-${MONGO_VERSION} \
     && docker-php-ext-enable mongodb
 
