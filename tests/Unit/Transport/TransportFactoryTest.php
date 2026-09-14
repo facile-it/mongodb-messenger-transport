@@ -13,6 +13,7 @@ use Facile\MongoDbMessenger\Transport\TransportFactory;
 use MongoDB\Collection;
 use MongoDB\Database;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
@@ -155,6 +156,25 @@ class TransportFactoryTest extends TestCase
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('value is neither a service reference nor an existing class');
+
+        $factory->createTransport('mongodb://foobar', $options, $this->mockSerializer());
+    }
+
+    public function testCreateTransportWithDocumentEnhancerServiceOfWrongType(): void
+    {
+        $options = [
+            'document_enhancers' => ['@mongo.connection.foobar'],
+        ];
+        $container = $this->prophesize(ContainerInterface::class);
+        $database = $this->prophesize(Database::class);
+        $database->selectCollection(Argument::cetera())
+            ->willReturn($this->prophesize(Collection::class)->reveal());
+        $container->get('mongo.connection.foobar')
+            ->willReturn($database->reveal());
+        $factory = new TransportFactory($container->reveal());
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Expecting DocumentEnhancer, got ');
 
         $factory->createTransport('mongodb://foobar', $options, $this->mockSerializer());
     }
