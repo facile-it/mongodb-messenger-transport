@@ -188,7 +188,7 @@ final class Connection
      *
      * @return Cursor<BSONDocument>
      */
-    public function findBy($filters, array $options): Cursor
+    public function findBy(array|object $filters, array $options): Cursor
     {
         return $this->collection->find($filters, $this->setTypeMapOption($options));
     }
@@ -197,7 +197,7 @@ final class Connection
      * @param array<string, mixed>|object $filters
      * @param array<string, mixed> $options
      */
-    public function countBy($filters, array $options): int
+    public function countBy(array|object $filters, array $options): int
     {
         return $this->collection->count($filters, $options);
     }
@@ -247,7 +247,7 @@ final class Connection
      */
     private function getMongoOptions(?Session $session = null): array
     {
-        if ($session && $session->isInTransaction()) {
+        if ($session instanceof Session && $session->isInTransaction()) {
             return ['session' => $session];
         }
 

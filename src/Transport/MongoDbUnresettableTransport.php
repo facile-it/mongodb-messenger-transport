@@ -66,7 +66,7 @@ class MongoDbUnresettableTransport implements TransportInterface, SetupableTrans
      *
      * @return \Generator<Envelope>
      */
-    public function findBy($filters = [], array $options = []): \Generator
+    public function findBy(array|object $filters = [], array $options = []): \Generator
     {
         yield from $this->getReceiver()->findBy($filters, $options);
     }
@@ -77,7 +77,7 @@ class MongoDbUnresettableTransport implements TransportInterface, SetupableTrans
      * @param array<string, mixed>|object $filters
      * @param array<string, mixed> $options
      */
-    public function countBy($filters = [], array $options = []): int
+    public function countBy(array|object $filters = [], array $options = []): int
     {
         return $this->getReceiver()->countBy($filters, $options);
     }
