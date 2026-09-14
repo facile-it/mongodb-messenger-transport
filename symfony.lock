@@ -74,9 +74,6 @@
     "jangregor/phpstan-prophecy": {
         "version": "0.8.0"
     },
-    "jean85/pretty-package-versions": {
-        "version": "1.6.0"
-    },
     "justinrainbow/json-schema": {
         "version": "5.2.10"
     },
