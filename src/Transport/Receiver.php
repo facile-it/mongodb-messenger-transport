@@ -74,7 +74,7 @@ final class Receiver implements ReceiverInterface, MessageCountAwareInterface, L
      *
      * @return \Generator<Envelope>
      */
-    public function findBy($filters, array $options): \Generator
+    public function findBy(array|object $filters, array $options): \Generator
     {
         foreach ($this->connection->findBy($filters, $options) as $document) {
             yield $this->createEnvelope($document);
@@ -85,7 +85,7 @@ final class Receiver implements ReceiverInterface, MessageCountAwareInterface, L
      * @param array<string, mixed>|object $filters
      * @param array<string, mixed> $options
      */
-    public function countBy($filters, array $options): int
+    public function countBy(array|object $filters, array $options): int
     {
         return $this->connection->countBy($filters, $options);
     }
