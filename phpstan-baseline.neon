@@ -1,18 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Call to an undefined method Symfony\\Component\\Messenger\\Stamp\\RedeliveryStamp\:\:getExceptionMessage\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Extension/DocumentEnhancer/FirstErrorMessageEnhancer.php
-
-		-
-			message: '#^Call to an undefined method Symfony\\Component\\Messenger\\Stamp\\RedeliveryStamp\:\:getExceptionMessage\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Extension/DocumentEnhancer/LastErrorMessageEnhancer.php
-
-		-
 			message: '#^Method Facile\\MongoDbMessenger\\Transport\\Connection\:\:find\(\) should return MongoDB\\Model\\BSONDocument\|null but returns array\|object\|null\.$#'
 			identifier: return.type
 			count: 1

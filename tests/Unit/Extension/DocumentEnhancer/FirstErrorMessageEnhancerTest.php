@@ -15,25 +15,13 @@ class FirstErrorMessageEnhancerTest extends DocumentEnhancerTestCase
 {
     public function testEnhance(): void
     {
-        if (class_exists(ErrorDetailsStamp::class)) {
-            // Symfony 5.2+
-            $stamps = [
-                $stamp = new RedeliveryStamp(456),
-                new ErrorDetailsStamp(\Exception::class, 500, 'Foo Bar'),
-                new RedeliveryStamp(789),
-                new ErrorDetailsStamp(\Exception::class, 500, 'Baz'),
-            ];
-        } else {
-            $stamps = [
-                /** @phpstan-ignore-next-line */
-                $stamp = new RedeliveryStamp(456, 'Foo Bar'),
-                /** @phpstan-ignore-next-line */
-                new RedeliveryStamp(789, 'Baz'),
-            ];
-        }
-
         $document = new BSONDocument();
-        $envelope = new Envelope(new class {}, $stamps);
+        $envelope = new Envelope(new class {}, [
+            $stamp = new RedeliveryStamp(456),
+            new ErrorDetailsStamp(\Exception::class, 500, 'Foo Bar'),
+            new RedeliveryStamp(789),
+            new ErrorDetailsStamp(\Exception::class, 500, 'Baz'),
+        ]);
 
         (new FirstErrorMessageEnhancer())->enhance($document, $envelope);
 

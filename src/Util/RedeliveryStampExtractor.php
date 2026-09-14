@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Facile\MongoDbMessenger\Util;
 
 use Symfony\Component\Messenger\Envelope;
-use Symfony\Component\Messenger\Stamp\ErrorDetailsStamp;
 use Symfony\Component\Messenger\Stamp\RedeliveryStamp;
 
 /**
@@ -15,7 +14,7 @@ class RedeliveryStampExtractor
 {
     public static function getFirstWithException(Envelope $envelope): ?RedeliveryStamp
     {
-        self::checkDeprecation();
+        self::triggerDeprecation();
 
         /** @var RedeliveryStamp $stamp */
         foreach ($envelope->all(RedeliveryStamp::class) as $stamp) {
@@ -29,7 +28,7 @@ class RedeliveryStampExtractor
 
     public static function getLastWithException(Envelope $envelope): ?RedeliveryStamp
     {
-        self::checkDeprecation();
+        self::triggerDeprecation();
 
         /** @var RedeliveryStamp $stamp */
         foreach (array_reverse($envelope->all(RedeliveryStamp::class)) as $stamp) {
@@ -41,14 +40,12 @@ class RedeliveryStampExtractor
         return null;
     }
 
-    private static function checkDeprecation(): void
+    private static function triggerDeprecation(): void
     {
-        if (class_exists(ErrorDetailsStamp::class)) {
-            trigger_deprecation(
-                'symfony/messenger',
-                '5.2',
-                'using RedeliveryStamp::getExceptionMessage is deprecated; use ErrorDetailsStamp instead, which is now added to failed messages to retain information about the failures',
-            );
-        }
+        trigger_deprecation(
+            'symfony/messenger',
+            '5.2',
+            'using RedeliveryStamp::getExceptionMessage is deprecated; use ErrorDetailsStamp instead, which is now added to failed messages to retain information about the failures',
+        );
     }
 }

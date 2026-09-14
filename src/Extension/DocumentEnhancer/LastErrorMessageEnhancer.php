@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Facile\MongoDbMessenger\Extension\DocumentEnhancer;
 
 use Facile\MongoDbMessenger\Extension\DocumentEnhancer;
-use Facile\MongoDbMessenger\Util\RedeliveryStampExtractor;
 use MongoDB\BSON\UTCDateTime;
 use MongoDB\Model\BSONDocument;
 use Symfony\Component\Messenger\Envelope;
@@ -17,23 +16,13 @@ class LastErrorMessageEnhancer implements DocumentEnhancer
 {
     public function enhance(BSONDocument $document, Envelope $envelope): void
     {
-        if (class_exists(ErrorDetailsStamp::class)) {
-            $lastRedeliveryStamp = $envelope->last(RedeliveryStamp::class);
-            $lastErrorStamp = $envelope->last(ErrorDetailsStamp::class);
-            if (! $lastErrorStamp instanceof ErrorDetailsStamp) {
-                return;
-            }
-
-            $exceptionMessage = $lastErrorStamp->getExceptionMessage();
-        } else {
-            $lastRedeliveryStamp = RedeliveryStampExtractor::getLastWithException($envelope);
-
-            if (! $lastRedeliveryStamp instanceof RedeliveryStamp) {
-                return;
-            }
-
-            $exceptionMessage = $lastRedeliveryStamp->getExceptionMessage();
+        $lastRedeliveryStamp = $envelope->last(RedeliveryStamp::class);
+        $lastErrorStamp = $envelope->last(ErrorDetailsStamp::class);
+        if (! $lastErrorStamp instanceof ErrorDetailsStamp) {
+            return;
         }
+
+        $exceptionMessage = $lastErrorStamp->getExceptionMessage();
 
         Assert::isInstanceOf($lastRedeliveryStamp, RedeliveryStamp::class);
         $document->lastErrorAt = new UTCDateTime($lastRedeliveryStamp->getRedeliveredAt());
