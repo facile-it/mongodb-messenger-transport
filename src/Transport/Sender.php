@@ -23,7 +23,7 @@ class Sender implements SenderInterface
 
         /** @var DelayStamp|null $delayStamp */
         $delayStamp = $envelope->last(DelayStamp::class);
-        $delay = null !== $delayStamp ? $delayStamp->getDelay() : 0;
+        $delay = $delayStamp?->getDelay() ?? 0;
 
         if (! array_key_exists('body', $encodedMessage)) {
             throw new \InvalidArgumentException('Encoded message missing required "body" parameter');
