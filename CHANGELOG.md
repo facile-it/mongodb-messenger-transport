@@ -7,8 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## Unreleased
 * ...
 
-## 1.9.0 (2026-01-TBD)
-* Drop support for Symfony below 5.4
+## 1.9.0 (2026-10-20)
+* Drop support for Symfony below 5.4 ([#78](https://github.com/facile-it/mongodb-messenger-transport/issues/78))
+* Switch to `Symfony\Component\DependencyInjection\Extension\Extension` to avoid future deprecation ([#105](https://github.com/facile-it/mongodb-messenger-transport/issues/105), thanks [@DuaelFr](https://github.com/DuaelFr))
 
 ## 1.8.0 (2026-01-15)
 * Allow Symfony 8 ([#49](https://github.com/facile-it/mongodb-messenger-transport/issues/49))
