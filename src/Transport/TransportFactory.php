@@ -181,7 +181,7 @@ final class TransportFactory implements TransportFactoryInterface
 
             $constructor = $reflectionClass->getConstructor();
 
-            if (null === $constructor) {
+            if (! $constructor instanceof \ReflectionMethod) {
                 continue;
             }
 
